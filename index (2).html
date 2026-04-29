@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>가마실 소성 계산기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:        #F9F6F2;
+  --surface:   #FFFFFF;
+  --surface2:  #F4F0EB;
+  --border:    #E5DDD5;
+  --border2:   #D4C9BE;
+  --text:      #2A1F17;
+  --text-mid:  #6B5A4E;
+  --text-soft: #9C8A7E;
+  --accent:    #C4591A;
+  --accent-lt: #F2E4D8;
+  --accent-dk: #A04010;
+  --blue:      #3A7FC1;
+  --blue-lt:   #E4EEF8;
+  --amber:     #D4881A;
+  --amber-lt:  #FDF3DC;
+  --red:       #C03030;
+  --red-lt:    #FDEAEA;
+  --green:     #3A7A4A;
+  --green-lt:  #E4F2E8;
+  --radius:    10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 3px rgba(42,31,23,0.07), 0 1px 2px rgba(42,31,23,0.04);
+  --shadow:    0 2px 8px rgba(42,31,23,0.08), 0 1px 3px rgba(42,31,23,0.05);
+  --shadow-md: 0 4px 16px rgba(42,31,23,0.1), 0 2px 6px rgba(42,31,23,0.06);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: var(--shadow-sm);
+}
+.header-inner {
+  max-width: 700px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 0;
+}
+.header-left { display: flex; align-items: center; gap: 11px; }
+.logo {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  box-shadow: 0 2px 6px rgba(196,89,26,0.3);
+  flex-shrink: 0;
+}
+.header-title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 17px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.02em;
+}
+.header-sub { font-size: 11px; color: var(--text-soft); margin-top: 1px; }
+.admin-btn {
+  font-size: 12px; font-weight: 600; font-family: inherit;
+  color: var(--text-soft);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 14px; cursor: pointer;
+  transition: all 0.18s;
+}
+.admin-btn:hover { background: var(--border); color: var(--text-mid); }
+.admin-btn.on { background: var(--accent-lt); border-color: rgba(196,89,26,0.3); color: var(--accent); }
+.tab-wrap {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 62px; z-index: 199;
+}
+.tab-bar { max-width: 700px; margin: 0 auto; display: flex; padding: 0 24px; }
+.tab {
+  padding: 11px 20px; font-size: 13px; font-weight: 600; font-family: inherit;
+  color: var(--text-soft); background: none; border: none;
+  border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.18s;
+}
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab:hover:not(.active) { color: var(--text-mid); }
+main { max-width: 700px; margin: 0 auto; padding: 22px 24px 64px; }
+.notice { border-radius: var(--radius-lg); padding: 14px 18px; margin-bottom: 20px; border: 1px solid; animation: fadeUp 0.3s ease; }
+.notice.type-info  { background: var(--blue-lt);  border-color: rgba(58,127,193,0.25); }
+.notice.type-warn  { background: var(--amber-lt); border-color: rgba(212,136,26,0.28); }
+.notice.type-alert { background: var(--red-lt);   border-color: rgba(192,48,48,0.25); }
+.notice-title { font-size: 13px; font-weight: 700; margin-bottom: 5px; display: flex; align-items: center; gap: 6px; }
+.notice.type-info  .notice-title { color: var(--blue); }
+.notice.type-warn  .notice-title { color: #9A6010; }
+.notice.type-alert .notice-title { color: var(--red); }
+.notice-body { font-size: 13px; line-height: 1.8; white-space: pre-wrap; }
+.notice.type-info  .notice-body { color: #2A5F96; }
+.notice.type-warn  .notice-body { color: #7A4C08; }
+.notice.type-alert .notice-body { color: #9A2020; }
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--text-soft); text-transform: uppercase;
+  margin-bottom: 10px; margin-top: 24px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.section-label:first-child { margin-top: 0; }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px; margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.card-flush { padding: 0; overflow: hidden; }
+label { font-size: 12px; font-weight: 600; color: var(--text-mid); display: block; margin-bottom: 6px; letter-spacing: 0.01em; }
+select, input[type=date], input[type=time], input[type=number], input[type=text], input[type=password] {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  font-size: 14px; font-family: inherit;
+  background: var(--surface); color: var(--text);
+  outline: none; -webkit-appearance: none; appearance: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+select:focus, input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(196,89,26,0.1); }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239C8A7E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+}
+textarea {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  font-size: 13px; font-family: inherit; background: var(--surface); color: var(--text);
+  resize: vertical; line-height: 1.7; outline: none; transition: border-color 0.18s;
+}
+textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(196,89,26,0.1); }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field { margin-bottom: 12px; }
+.field:last-child { margin-bottom: 0; }
+.btn {
+  padding: 10px 18px; border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: var(--surface2); color: var(--text-mid);
+  cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit;
+  transition: all 0.16s;
+}
+.btn:hover { background: var(--border); color: var(--text); }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent-dk); box-shadow: 0 2px 6px rgba(196,89,26,0.25); }
+.btn-primary:hover { background: var(--accent-dk); box-shadow: 0 3px 10px rgba(196,89,26,0.35); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-danger { color: var(--red); border-color: rgba(192,48,48,0.2); }
+.btn-danger:hover { background: var(--red-lt); }
+.result-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap; background: var(--surface2); }
+.result-body { padding: 0 20px; }
+.result-row { display: flex; justify-content: space-between; align-items: center; padding: 13px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+.result-row:last-child { border-bottom: none; }
+.result-row.hl { margin: 0 -20px; padding: 13px 20px; background: linear-gradient(90deg, var(--accent-lt), #FFF8F3); border-top: 1px solid rgba(196,89,26,0.15); border-bottom: 1px solid rgba(196,89,26,0.15); }
+.result-label { font-size: 13px; color: var(--text-soft); flex-shrink: 0; }
+.result-value { font-size: 14px; font-weight: 700; text-align: right; color: var(--text); }
+.result-value.fire { color: var(--accent); }
+.badge { display: inline-block; padding: 4px 11px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid; }
+.badge-orange { background: var(--accent-lt); border-color: rgba(196,89,26,0.25); color: var(--accent); }
+.badge-blue   { background: var(--blue-lt);   border-color: rgba(58,127,193,0.22); color: var(--blue); }
+.power-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 18px; margin-bottom: 14px; }
+.power-box-title { font-size: 13px; font-weight: 700; color: var(--text-mid); margin-bottom: 7px; }
+.power-box-body { font-size: 13px; color: var(--text-soft); line-height: 1.85; }
+.power-box-body b { color: var(--text); font-weight: 700; }
+.timeline-bar { display: flex; border-radius: var(--radius); overflow: hidden; height: 38px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+.bar-heat { background: linear-gradient(90deg, var(--accent-lt), #FAE8D4); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--accent); border-right: 1px solid rgba(196,89,26,0.2); }
+.bar-cool { background: var(--blue-lt); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--blue); flex: 1; }
+.timeline-times { display: flex; justify-content: space-between; margin-top: 6px; }
+.timeline-times span { font-size: 11px; color: var(--text-soft); }
+.timeline-times .t-peak { color: var(--accent); font-weight: 700; }
+.setting-grid { display: grid; grid-template-columns: 2fr 80px 80px auto; gap: 6px; align-items: center; margin-bottom: 7px; }
+.col-header { font-size: 11px; color: var(--text-soft); font-weight: 600; letter-spacing: 0.03em; }
+.kiln-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.kiln-name-input { border: none !important; padding: 0 !important; background: transparent !important; box-shadow: none !important; font-weight: 700; font-size: 14px; color: var(--text) !important; outline: none; flex: 1; font-family: inherit; }
+.overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(42,31,23,0.45); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+.overlay.show { display: flex; animation: fadeIn 0.2s ease; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px 28px 24px; width: 320px; box-shadow: var(--shadow-md); animation: slideUp 0.22s ease; }
+.modal-title { font-family: 'Noto Serif KR', serif; font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+.modal-sub { font-size: 12px; color: var(--text-soft); margin-bottom: 22px; line-height: 1.6; }
+.modal-actions { display: flex; gap: 8px; margin-top: 18px; }
+.err-msg { font-size: 12px; color: var(--red); margin-top: 8px; display: none; }
+.loading { text-align: center; padding: 36px 0; color: var(--text-soft); font-size: 13px; }
+.spinner { width: 22px; height: 22px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.75s linear infinite; margin: 0 auto 12px; }
+.divider { height: 1px; background: var(--border); margin: 22px 0; }
+.save-ok { font-size: 12px; font-weight: 600; color: var(--green); background: var(--green-lt); border: 1px solid rgba(58,122,74,0.25); border-radius: 8px; padding: 5px 14px; display: none; }
+@keyframes fadeUp  { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
+@keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes spin    { to { transform: rotate(360deg); } }
+.fade-in { animation: fadeUp 0.3s ease; }
+@media (max-width: 480px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .setting-grid { grid-template-columns: 1fr 64px 64px auto; }
+  main { padding: 16px 16px 60px; }
+  header { padding: 0 16px; }
+  .tab-bar { padding: 0 16px; }
+  .header-sub { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <p class="modal-title">🔒 관리자 로그인</p>
+    <p class="modal-sub">담당자만 가마 설정과 공지사항을 수정할 수 있습니다</p>
+    <div class="field">
+      <label>관리자 비밀번호</label>
+      <input type="password" id="pw-input" placeholder="비밀번호를 입력하세요" onkeydown="if(event.key==='Enter')tryLogin()">
+    </div>
+    <p class="err-msg" id="pw-err">비밀번호가 올바르지 않습니다</p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="tryLogin()">로그인</button>
+      <button class="btn" onclick="closeModal()">취소</button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="logo">🔥</div>
+      <div>
+        <div class="header-title">가마실 소성 계산기</div>
+        <div class="header-sub">소성 일정 및 전력 사용 시간 안내</div>
+      </div>
+    </div>
+    <button class="admin-btn" id="admin-btn" onclick="onAdminClick()">관리자</button>
+  </div>
+</header>
+
+<div class="tab-wrap" id="tab-wrap" style="display:none">
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('calc')">소성 계산기</button>
+    <button class="tab" onclick="showTab('settings')">설정 관리</button>
+  </div>
+</div>
+
+<main>
+  <div id="tab-calc">
+    <div id="notice-area"></div>
+    <p class="section-label">소성 정보 입력</p>
+    <div class="card">
+      <div class="loading" id="calc-loading">
+        <div class="spinner"></div>
+        설정을 불러오는 중...
+      </div>
+      <div id="calc-form" style="display:none">
+        <div class="grid2 field">
+          <div>
+            <label>가마 선택</label>
+            <select id="kiln-select" onchange="updateFiringTypes()"></select>
+          </div>
+          <div>
+            <label>소성 종류</label>
+            <select id="firing-select"></select>
+          </div>
+        </div>
+        <div class="grid2 field">
+          <div>
+            <label>소성 시작 날짜</label>
+            <input type="date" id="start-date">
+          </div>
+          <div>
+            <label>소성 시작 시간</label>
+            <input type="time" id="start-time" value="09:00">
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;padding:12px;font-size:14px" onclick="calculate()">계산하기</button>
+      </div>
+    </div>
+
+    <div id="result-area" style="display:none">
+      <p class="section-label">소성 일정</p>
+      <div class="card card-flush">
+        <div class="result-header">
+          <span id="res-kiln-badge" class="badge badge-blue"></span>
+          <span id="res-firing-badge" class="badge badge-orange"></span>
+        </div>
+        <div class="result-body">
+          <div class="result-row">
+            <span class="result-label">소성 시작</span>
+            <span class="result-value" id="res-start"></span>
+          </div>
+          <div class="result-row hl">
+            <span class="result-label">🌡️ 최고 온도 도달 (전력 종료)</span>
+            <span class="result-value fire" id="res-peak"></span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">소성 완전 종료 (냉각 완료)</span>
+            <span class="result-value" id="res-end"></span>
+          </div>
+        </div>
+      </div>
+      <div class="power-box">
+        <p class="power-box-title">⚡ 전력 사용 안내</p>
+        <p class="power-box-body" id="res-power-note"></p>
+      </div>
+      <div id="res-timeline"></div>
+    </div>
+  </div>
+
+  <div id="tab-settings" style="display:none">
+    <p class="section-label" style="margin-top:4px">공지사항 설정</p>
+    <div class="card">
+      <div class="grid2 field">
+        <div>
+          <label>표시 여부</label>
+          <select id="notice-show">
+            <option value="show">표시</option>
+            <option value="hide">숨기기</option>
+          </select>
+        </div>
+        <div>
+          <label>배너 색상</label>
+          <select id="notice-type">
+            <option value="info">파랑 — 일반 안내</option>
+            <option value="warn">노랑 — 주의</option>
+            <option value="alert">빨강 — 긴급</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>제목</label>
+        <input type="text" id="notice-title-input" placeholder="예) 5월 소성 일정 안내">
+      </div>
+      <div class="field">
+        <label>내용</label>
+        <textarea id="notice-body-input" rows="5" placeholder="학생들에게 전달할 내용을 입력하세요&#10;줄바꿈도 그대로 표시됩니다"></textarea>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <p class="section-label">가마 및 소성 시간 설정</p>
+    <div id="kiln-settings-list"></div>
+    <button class="btn" onclick="addKiln()" style="margin-bottom:16px">+ 가마 추가</button>
+    <div class="divider"></div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn btn-primary" onclick="saveAll()">전체 저장</button>
+      <span class="save-ok" id="save-ok"></span>
+    </div>
+    <p style="font-size:12px;color:var(--text-soft);margin-top:10px">저장하면 모든 학생의 화면에 즉시 반영됩니다</p>
+  </div>
+</main>
+
+<script>
+// ════════════════════════════════════════
+const SUPABASE_URL      = 'https://bcuipzhrnkgzpvdsvbrm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjdWlwemhybmtnenB2ZHN2YnJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjUzOTUsImV4cCI6MjA5MzAwMTM5NX0.YpIr4KPjcHCHszgoLhEb1k_yHN6eHDZRzgbzlZ9tNRg';
+const ADMIN_PASSWORD    = 'kiln1234';
+// ════════════════════════════════════════
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let isAdmin = false;
+let kilns   = [];
+let notice  = { show: false, type: 'info', title: '', body: '' };
+
+function defaultKilns() {
+  return [
+    { name:'가마 1 (전기가마 소형)', sort_order:1, types:[
+      {name:'비스킷 소성', heatHours:6,  coolHours:8},
+      {name:'유약 소성',   heatHours:8,  coolHours:12},
+      {name:'고화도 소성', heatHours:10, coolHours:16}
+    ]},
+    { name:'가마 2 (전기가마 대형)', sort_order:2, types:[
+      {name:'비스킷 소성', heatHours:8,  coolHours:10},
+      {name:'유약 소성',   heatHours:10, coolHours:14},
+      {name:'고화도 소성', heatHours:13, coolHours:18}
+    ]},
+    { name:'가마 3 (가스가마)', sort_order:3, types:[
+      {name:'산화 소성', heatHours:5, coolHours:12},
+      {name:'환원 소성', heatHours:7, coolHours:14},
+      {name:'라쿠 소성', heatHours:2, coolHours:3}
+    ]}
+  ];
+}
+
+async function loadData() {
+  try {
+    const [kr, nr] = await Promise.all([
+      sb.from('kilns').select('*').order('sort_order'),
+      sb.from('notice').select('*').eq('id', 1).single()
+    ]);
+    kilns = (kr.data && kr.data.length)
+      ? kr.data.map(k => ({ ...k, types: Array.isArray(k.types) ? k.types : JSON.parse(k.types||'[]') }))
+      : defaultKilns();
+    if (nr.data) notice = { show:nr.data.show, type:nr.data.type, title:nr.data.title, body:nr.data.body };
+  } catch(e) {
+    console.warn('Supabase 오류:', e.message);
+    kilns = defaultKilns();
+  }
+  renderNotice();
+  populateKilnSelect();
+  document.getElementById('calc-loading').style.display = 'none';
+  document.getElementById('calc-form').style.display    = 'block';
+}
+
+function onAdminClick() { isAdmin ? logoutAdmin() : openModal(); }
+function openModal() {
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(() => document.getElementById('pw-input').focus(), 80);
+}
+function closeModal() {
+  document.getElementById('overlay').classList.remove('show');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-err').style.display = 'none';
+}
+function tryLogin() {
+  if (document.getElementById('pw-input').value === ADMIN_PASSWORD) {
+    isAdmin = true; closeModal();
+    document.getElementById('admin-btn').textContent = '로그아웃';
+    document.getElementById('admin-btn').classList.add('on');
+    document.getElementById('tab-wrap').style.display = 'block';
+  } else {
+    document.getElementById('pw-err').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+function logoutAdmin() {
+  isAdmin = false;
+  document.getElementById('admin-btn').textContent = '관리자';
+  document.getElementById('admin-btn').classList.remove('on');
+  document.getElementById('tab-wrap').style.display = 'none';
+  showTab('calc');
+}
+
+function showTab(t) {
+  document.getElementById('tab-calc').style.display     = t==='calc'     ? 'block' : 'none';
+  document.getElementById('tab-settings').style.display = t==='settings' ? 'block' : 'none';
+  document.querySelectorAll('.tab').forEach((el,i) =>
+    el.classList.toggle('active', (t==='calc'&&i===0)||(t==='settings'&&i===1))
+  );
+  if (t==='settings') renderSettingsPanel();
+}
+
+function renderNotice() {
+  const el = document.getElementById('notice-area');
+  if (!notice.show || (!notice.title && !notice.body)) { el.innerHTML=''; return; }
+  const icons = { info:'ℹ️', warn:'⚠️', alert:'🚨' };
+  el.innerHTML = `<div class="notice type-${notice.type} fade-in">
+    ${notice.title ? `<p class="notice-title">${icons[notice.type]} ${esc(notice.title)}</p>` : ''}
+    ${notice.body  ? `<p class="notice-body">${esc(notice.body)}</p>` : ''}
+  </div>`;
+}
+
+function populateKilnSelect() {
+  const sel = document.getElementById('kiln-select');
+  sel.innerHTML = kilns.map((k,i) => `<option value="${i}">${ea(k.name)}</option>`).join('');
+  updateFiringTypes();
+}
+function updateFiringTypes() {
+  const ki = parseInt(document.getElementById('kiln-select').value);
+  document.getElementById('firing-select').innerHTML =
+    kilns[ki].types.map((t,i) =>
+      `<option value="${i}">${ea(t.name)} (가열 ${t.heatHours}h / 냉각 ${t.coolHours}h)</option>`
+    ).join('');
+}
+function fmt(d) {
+  const days=['일','월','화','수','목','금','토'];
+  return `${d.getFullYear()}.${p2(d.getMonth()+1)}.${p2(d.getDate())}(${days[d.getDay()]}) ${p2(d.getHours())}:${p2(d.getMinutes())}`;
+}
+function p2(n) { return String(n).padStart(2,'0'); }
+function addH(d,h) { return new Date(d.getTime()+h*3600000); }
+
+function calculate() {
+  const sd = document.getElementById('start-date').value;
+  const st = document.getElementById('start-time').value;
+  if (!sd||!st) { alert('날짜와 시간을 입력해주세요'); return; }
+  const ki = parseInt(document.getElementById('kiln-select').value);
+  const fi = parseInt(document.getElementById('firing-select').value);
+  const k  = kilns[ki], f = k.types[fi];
+  const start = new Date(`${sd}T${st}`);
+  const peak  = addH(start, f.heatHours);
+  const end   = addH(peak,  f.coolHours);
+
+  document.getElementById('res-kiln-badge').textContent  = k.name;
+  document.getElementById('res-firing-badge').textContent = f.name;
+  document.getElementById('res-start').textContent = fmt(start);
+  document.getElementById('res-peak').textContent  = fmt(peak);
+  document.getElementById('res-end').textContent   = fmt(end);
+  document.getElementById('res-power-note').innerHTML =
+    `<b>${fmt(start)}</b>부터 <b>${fmt(peak)}</b>까지 ${f.heatHours}시간 동안 전력이 사용됩니다.<br>`+
+    `이 시간 동안은 <b>다른 가마를 가동할 수 없습니다.</b><br>`+
+    `냉각 시작(${fmt(peak)}) 이후 ~ ${fmt(end)}까지는 다른 가마 가동이 가능합니다.`;
+
+  const hp = Math.round(f.heatHours / (f.heatHours+f.coolHours) * 100);
+  document.getElementById('res-timeline').innerHTML = `
+    <p class="section-label">소성 타임라인</p>
+    <div class="timeline-bar">
+      <div class="bar-heat" style="width:${hp}%">⚡ 가열 ${f.heatHours}h</div>
+      <div class="bar-cool">❄️ 냉각 ${f.coolHours}h</div>
+    </div>
+    <div class="timeline-times">
+      <span>${fmt(start)}</span>
+      <span class="t-peak">${fmt(peak)}</span>
+      <span>${fmt(end)}</span>
+    </div>`;
+
+  const ra = document.getElementById('result-area');
+  ra.style.display = 'block'; ra.className = 'fade-in';
+  setTimeout(() => ra.scrollIntoView({behavior:'smooth', block:'start'}), 50);
+}
+
+function renderSettingsPanel() {
+  document.getElementById('notice-show').value        = notice.show ? 'show' : 'hide';
+  document.getElementById('notice-type').value        = notice.type;
+  document.getElementById('notice-title-input').value = notice.title;
+  document.getElementById('notice-body-input').value  = notice.body;
+
+  document.getElementById('kiln-settings-list').innerHTML = kilns.map((k,ki) => `
+    <div class="card" style="margin-bottom:10px">
+      <div class="kiln-name-row">
+        <input class="kiln-name-input" type="text" value="${ea(k.name)}" oninput="kilns[${ki}].name=this.value">
+        <button class="btn btn-sm btn-danger" onclick="removeKiln(${ki})">삭제</button>
+      </div>
+      <div class="setting-grid" style="margin-bottom:6px">
+        <span class="col-header">소성 종류</span>
+        <span class="col-header">가열(h)</span>
+        <span class="col-header">냉각(h)</span>
+        <span></span>
+      </div>
+      ${k.types.map((t,ti) => `
+        <div class="setting-grid">
+          <input type="text"   value="${ea(t.name)}" oninput="kilns[${ki}].types[${ti}].name=this.value">
+          <input type="number" value="${t.heatHours}" min="0.5" step="0.5" oninput="kilns[${ki}].types[${ti}].heatHours=parseFloat(this.value)||0">
+          <input type="number" value="${t.coolHours}" min="0.5" step="0.5" oninput="kilns[${ki}].types[${ti}].coolHours=parseFloat(this.value)||0">
+          <button class="btn btn-sm btn-danger" onclick="removeType(${ki},${ti})">✕</button>
+        </div>`).join('')}
+      <button class="btn btn-sm" onclick="addType(${ki})" style="margin-top:8px">+ 소성 종류 추가</button>
+    </div>`).join('');
+}
+
+function addKiln() {
+  kilns.push({ name:`가마 ${kilns.length+1}`, sort_order:kilns.length+1, types:[{name:'비스킷 소성', heatHours:6, coolHours:8}] });
+  renderSettingsPanel();
+}
+function removeKiln(ki) {
+  if (kilns.length<=1) { alert('가마는 최소 1개 이상이어야 합니다'); return; }
+  if (confirm(`"${kilns[ki].name}"을(를) 삭제할까요?`)) { kilns.splice(ki,1); renderSettingsPanel(); }
+}
+function addType(ki) { kilns[ki].types.push({name:'새 소성', heatHours:6, coolHours:10}); renderSettingsPanel(); }
+function removeType(ki,ti) {
+  if (kilns[ki].types.length<=1) { alert('소성 종류는 최소 1개 이상이어야 합니다'); return; }
+  kilns[ki].types.splice(ti,1); renderSettingsPanel();
+}
+
+async function saveAll() {
+  notice = {
+    show:  document.getElementById('notice-show').value === 'show',
+    type:  document.getElementById('notice-type').value,
+    title: document.getElementById('notice-title-input').value,
+    body:  document.getElementById('notice-body-input').value
+  };
+  try {
+    await sb.from('notice').upsert({ id:1, ...notice });
+    await sb.from('kilns').delete().neq('id', 0);
+    await sb.from('kilns').insert(
+      kilns.map((k,i) => ({ name:k.name, sort_order:i+1, types:k.types }))
+    );
+    renderNotice(); populateKilnSelect();
+    document.getElementById('result-area').style.display = 'none';
+    showOk('✓ 저장 완료! 학생 화면에 즉시 반영됩니다');
+  } catch(e) { alert('저장 오류: ' + e.message); }
+}
+function showOk(msg) {
+  const el = document.getElementById('save-ok');
+  el.textContent = msg; el.style.display = 'inline-block';
+  setTimeout(() => el.style.display='none', 3500);
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function ea(s)  { return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+document.getElementById('start-date').value = new Date().toISOString().split('T')[0];
+loadData();
+</script>
+</body>
+</html>
