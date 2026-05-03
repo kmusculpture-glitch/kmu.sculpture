@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>가마실 소성 캘린더</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root {
+  --bg:#F9F6F2;--surface:#FFFFFF;--surface2:#F4F0EB;--border:#E5DDD5;--border2:#D4C9BE;
+  --text:#2A1F17;--text-mid:#6B5A4E;--text-soft:#9C8A7E;
+  --accent:#C4591A;--accent-lt:#F2E4D8;--accent-dk:#A04010;
+  --red:#C03030;--red-lt:#FDEAEA;--green:#3A7A4A;--green-lt:#E4F2E8;
+  --blue:#3A7FC1;--blue-lt:#E4EEF8;
+  --radius:10px;--radius-lg:16px;
+  --shadow-sm:0 1px 3px rgba(42,31,23,0.07);
+  --shadow:0 2px 8px rgba(42,31,23,0.08),0 1px 3px rgba(42,31,23,0.05);
+  --shadow-md:0 4px 16px rgba(42,31,23,0.1),0 2px 6px rgba(42,31,23,0.06);
+
+  /* 가마별 색상 팔레트 */
+  --k0-bg:#FDE8D0;--k0-bd:#D4681A;--k0-tx:#8A3A10;
+  --k1-bg:#D8EAF8;--k1-bd:#3A7FC1;--k1-tx:#1A4A80;
+  --k2-bg:#D8F0E0;--k2-bd:#3A9A5A;--k2-tx:#1A5A30;
+  --k3-bg:#EEE0F8;--k3-bd:#9A4AC1;--k3-tx:#5A1A80;
+  --k4-bg:#F8EED8;--k4-bd:#C4A030;--k4-tx:#6A4A10;
+
+  --bar-h: 22px;
+  --bar-gap: 3px;
+  --date-h: 28px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* ── 헤더 ── */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:0;z-index:200;box-shadow:var(--shadow-sm);}
+.header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:13px 0;}
+.header-left{display:flex;align-items:center;gap:11px;}
+.logo{width:36px;height:36px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 6px rgba(196,89,26,0.3);flex-shrink:0;}
+.header-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;color:var(--text);letter-spacing:-0.02em;}
+.header-sub{font-size:11px;color:var(--text-soft);margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.nav-link{font-size:12px;font-weight:600;color:var(--text-soft);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 14px;text-decoration:none;transition:all .18s;}
+.nav-link:hover{background:var(--border);color:var(--text-mid);}
+.admin-btn{font-size:12px;font-weight:600;font-family:inherit;color:var(--text-soft);background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 14px;cursor:pointer;transition:all .18s;}
+.admin-btn:hover{background:var(--border);}
+.admin-btn.on{background:var(--accent-lt);border-color:rgba(196,89,26,.3);color:var(--accent);}
+
+/* ── 탭 바 ── */
+.top-tabs{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:62px;z-index:199;}
+.top-tabs-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+.semester-tabs{display:flex;overflow-x:auto;}
+.s-tab{padding:10px 16px;font-size:13px;font-weight:600;font-family:inherit;color:var(--text-soft);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .18s;white-space:nowrap;}
+.s-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.s-tab:hover:not(.active){color:var(--text-mid);}
+.admin-tabs{display:none;gap:4px;padding:6px 0;flex-shrink:0;}
+.admin-tabs.show{display:flex;}
+.a-tab{padding:5px 12px;font-size:12px;font-weight:600;font-family:inherit;color:var(--text-soft);background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all .15s;}
+.a-tab.active{background:var(--accent-lt);border-color:rgba(196,89,26,.3);color:var(--accent);}
+
+/* ── 메인 ── */
+main{max-width:1200px;margin:0 auto;padding:20px 24px 60px;}
+
+/* ── 캘린더 컨트롤 ── */
+.cal-controls{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+.cal-nav{display:flex;align-items:center;gap:10px;}
+.cal-nav-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface);cursor:pointer;font-size:14px;color:var(--text-mid);display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.cal-nav-btn:hover{background:var(--surface2);}
+.cal-month{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;color:var(--text);min-width:140px;text-align:center;}
+.cal-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.action-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface);color:var(--text-mid);cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .16s;}
+.action-btn:hover{background:var(--surface2);}
+.action-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent-dk);box-shadow:0 2px 6px rgba(196,89,26,.25);}
+.action-btn.primary:hover{background:var(--accent-dk);}
+.action-btn.hidden{display:none!important;}
+
+/* ── 범례 ── */
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text-mid);}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+
+/* ── 캘린더 그리드 ── */
+.cal-grid{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:visible;box-shadow:var(--shadow);}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);}
+.cal-weekday{padding:10px 0;text-align:center;font-size:11px;font-weight:700;color:var(--text-soft);letter-spacing:.05em;}
+.cal-weekday:first-child{color:#C03030;}
+.cal-weekday:last-child{color:#3A7FC1;}
+
+/* 핵심: cal-days는 relative, 바는 absolute */
+.cal-days-wrap{position:relative;overflow:visible;}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-days-wrap{ display:block; }
+.cal-cell{
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+  position:relative;
+  min-height:130px;
+}
+.cal-cell:last-child{ border-right:none; }
+.cal-cell.other-month{background:var(--surface2);}
+.cal-cell.today{background:#FFFAF6;}
+.cal-cell.in-semester{background:#FDFDF7;}
+.cal-cell.blocked{background:#EDEDEC!important;}
+.cal-cell.blocked .cal-date{color:#999!important;}
+.cal-date{
+  font-size:12px;font-weight:700;color:var(--text-soft);
+  display:inline-flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:50%;
+  margin-bottom:2px;
+}
+.cal-cell:nth-child(7n+1) .cal-date{color:#C03030;}
+.cal-cell:nth-child(7n) .cal-date{color:#3A7FC1;}
+.cal-cell.today .cal-date{background:var(--accent);color:#fff!important;}
+
+/* ── 셀 내부 바 슬롯 ── */
+.bar-slot{
+  position:relative;
+  height:20px;
+  margin-top:2px;
+  overflow:visible;
+}
+
+/* 가마별 색상 */
+.kc-0{background:var(--k0-bg);border-color:var(--k0-bd);color:var(--k0-tx);}
+.kc-1{background:var(--k1-bg);border-color:var(--k1-bd);color:var(--k1-tx);}
+.kc-2{background:var(--k2-bg);border-color:var(--k2-bd);color:var(--k2-tx);}
+.kc-3{background:var(--k3-bg);border-color:var(--k3-bd);color:var(--k3-tx);}
+.kc-4{background:var(--k4-bg);border-color:var(--k4-bd);color:var(--k4-tx);}
+
+/* 가마 외 일정 */
+.ec-maintenance{background:#F0E4F8;border-color:#7A3AA0;color:#5A1A80;}
+.ec-cleaning   {background:#E4F0F8;border-color:#2A70A0;color:#1A4A70;}
+.ec-closed     {background:#F4E4E4;border-color:#A03030;color:#701A1A;}
+.ec-other      {background:#F4F0E4;border-color:#807040;color:#504020;}
+
+/* ── 패널 ── */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* ── 수리 내역 ── */
+.repair-list{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
+.repair-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-sm);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.repair-info{flex:1;}
+.repair-date{font-size:11px;color:var(--text-soft);margin-bottom:3px;}
+.repair-kiln{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;}
+.repair-desc{font-size:13px;color:var(--text);}
+.repair-empty{text-align:center;padding:40px;color:var(--text-soft);font-size:13px;}
+
+/* ── 학기 설정 ── */
+.download-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-top:16px;box-shadow:var(--shadow-sm);}
+.download-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px;}
+.download-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+.download-btn{display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface2);color:var(--text-mid);cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .16s;}
+.download-btn:hover{background:var(--green-lt);border-color:rgba(58,122,74,.3);color:var(--green);}
+
+/* ── 공통 UI ── */
+.section-label{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--text-soft);text-transform:uppercase;margin-bottom:10px;margin-top:20px;display:flex;align-items:center;gap:8px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.section-label:first-child{margin-top:0;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;box-shadow:var(--shadow);}
+label{font-size:12px;font-weight:600;color:var(--text-mid);display:block;margin-bottom:6px;}
+select,input[type=date],input[type=time],input[type=number],input[type=text],input[type=password]{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius);font-size:14px;font-family:inherit;background:var(--surface);color:var(--text);outline:none;-webkit-appearance:none;appearance:none;transition:border-color .18s,box-shadow .18s;}
+select:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(196,89,26,.1);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239C8A7E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+textarea{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text);resize:vertical;line-height:1.7;outline:none;}
+textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(196,89,26,.1);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field{margin-bottom:12px;}
+.field:last-child{margin-bottom:0;}
+.radio-group{display:flex;gap:8px;flex-wrap:wrap;}
+.radio-option{flex:1;min-width:70px;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--radius);cursor:pointer;font-size:12px;font-weight:600;text-align:center;transition:all .15s;color:var(--text-mid);background:var(--surface);}
+.radio-option.selected{border-color:var(--accent);background:var(--accent-lt);color:var(--accent);}
+.btn{padding:9px 16px;border-radius:var(--radius);border:1px solid var(--border2);background:var(--surface2);color:var(--text-mid);cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .16s;}
+.btn:hover{background:var(--border);color:var(--text);}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent-dk);box-shadow:0 2px 6px rgba(196,89,26,.25);}
+.btn-primary:hover{background:var(--accent-dk);}
+.btn-sm{padding:5px 11px;font-size:11px;}
+.btn-danger{color:var(--red);border-color:rgba(192,48,48,.2);}
+.btn-danger:hover{background:var(--red-lt);}
+.divider{height:1px;background:var(--border);margin:18px 0;}
+
+/* ── 모달 ── */
+.overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(42,31,23,.45);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px;}
+.overlay.show{display:flex;animation:fadeIn .2s ease;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;width:100%;max-width:460px;box-shadow:var(--shadow-md);animation:slideUp .22s ease;max-height:90vh;overflow-y:auto;}
+.modal-sm{max-width:340px;}
+.modal-title{font-family:'Noto Serif KR',serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--text-soft);margin-bottom:18px;line-height:1.6;}
+.modal-actions{display:flex;gap:8px;margin-top:18px;}
+.err-msg{font-size:12px;color:var(--red);margin-top:6px;display:none;}
+.detail-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;gap:12px;}
+.detail-row:last-of-type{border-bottom:none;}
+.detail-label{color:var(--text-soft);flex-shrink:0;}
+.detail-value{font-weight:600;text-align:right;}
+.preview-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:12px;font-size:12px;}
+.preview-title{font-weight:700;color:var(--text-mid);margin-bottom:6px;}
+.admin-only-row{background:rgba(196,89,26,.04);border:1px dashed rgba(196,89,26,.2);border-radius:var(--radius);padding:8px 12px;margin:8px 0;}
+.admin-only-label{font-size:10px;font-weight:700;color:var(--accent);margin-bottom:2px;letter-spacing:.05em;}
+.loading{text-align:center;padding:50px 0;color:var(--text-soft);font-size:13px;}
+.spinner{width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 10px;}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:768px){
+  .cal-cell{min-height:80px;padding:4px 2px 2px 4px;}
+  .cal-month{font-size:16px;min-width:110px;}
+  main{padding:14px 12px 60px;}
+  header,.top-tabs-inner{padding-left:14px;padding-right:14px;}
+  .grid2{grid-template-columns:1fr;}
+  :root{--bar-h:18px;--bar-gap:2px;}
+}
+</style>
+</head>
+<body>
+
+<!-- 로그인 모달 -->
+<div class="overlay" id="login-overlay">
+  <div class="modal modal-sm">
+    <p class="modal-title">🔒 관리자 로그인</p>
+    <p class="modal-sub">담당자만 일정을 추가·수정할 수 있습니다</p>
+    <div class="field">
+      <label>관리자 비밀번호</label>
+      <input type="password" id="pw-input" placeholder="비밀번호를 입력하세요" onkeydown="if(event.key==='Enter')tryLogin()">
+    </div>
+    <p class="err-msg" id="pw-err">비밀번호가 올바르지 않습니다</p>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="tryLogin()">로그인</button>
+      <button class="btn" onclick="closeOverlay('login-overlay')">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- 소성 추가 모달 -->
+<div class="overlay" id="add-firing-overlay">
+  <div class="modal">
+    <p class="modal-title">📅 소성 일정 추가</p>
+    <p class="modal-sub">소성 시작 시간을 입력하면 종료 시간이 자동 계산됩니다</p>
+    <div class="field">
+      <label>소성 유형</label>
+      <div class="radio-group">
+        <div class="radio-option selected" id="type-general" onclick="selectFiringType('general')">일반 소성</div>
+        <div class="radio-option" id="type-student" onclick="selectFiringType('student')">학생 예약</div>
+      </div>
+    </div>
+    <div class="field" id="student-name-field" style="display:none">
+      <label>학생 이름</label>
+      <input type="text" id="student-name" placeholder="홍길동">
+    </div>
+    <div class="field">
+      <label>가마 선택</label>
+      <select id="add-kiln-select" onchange="updateAddFiringTypes()"></select>
+    </div>
+    <div class="field">
+      <label>소성 종류</label>
+      <select id="add-firing-select" onchange="updateFiringPreview()"></select>
+    </div>
+    <div class="grid2 field">
+      <div><label>소성 시작 날짜</label><input type="date" id="add-start-date" onchange="updateFiringPreview()"></div>
+      <div><label>소성 시작 시간</label><input type="time" id="add-start-time" value="09:00" onchange="updateFiringPreview()"></div>
+    </div>
+    <div id="firing-preview" style="display:none" class="preview-box">
+      <div class="preview-title">📋 자동 계산 결과</div>
+      <div style="color:var(--text-soft);display:flex;flex-direction:column;gap:3px;font-size:12px;">
+        <div>🔥 최고 온도 도달: <b id="prev-peak" style="color:var(--accent)"></b></div>
+        <div>❄️ 소성 완전 종료: <b id="prev-end" style="color:var(--text)"></b></div>
+      </div>
+    </div>
+    <div class="admin-only-row">
+      <div class="admin-only-label">🔒 관리자 기록 (학생에게 비공개)</div>
+      <label style="margin-top:4px">담당자</label>
+      <input type="text" id="manager-name" placeholder="담당 선생님 이름">
+    </div>
+    <div class="field" style="margin-top:8px">
+      <label>메모 (선택)</label>
+      <input type="text" id="add-memo" placeholder="특이사항 등">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="submitFiring()">추가</button>
+      <button class="btn" onclick="closeOverlay('add-firing-overlay')">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- 가마 외 일정 추가 -->
+<div class="overlay" id="add-event-overlay">
+  <div class="modal">
+    <p class="modal-title">🔧 가마 외 일정 추가</p>
+    <p class="modal-sub">보수, 청소, 휴무 등 소성 불가 기간을 등록합니다</p>
+    <div class="field">
+      <label>일정 종류</label>
+      <div class="radio-group" id="event-type-group">
+        <div class="radio-option selected" onclick="selectEventType('maintenance')">가마보수</div>
+        <div class="radio-option" onclick="selectEventType('cleaning')">가마청소</div>
+        <div class="radio-option" onclick="selectEventType('closed')">휴무</div>
+        <div class="radio-option" onclick="selectEventType('other')">기타</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>제목</label>
+      <input type="text" id="event-title" placeholder="예) 대형가마 전열선 교체">
+    </div>
+    <div class="field">
+      <label>해당 가마 (전체면 비워두세요)</label>
+      <select id="event-kiln-select"><option value="">전체 가마</option></select>
+    </div>
+    <div class="grid2 field">
+      <div><label>시작 날짜</label><input type="date" id="event-start-date"></div>
+      <div><label>종료 날짜</label><input type="date" id="event-end-date"></div>
+    </div>
+    <div class="field">
+      <label>메모 (선택)</label>
+      <textarea id="event-memo" rows="2" placeholder="상세 내용"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="submitEvent()">추가</button>
+      <button class="btn" onclick="closeOverlay('add-event-overlay')">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- 상세 보기 -->
+<div class="overlay" id="detail-overlay">
+  <div class="modal modal-sm">
+    <p class="modal-title" id="detail-title">상세 정보</p>
+    <div id="detail-body" style="margin:14px 0;"></div>
+    <div class="modal-actions" id="detail-actions"></div>
+  </div>
+</div>
+
+<!-- 수리 내역 추가 -->
+<div class="overlay" id="add-repair-overlay">
+  <div class="modal modal-sm">
+    <p class="modal-title">🔩 수리 내역 추가</p>
+    <div class="field"><label>가마</label><select id="repair-kiln-select"></select></div>
+    <div class="field"><label>수리 날짜</label><input type="date" id="repair-date"></div>
+    <div class="field"><label>수리 내용</label><textarea id="repair-desc" rows="3" placeholder="예) 전열선 3번 교체"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="submitRepair()">저장</button>
+      <button class="btn" onclick="closeOverlay('add-repair-overlay')">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- 학기 설정 -->
+<div class="overlay" id="semester-setting-overlay">
+  <div class="modal">
+    <p class="modal-title">📚 학기 설정</p>
+    <p class="modal-sub">연도별 학기 기간을 설정합니다</p>
+    <div class="field"><label>연도</label><input type="number" id="sem-year" value="2025" min="2020" max="2035"></div>
+    <div id="semester-inputs"></div>
+    <button class="btn btn-sm" onclick="addSemesterRow()" style="margin-bottom:12px">+ 학기 추가</button>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="saveSemesters()">저장</button>
+      <button class="btn" onclick="closeOverlay('semester-setting-overlay')">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- 엑셀 다운로드 -->
+<div class="overlay" id="download-overlay">
+  <div class="modal modal-sm">
+    <p class="modal-title">📥 엑셀 다운로드</p>
+    <div class="field"><label>범위</label>
+      <select id="dl-range" onchange="onDlRangeChange()">
+        <option value="all">전체</option>
+        <option value="year">연도별</option>
+        <option value="semester">학기별</option>
+      </select>
+    </div>
+    <div class="field" id="dl-year-field" style="display:none"><label>연도</label><select id="dl-year"></select></div>
+    <div class="field" id="dl-semester-field" style="display:none"><label>학기</label><select id="dl-semester"></select></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1" onclick="downloadExcel()">다운로드</button>
+      <button class="btn" onclick="closeOverlay('download-overlay')">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- 헤더 -->
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="logo">🔥</div>
+      <div>
+        <div class="header-title">가마실 소성 캘린더</div>
+        <div class="header-sub">소성 일정 및 가마 사용 현황</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="nav-link">소성 계산기 →</a>
+      <button class="admin-btn" id="admin-btn" onclick="onAdminClick()">관리자</button>
+    </div>
+  </div>
+</header>
+
+<!-- 탭 바 -->
+<div class="top-tabs">
+  <div class="top-tabs-inner">
+    <div class="semester-tabs" id="semester-tabs">
+      <button class="s-tab active" onclick="selectSemTab('all',this)">전체</button>
+    </div>
+    <div class="admin-tabs" id="admin-tabs">
+      <button class="a-tab active" onclick="selectAdminTab('calendar',this)">캘린더</button>
+      <button class="a-tab" onclick="selectAdminTab('repairs',this)">수리 내역</button>
+      <button class="a-tab" onclick="selectAdminTab('settings',this)">학기 설정</button>
+    </div>
+  </div>
+</div>
+
+<!-- 메인 -->
+<main>
+
+  <!-- 캘린더 패널 -->
+  <div class="panel active" id="panel-calendar">
+    <div class="cal-controls">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+        <div class="cal-month" id="cal-month-label"></div>
+        <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+      </div>
+      <div class="cal-actions">
+        <button class="action-btn hidden" id="btn-add-event" onclick="openAddEventModal()">🔧 일정 추가</button>
+        <button class="action-btn primary hidden" id="btn-add-firing" onclick="openAddFiringModal()">+ 소성 추가</button>
+        <button class="action-btn hidden" id="btn-download" onclick="openDownloadModal()">📥 엑셀</button>
+      </div>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="cal-grid">
+      <div class="cal-weekdays">
+        <div class="cal-weekday">일</div><div class="cal-weekday">월</div>
+        <div class="cal-weekday">화</div><div class="cal-weekday">수</div>
+        <div class="cal-weekday">목</div><div class="cal-weekday">금</div>
+        <div class="cal-weekday">토</div>
+      </div>
+      <!-- cal-days-wrap: 행별 rowWrap이 여기에 들어감 -->
+      <div class="cal-days-wrap" id="cal-days-wrap"></div>
+    </div>
+  </div>
+
+  <!-- 수리 내역 패널 -->
+  <div class="panel" id="panel-repairs">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <p class="section-label" style="margin:0;flex:1">가마 수리 내역</p>
+      <button class="btn btn-sm btn-primary" onclick="openOverlay('add-repair-overlay')" style="margin-left:12px">+ 추가</button>
+    </div>
+    <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap" id="repair-filter-btns"></div>
+    <div class="repair-list" id="repair-list"></div>
+  </div>
+
+  <!-- 학기/다운로드 패널 -->
+  <div class="panel" id="panel-settings">
+    <p class="section-label">학기 설정</p>
+    <div class="card">
+      <p style="font-size:13px;color:var(--text-soft);margin-bottom:16px;line-height:1.7">학기 기간을 설정하면 상단 탭에서 학기별로 소성 내역을 조회할 수 있습니다.</p>
+      <div id="semester-list"></div>
+      <button class="btn" onclick="openSemesterModal()">+ 학기 추가/수정</button>
+    </div>
+    <div class="download-section">
+      <div class="download-title">📥 엑셀 다운로드</div>
+      <div class="download-grid" id="download-grid"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ════════════════════════════════
+const SUPABASE_URL      = 'https://bcuipzhrnkgzpvdsvbrm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjdWlwemhybmtnenB2ZHN2YnJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjUzOTUsImV4cCI6MjA5MzAwMTM5NX0.YpIr4KPjcHCHszgoLhEb1k_yHN6eHDZRzgbzlZ9tNRg';
+const ADMIN_PASSWORD    = 'kiln1234';
+// ════════════════════════════════
+
+let sb = null;
+try { sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch(e){}
+
+let isAdmin    = false;
+let kilns      = [];
+let firings    = [];
+let kilnEvents = [];
+let repairs    = [];
+let semesters  = [];
+let curYear    = new Date().getFullYear();
+let curMonth   = new Date().getMonth();
+let curSemTab  = 'all';
+let firingType = 'general';
+let eventType  = 'maintenance';
+let repairFilter = 'all';
+let semesterRows = [];
+// 셀 DOM 레퍼런스 (바 위치 계산용)
+let cellEls = [];
+let cellDates = [];
+
+const KILN_COLORS = ['kc-0','kc-1','kc-2','kc-3','kc-4'];
+const KILN_HEX    = ['#D4681A','#3A7FC1','#3A9A5A','#9A4AC1','#C4A030'];
+const EVENT_CLS   = {maintenance:'ec-maintenance',cleaning:'ec-cleaning',closed:'ec-closed',other:'ec-other'};
+const EVENT_LBL   = {maintenance:'가마보수',cleaning:'가마청소',closed:'휴무',other:'기타'};
+const EVENT_ICON  = {maintenance:'🔧',cleaning:'🧹',closed:'🚫',other:'📌'};
+
+// ── 초기화 ──
+async function init() {
+  await loadAll();
+  renderSemesterTabs();
+  buildCalendarCells();
+  renderLegend();
+  populateRepairFilter();
+  renderRepairs();
+  renderSemesterList();
+  renderDownloadButtons();
+}
+
+async function loadAll() {
+  kilns = defaultKilns();
+  try {
+    firings    = JSON.parse(localStorage.getItem('firings')    || '[]');
+    kilnEvents = JSON.parse(localStorage.getItem('kilnEvents') || '[]');
+    repairs    = JSON.parse(localStorage.getItem('repairs')    || '[]');
+    semesters  = JSON.parse(localStorage.getItem('semesters')  || '[]');
+  } catch(e) { firings=[]; kilnEvents=[]; repairs=[]; semesters=[]; }
+  if (sb) {
+    try {
+      const [kr,fr,er,rr,sr] = await Promise.all([
+        sb.from('kilns').select('*').order('sort_order'),
+        sb.from('firings').select('*').order('start_at'),
+        sb.from('kiln_events').select('*').order('start_date'),
+        sb.from('kiln_repairs').select('*').order('repair_date',{ascending:false}),
+        sb.from('semesters').select('*').order('start_date')
+      ]);
+      if(kr.data?.length) kilns=kr.data.map(k=>({...k,types:Array.isArray(k.types)?k.types:JSON.parse(k.types||'[]')}));
+      if(fr.data) firings=fr.data;
+      if(er.data) kilnEvents=er.data;
+      if(rr.data) repairs=rr.data;
+      if(sr.data) semesters=sr.data;
+    } catch(e){ console.warn('DB 연결 실패, 로컬 사용'); }
+  }
+}
+function saveLocal(){
+  localStorage.setItem('firings',    JSON.stringify(firings));
+  localStorage.setItem('kilnEvents', JSON.stringify(kilnEvents));
+  localStorage.setItem('repairs',    JSON.stringify(repairs));
+  localStorage.setItem('semesters',  JSON.stringify(semesters));
+}
+function defaultKilns(){
+  return [
+    {id:1,name:'대형가마',sort_order:1,types:[{name:'초벌',heatHours:15,coolHours:48},{name:'건조',heatHours:13,coolHours:48}]},
+    {id:2,name:'중형가마',sort_order:2,types:[{name:'재벌',heatHours:24,coolHours:48}]},
+    {id:3,name:'소형가마',sort_order:3,types:[{name:'초벌',heatHours:5+20/60,coolHours:12}]}
+  ];
+}
+
+// ── 관리자 ──
+function onAdminClick(){ isAdmin ? logoutAdmin() : openOverlay('login-overlay'); }
+function tryLogin(){
+  if(document.getElementById('pw-input').value===ADMIN_PASSWORD){
+    isAdmin=true; closeOverlay('login-overlay');
+    document.getElementById('admin-btn').textContent='로그아웃';
+    document.getElementById('admin-btn').classList.add('on');
+    document.getElementById('admin-tabs').classList.add('show');
+    ['btn-add-firing','btn-add-event','btn-download'].forEach(id=>document.getElementById(id).classList.remove('hidden'));
+    populateAddKilnSelect(); populateEventKilnSelect(); populateRepairKilnSelect();
+  } else {
+    document.getElementById('pw-err').style.display='block';
+    document.getElementById('pw-input').value=''; document.getElementById('pw-input').focus();
+  }
+}
+function logoutAdmin(){
+  isAdmin=false;
+  document.getElementById('admin-btn').textContent='관리자';
+  document.getElementById('admin-btn').classList.remove('on');
+  document.getElementById('admin-tabs').classList.remove('show');
+  ['btn-add-firing','btn-add-event','btn-download'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  selectAdminTab('calendar', document.querySelector('.a-tab'));
+}
+
+// ── 학기 탭 ──
+function selectSemTab(id, el){
+  curSemTab=id;
+  document.querySelectorAll('.s-tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  if(id!=='all'){
+    const sem=semesters.find(s=>String(s.id)===String(id));
+    if(sem){const d=new Date(sem.start_date);curYear=d.getFullYear();curMonth=d.getMonth();}
+  }
+  buildCalendarCells();
+}
+function renderSemesterTabs(){
+  const container=document.getElementById('semester-tabs');
+  const years=[...new Set(semesters.map(s=>s.year))].sort();
+  let html=`<button class="s-tab${curSemTab==='all'?' active':''}" onclick="selectSemTab('all',this)">전체</button>`;
+  years.forEach(y=>{
+    semesters.filter(s=>s.year===y).forEach(s=>{
+      html+=`<button class="s-tab${curSemTab===String(s.id)?' active':''}" onclick="selectSemTab('${s.id}',this)">${s.name}</button>`;
+    });
+  });
+  container.innerHTML=html;
+}
+
+// ── 관리자 탭 ──
+function selectAdminTab(tab, el){
+  document.querySelectorAll('.a-tab').forEach(e=>e.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.panel').forEach(e=>e.classList.remove('active'));
+  const map={calendar:'panel-calendar',repairs:'panel-repairs',settings:'panel-settings'};
+  document.getElementById(map[tab]).classList.add('active');
+  if(tab==='repairs') renderRepairs();
+  if(tab==='settings'){renderSemesterList();renderDownloadButtons();}
+}
+
+// ════════════════════════════════
+// ── 캘린더 핵심 로직 ──
+// ════════════════════════════════
+
+function buildCalendarCells(){
+  document.getElementById('cal-month-label').textContent=`${curYear}년 ${curMonth+1}월`;
+  const firstDay=new Date(curYear,curMonth,1).getDay();
+  const lastDate=new Date(curYear,curMonth+1,0).getDate();
+  const prevLast=new Date(curYear,curMonth,0).getDate();
+  const today=new Date(); today.setHours(0,0,0,0);
+
+  let semStart=null,semEnd=null;
+  if(curSemTab!=='all'){
+    const sem=semesters.find(s=>String(s.id)===String(curSemTab));
+    if(sem){semStart=new Date(sem.start_date);semEnd=new Date(sem.end_date);semEnd.setHours(23,59,59,999);}
+  }
+
+  cellDates=[];
+  for(let i=firstDay-1;i>=0;i--) cellDates.push({date:new Date(curYear,curMonth-1,prevLast-i),cur:false});
+  for(let d=1;d<=lastDate;d++)   cellDates.push({date:new Date(curYear,curMonth,d),cur:true});
+  const remain=7-(cellDates.length%7);
+  if(remain<7) for(let d=1;d<=remain;d++) cellDates.push({date:new Date(curYear,curMonth+1,d),cur:false});
+
+  renderCalGrid(today, semStart, semEnd);
+}
+
+function renderCalGrid(today, semStart, semEnd){
+  const monthStart=new Date(curYear,curMonth,1);
+  const monthEnd  =new Date(curYear,curMonth+1,0,23,59,59);
+  const dateIdx   ={};
+  cellDates.forEach((c,i)=>{ dateIdx[dKey(c.date)]=i; });
+
+  // ── 이벤트 수집 ──
+  const allItems=[];
+  kilnEvents.forEach(ev=>{
+    const s=d0(new Date(ev.start_date)),e=d0(new Date(ev.end_date));
+    if(s>monthEnd||e<monthStart) return;
+    allItems.push({
+      kind:'event',
+      sd:s<d0(monthStart)?d0(monthStart):s,
+      ed:e>d0(monthEnd)  ?d0(monthEnd)  :e,
+      colorCls:EVENT_CLS[ev.event_type||'other'],
+      label:(ev.kiln_id?(kilns.find(k=>k.id===ev.kiln_id)?.name||'')+' ':'')+ev.title,
+      icon:EVENT_ICON[ev.event_type||'other'],
+      isEvent:true, fullSd:s, fullEd:e,
+      onClick:()=>showEventDetail(ev)
+    });
+  });
+  firings.forEach(f=>{
+    const fs=new Date(f.start_at),fe=new Date(f.end_at);
+    if(fs>monthEnd||fe<monthStart) return;
+    if(semStart&&semEnd&&(fs>semEnd||fe<semStart)) return;
+    const kilnIdx=kilns.findIndex(k=>k.id===f.kiln_id);
+    const cc=KILN_COLORS[kilnIdx%KILN_COLORS.length]||'kc-0';
+    allItems.push({
+      kind:'firing',
+      sd:d0(fs)<d0(monthStart)?d0(monthStart):d0(fs),
+      ed:d0(fe)>d0(monthEnd)  ?d0(monthEnd)  :d0(fe),
+      colorCls:cc, isEvent:false, fullSd:d0(fs), fullEd:d0(fe),
+      label:f.student_name?('👤 '+f.student_name):(kilns[kilnIdx]?.name||'가마')+' '+f.firing_name,
+      onClick:()=>showFiringDetail(f)
+    });
+  });
+
+  // ── 행별 슬롯 배치 ──
+  const numRows=Math.ceil(cellDates.length/7);
+  const rowSlots=Array.from({length:numRows},()=>[]);
+  const itemSlot={};
+  allItems.forEach((item,idx)=>{
+    const si=dateIdx[dKey(item.sd)],ei=dateIdx[dKey(item.ed)];
+    if(si===undefined||ei===undefined) return;
+    const rowS=Math.floor(si/7),rowE=Math.floor(ei/7);
+    let slot=0;
+    outer:while(true){for(let r=rowS;r<=rowE;r++){if(rowSlots[r][slot]){slot++;continue outer;}}break;}
+    for(let r=rowS;r<=rowE;r++) rowSlots[r][slot]=true;
+    itemSlot[idx]=slot;
+  });
+  const maxSlot=Object.values(itemSlot).length?Math.max(...Object.values(itemSlot)):0;
+
+  // blocked 날짜 set
+  const blockedSet=new Set();
+  kilnEvents.forEach(ev=>{
+    let c=d0(new Date(ev.start_date));const e=d0(new Date(ev.end_date));
+    while(c<=e){blockedSet.add(dKey(c));c.setDate(c.getDate()+1);}
+  });
+
+  // ── 행(row)별로 그리드를 렌더 ──
+  // 각 행은 독립적인 sub-grid: 날짜행 + 슬롯행들
+  const BAR_H=22, BAR_GAP=3, DATE_H=32, CELL_PAD=6;
+
+  const wrap=document.getElementById('cal-days-wrap');
+  wrap.innerHTML='';
+  cellEls=[];
+
+  for(let row=0;row<numRows;row++){
+    const rowCells=cellDates.slice(row*7,(row+1)*7);
+
+    // row 컨테이너: position:relative, 자체 그리드
+    const rowWrap=document.createElement('div');
+    rowWrap.style.cssText='position:relative;border-bottom:none;';
+
+    // 날짜 셀 7개 담는 그리드
+    const cellRow=document.createElement('div');
+    cellRow.style.cssText='display:grid;grid-template-columns:repeat(7,1fr);';
+
+    // 이 행에서 필요한 슬롯 수
+    const slotsInRow=rowSlots[row].length;
+    const rowContentH=Math.max(120, DATE_H+(slotsInRow>0?slotsInRow*(BAR_H+BAR_GAP)+BAR_GAP:0)+CELL_PAD*2);
+
+    rowCells.forEach((cell,ci)=>{
+      const globalIdx=row*7+ci;
+      const d=new Date(cell.date); d.setHours(0,0,0,0);
+      const div=document.createElement('div');
+      div.className='cal-cell'+(cell.cur?'':' other-month');
+      if(isSameDay(d,today)) div.classList.add('today');
+      if(cell.cur&&semStart&&d>=semStart&&d<=semEnd) div.classList.add('in-semester');
+      if(blockedSet.has(dKey(d))) div.classList.add('blocked');
+      div.style.cssText=`min-height:${rowContentH}px;border-right:${ci<6?'1px solid var(--border)':'none'};border-bottom:1px solid var(--border);padding:${CELL_PAD}px 0 0 0;`;
+      const dateSpan=document.createElement('div');
+      dateSpan.className='cal-date';
+      dateSpan.style.marginLeft='5px';
+      dateSpan.textContent=cell.date.getDate();
+      div.appendChild(dateSpan);
+      cellRow.appendChild(div);
+      cellEls.push(div);
+    });
+    rowWrap.appendChild(cellRow);
+
+    // ── 바 레이어: rowWrap 위에 absolute ──
+    // 이 행에 속하는 이벤트들만 찾아서 바 생성
+    allItems.forEach((item,idx)=>{
+      const slot=itemSlot[idx];
+      if(slot===undefined) return;
+
+      // 이 행에서 겹치는 구간 계산
+      const rowStartDate=rowCells[0].date;
+      const rowEndDate  =rowCells[6].date;
+      const segSd=item.sd>rowStartDate?item.sd:new Date(rowStartDate);
+      const segEd=item.ed<rowEndDate  ?item.ed:new Date(rowEndDate);
+      if(segSd>segEd) return;
+
+      const colStart=cellDates.findIndex(c=>isSameDay(c.date,segSd))-row*7; // 0~6
+      const colEnd  =cellDates.findIndex(c=>isSameDay(c.date,segEd))-row*7; // 0~6
+      if(colStart<0||colEnd<0||colStart>6||colEnd>6) return;
+
+      const isFirst=isSameDay(segSd,item.fullSd); // 이 이벤트의 진짜 첫날
+      const isLast =isSameDay(segEd,item.fullEd); // 이 이벤트의 진짜 마지막날
+
+      // 마커 색상
+      const mc={
+        'kc-0':'rgba(120,48,10,0.6)','kc-1':'rgba(20,60,115,0.6)',
+        'kc-2':'rgba(20,78,38,0.6)','kc-3':'rgba(78,20,115,0.6)',
+        'kc-4':'rgba(100,70,10,0.6)',
+        'ec-maintenance':'rgba(78,20,115,0.6)','ec-cleaning':'rgba(20,60,115,0.6)',
+        'ec-closed':'rgba(115,20,20,0.6)','ec-other':'rgba(70,55,20,0.6)',
+      };
+      const markerColor=mc[item.colorCls]||'rgba(0,0,0,0.35)';
+
+      // 바 위치: % 기반으로 계산 (셀 경계와 정확히 맞음)
+      const leftPct =(colStart/7*100)+(isFirst?0.3:0);
+      const rightPct=((6-colEnd)/7*100)+(isLast?0.3:0);
+      const topPx   =DATE_H+BAR_GAP+slot*(BAR_H+BAR_GAP);
+
+      const bar=document.createElement('div');
+      bar.className=item.colorCls;
+      bar.style.cssText=`
+        position:absolute;
+        left:calc(${leftPct}% + ${isFirst?'2px':'0px'});
+        right:calc(${rightPct}% + ${isLast?'2px':'0px'});
+        top:${topPx}px;
+        height:${BAR_H}px;
+        line-height:${BAR_H}px;
+        border-radius:${isFirst?'4px':'0'} ${isLast?'4px':'0'} ${isLast?'4px':'0'} ${isFirst?'4px':'0'};
+        display:flex;align-items:center;
+        padding:0 6px;
+        font-size:10px;font-weight:700;
+        cursor:pointer;
+        overflow:hidden;white-space:nowrap;
+        z-index:2;
+      `;
+
+      // 텍스트: 첫 세그먼트에만
+      if(isFirst||colStart===0){
+        if(item.isEvent){
+          bar.innerHTML=`<span style="flex-shrink:0;margin-right:3px">${item.icon}</span><span style="overflow:hidden;text-overflow:ellipsis;color:#8C1A1A;font-weight:800;flex:1">${item.label}</span>`;
+        } else {
+          bar.innerHTML=`<span style="overflow:hidden;text-overflow:ellipsis;flex:1">${item.label}</span>`;
+        }
+      }
+
+      // 시작 마커
+      if(isFirst){
+        const m=document.createElement('div');
+        m.style.cssText=`position:absolute;left:4px;top:3px;bottom:3px;width:3px;border-radius:2px;background:${markerColor};pointer-events:none;`;
+        bar.appendChild(m);
+        bar.style.paddingLeft='11px';
+      }
+      // 종료 마커
+      if(isLast){
+        const m=document.createElement('div');
+        m.style.cssText=`position:absolute;right:4px;top:3px;bottom:3px;width:3px;border-radius:2px;background:${markerColor};pointer-events:none;`;
+        bar.appendChild(m);
+        bar.style.paddingRight='11px';
+      }
+
+      bar.onclick=(e)=>{e.stopPropagation();item.onClick();};
+      rowWrap.appendChild(bar);
+    });
+
+    wrap.appendChild(rowWrap);
+  }
+}
+
+function renderLegend(){
+  const el=document.getElementById('legend');
+  let html=kilns.map((k,i)=>`<div class="legend-item"><div class="legend-dot" style="background:${KILN_HEX[i%KILN_HEX.length]}"></div>${k.name}</div>`).join('');
+  html+=`<div class="legend-item"><span style="font-size:12px">🔥</span>소성중</div>`;
+  html+=`<div class="legend-item"><span style="font-size:12px">❄️</span>냉각중</div>`;
+  Object.entries(EVENT_LBL).forEach(([t,l])=>{
+    html+=`<div class="legend-item"><div class="legend-dot" style="background:${t==='maintenance'?'#7A3AA0':t==='cleaning'?'#2A70A0':t==='closed'?'#A03030':'#807040'}"></div>${l}</div>`;
+  });
+  el.innerHTML=html;
+}
+
+function changeMonth(dir){
+  curMonth+=dir;
+  if(curMonth>11){curMonth=0;curYear++;}
+  if(curMonth<0){curMonth=11;curYear--;}
+  buildCalendarCells();
+}
+
+// ── 상세 보기 ──
+function showFiringDetail(f){
+  const kilnIdx=kilns.findIndex(k=>k.id===f.kiln_id);
+  const kilnName=kilns[kilnIdx]?.name||'-';
+  document.getElementById('detail-title').textContent=f.student_name?`👤 ${f.student_name}의 소성`:'📋 소성 일정';
+
+  // 타임라인 막대 계산
+  const totalH = (f.heat_hours||0) + (f.cool_hours||0);
+  const heatPct = totalH > 0 ? Math.round((f.heat_hours||0) / totalH * 100) : 50;
+  const coolPct = 100 - heatPct;
+
+  const timeline = `
+    <div style="margin:14px 0 4px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-soft);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px">소성 타임라인</div>
+      <div style="display:flex;border-radius:6px;overflow:hidden;height:28px;border:1px solid var(--border);box-shadow:var(--shadow-sm)">
+        <div style="width:${heatPct}%;background:linear-gradient(90deg,#F2E4D8,#FAE8D4);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--accent);border-right:1px solid rgba(196,89,26,.2)">🔥 ${formatH(f.heat_hours||0)}</div>
+        <div style="width:${coolPct}%;background:#E4EEF8;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--blue)">❄️ ${formatH(f.cool_hours||0)}</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:5px">
+        <span style="font-size:10px;color:var(--text-soft)">${fmtShort(new Date(f.start_at))}</span>
+        <span style="font-size:10px;color:var(--accent);font-weight:700">${fmtShort(new Date(f.peak_at))}</span>
+        <span style="font-size:10px;color:var(--text-soft)">${fmtShort(new Date(f.end_at))}</span>
+      </div>
+    </div>`;
+
+  let html=`
+    <div class="detail-row"><span class="detail-label">가마</span><span class="detail-value">${kilnName}</span></div>
+    <div class="detail-row"><span class="detail-label">소성 종류</span><span class="detail-value">${f.firing_name||'-'}</span></div>
+    <div class="detail-row"><span class="detail-label">🔥 소성 시작</span><span class="detail-value">${fmt(new Date(f.start_at))}</span></div>
+    <div class="detail-row"><span class="detail-label">🌡️ 최고 온도 (전력 종료)</span><span class="detail-value" style="color:var(--accent)">${fmt(new Date(f.peak_at))}</span></div>
+    <div class="detail-row"><span class="detail-label">❄️ 소성 완전 종료</span><span class="detail-value">${fmt(new Date(f.end_at))}</span></div>
+    ${f.memo?`<div class="detail-row"><span class="detail-label">메모</span><span class="detail-value">${f.memo}</span></div>`:''}
+    ${timeline}`;
+  if(isAdmin&&f.manager_name) html+=`<div class="admin-only-row"><div class="admin-only-label">🔒 관리자 정보</div><div style="font-size:13px;font-weight:600">담당자: ${f.manager_name}</div></div>`;
+  document.getElementById('detail-body').innerHTML=html;
+  document.getElementById('detail-actions').innerHTML=isAdmin
+    ?`<button class="btn btn-danger btn-sm" onclick="deleteFiring(${f.id})">삭제</button><button class="btn" style="flex:1" onclick="closeOverlay('detail-overlay')">닫기</button>`
+    :`<button class="btn" style="flex:1" onclick="closeOverlay('detail-overlay')">닫기</button>`;
+  openOverlay('detail-overlay');
+}
+function showEventDetail(ev){
+  const kilnName=ev.kiln_id?kilns.find(k=>k.id===ev.kiln_id)?.name:'전체 가마';
+  document.getElementById('detail-title').textContent=EVENT_LBL[ev.event_type||'other']+' 일정';
+  document.getElementById('detail-body').innerHTML=`
+    <div class="detail-row"><span class="detail-label">제목</span><span class="detail-value">${ev.title}</span></div>
+    <div class="detail-row"><span class="detail-label">종류</span><span class="detail-value">${EVENT_LBL[ev.event_type||'other']}</span></div>
+    <div class="detail-row"><span class="detail-label">해당 가마</span><span class="detail-value">${kilnName||'전체 가마'}</span></div>
+    <div class="detail-row"><span class="detail-label">기간</span><span class="detail-value">${ev.start_date} ~ ${ev.end_date}</span></div>
+    ${ev.memo?`<div class="detail-row"><span class="detail-label">메모</span><span class="detail-value">${ev.memo}</span></div>`:''}`;
+  document.getElementById('detail-actions').innerHTML=isAdmin
+    ?`<button class="btn btn-danger btn-sm" onclick="deleteEvent(${ev.id})">삭제</button><button class="btn" style="flex:1" onclick="closeOverlay('detail-overlay')">닫기</button>`
+    :`<button class="btn" style="flex:1" onclick="closeOverlay('detail-overlay')">닫기</button>`;
+  openOverlay('detail-overlay');
+}
+
+// ── 소성 추가 ──
+function openAddFiringModal(){
+  document.getElementById('add-start-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('add-start-time').value='09:00';
+  document.getElementById('add-memo').value='';
+  document.getElementById('student-name').value='';
+  document.getElementById('manager-name').value='';
+  document.getElementById('firing-preview').style.display='none';
+  selectFiringType('general'); populateAddKilnSelect();
+  openOverlay('add-firing-overlay');
+}
+function selectFiringType(t){
+  firingType=t;
+  document.getElementById('type-general').classList.toggle('selected',t==='general');
+  document.getElementById('type-student').classList.toggle('selected',t==='student');
+  document.getElementById('student-name-field').style.display=t==='student'?'block':'none';
+}
+function populateAddKilnSelect(){
+  document.getElementById('add-kiln-select').innerHTML=kilns.map((k,i)=>`<option value="${i}">${k.name}</option>`).join('');
+  updateAddFiringTypes();
+}
+function updateAddFiringTypes(){
+  const ki=parseInt(document.getElementById('add-kiln-select').value);
+  document.getElementById('add-firing-select').innerHTML=kilns[ki].types.map((t,i)=>`<option value="${i}">${t.name} (가열 ${formatH(t.heatHours)} / 냉각 ${formatH(t.coolHours)})</option>`).join('');
+  updateFiringPreview();
+}
+function updateFiringPreview(){
+  const sd=document.getElementById('add-start-date').value;
+  const st=document.getElementById('add-start-time').value;
+  if(!sd||!st){document.getElementById('firing-preview').style.display='none';return;}
+  const ki=parseInt(document.getElementById('add-kiln-select').value);
+  const fi=parseInt(document.getElementById('add-firing-select').value);
+  const f=kilns[ki].types[fi];
+  const start=new Date(`${sd}T${st}`);
+  document.getElementById('prev-peak').textContent=fmt(addH(start,f.heatHours));
+  document.getElementById('prev-end').textContent=fmt(addH(addH(start,f.heatHours),f.coolHours));
+  document.getElementById('firing-preview').style.display='block';
+}
+async function submitFiring(){
+  const sd=document.getElementById('add-start-date').value;
+  const st=document.getElementById('add-start-time').value;
+  const ki=parseInt(document.getElementById('add-kiln-select').value);
+  const fi=parseInt(document.getElementById('add-firing-select').value);
+  const studentName=firingType==='student'?document.getElementById('student-name').value.trim():null;
+  const managerName=document.getElementById('manager-name').value.trim()||null;
+  const memo=document.getElementById('add-memo').value.trim()||null;
+  if(!sd||!st){alert('날짜와 시간을 입력해주세요');return;}
+  if(firingType==='student'&&!studentName){alert('학생 이름을 입력해주세요');return;}
+  const kiln=kilns[ki],ftype=kiln.types[fi];
+  const start=new Date(`${sd}T${st}`);
+  const peak=addH(start,ftype.heatHours);
+  const end=addH(peak,ftype.coolHours);
+  const newItem={id:Date.now(),kiln_id:kiln.id,firing_name:ftype.name,student_name:studentName,manager_name:managerName,start_at:start.toISOString(),peak_at:peak.toISOString(),end_at:end.toISOString(),heat_hours:ftype.heatHours,cool_hours:ftype.coolHours,memo};
+  if(sb){try{const{data}=await sb.from('firings').insert({...newItem,id:undefined}).select().single();if(data)newItem.id=data.id;}catch(e){}}
+  firings.push(newItem); saveLocal();
+  buildCalendarCells(); closeOverlay('add-firing-overlay');
+}
+async function deleteFiring(id){
+  if(!confirm('삭제할까요?'))return;
+  if(sb){try{await sb.from('firings').delete().eq('id',id);}catch(e){}}
+  firings=firings.filter(f=>f.id!==id); saveLocal();
+  buildCalendarCells(); closeOverlay('detail-overlay');
+}
+
+// ── 가마 외 일정 ──
+function openAddEventModal(){
+  document.getElementById('event-title').value='';
+  document.getElementById('event-memo').value='';
+  document.getElementById('event-start-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('event-end-date').value=new Date().toISOString().split('T')[0];
+  selectEventType('maintenance'); populateEventKilnSelect();
+  openOverlay('add-event-overlay');
+}
+function selectEventType(t){
+  eventType=t;
+  document.querySelectorAll('#event-type-group .radio-option').forEach((el,i)=>{
+    el.classList.toggle('selected',['maintenance','cleaning','closed','other'][i]===t);
+  });
+}
+function populateEventKilnSelect(){
+  document.getElementById('event-kiln-select').innerHTML=`<option value="">전체 가마</option>`+kilns.map(k=>`<option value="${k.id}">${k.name}</option>`).join('');
+}
+async function submitEvent(){
+  const title=document.getElementById('event-title').value.trim();
+  const sd=document.getElementById('event-start-date').value;
+  const ed=document.getElementById('event-end-date').value;
+  const kilnId=document.getElementById('event-kiln-select').value||null;
+  const memo=document.getElementById('event-memo').value.trim()||null;
+  if(!title||!sd||!ed){alert('제목과 날짜를 입력해주세요');return;}
+  if(sd>ed){alert('종료 날짜가 시작 날짜보다 빠릅니다');return;}
+  const newItem={id:Date.now(),title,event_type:eventType,kiln_id:kilnId?parseInt(kilnId):null,start_date:sd,end_date:ed,memo};
+  if(sb){try{const{data}=await sb.from('kiln_events').insert({...newItem,id:undefined}).select().single();if(data)newItem.id=data.id;}catch(e){}}
+  kilnEvents.push(newItem); saveLocal();
+  buildCalendarCells(); closeOverlay('add-event-overlay');
+}
+async function deleteEvent(id){
+  if(!confirm('삭제할까요?'))return;
+  if(sb){try{await sb.from('kiln_events').delete().eq('id',id);}catch(e){}}
+  kilnEvents=kilnEvents.filter(e=>e.id!==id); saveLocal();
+  buildCalendarCells(); closeOverlay('detail-overlay');
+}
+
+// ── 수리 내역 ──
+function populateRepairFilter(){
+  document.getElementById('repair-filter-btns').innerHTML=
+    `<button class="btn btn-sm${repairFilter==='all'?' btn-primary':''}" onclick="setRepairFilter('all')">전체</button>`+
+    kilns.map(k=>`<button class="btn btn-sm${repairFilter===String(k.id)?' btn-primary':''}" onclick="setRepairFilter('${k.id}')">${k.name}</button>`).join('');
+}
+function setRepairFilter(f){repairFilter=f;populateRepairFilter();renderRepairs();}
+function renderRepairs(){
+  const filtered=repairFilter==='all'?repairs:repairs.filter(r=>String(r.kiln_id)===repairFilter);
+  const el=document.getElementById('repair-list');
+  if(!filtered.length){el.innerHTML='<div class="repair-empty">수리 내역이 없습니다</div>';return;}
+  el.innerHTML=filtered.map(r=>{
+    const kilnName=kilns.find(k=>k.id===r.kiln_id)?.name||'-';
+    return `<div class="repair-item"><div class="repair-info"><div class="repair-date">${r.repair_date}</div><div class="repair-kiln">${kilnName}</div><div class="repair-desc">${r.description}</div></div><button class="btn btn-sm btn-danger" onclick="deleteRepair(${r.id})">삭제</button></div>`;
+  }).join('');
+}
+function populateRepairKilnSelect(){
+  document.getElementById('repair-kiln-select').innerHTML=kilns.map(k=>`<option value="${k.id}">${k.name}</option>`).join('');
+  document.getElementById('repair-date').value=new Date().toISOString().split('T')[0];
+}
+async function submitRepair(){
+  const kilnId=parseInt(document.getElementById('repair-kiln-select').value);
+  const date=document.getElementById('repair-date').value;
+  const desc=document.getElementById('repair-desc').value.trim();
+  if(!date||!desc){alert('날짜와 수리 내용을 입력해주세요');return;}
+  const newItem={id:Date.now(),kiln_id:kilnId,repair_date:date,description:desc};
+  if(sb){try{const{data}=await sb.from('kiln_repairs').insert({...newItem,id:undefined}).select().single();if(data)newItem.id=data.id;}catch(e){}}
+  repairs.unshift(newItem); saveLocal();
+  document.getElementById('repair-desc').value='';
+  renderRepairs(); closeOverlay('add-repair-overlay');
+}
+async function deleteRepair(id){
+  if(!confirm('삭제할까요?'))return;
+  if(sb){try{await sb.from('kiln_repairs').delete().eq('id',id);}catch(e){}}
+  repairs=repairs.filter(r=>r.id!==id); saveLocal(); renderRepairs();
+}
+
+// ── 학기 설정 ──
+function openSemesterModal(){
+  const y=new Date().getFullYear();
+  document.getElementById('sem-year').value=y;
+  semesterRows=semesters.filter(s=>s.year===y).map(s=>({...s}));
+  if(!semesterRows.length) semesterRows=[{name:'1학기',start_date:'',end_date:''},{name:'여름방학',start_date:'',end_date:''},{name:'2학기',start_date:'',end_date:''},{name:'겨울방학',start_date:'',end_date:''}];
+  renderSemesterInputs(); openOverlay('semester-setting-overlay');
+}
+function addSemesterRow(){semesterRows.push({name:'',start_date:'',end_date:''});renderSemesterInputs();}
+function renderSemesterInputs(){
+  document.getElementById('semester-inputs').innerHTML=semesterRows.map((s,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;margin-bottom:8px;align-items:end">
+      <div><label>이름</label><input type="text" value="${s.name||''}" oninput="semesterRows[${i}].name=this.value" placeholder="1학기"></div>
+      <div><label>시작</label><input type="date" value="${s.start_date||''}" oninput="semesterRows[${i}].start_date=this.value"></div>
+      <div><label>종료</label><input type="date" value="${s.end_date||''}" oninput="semesterRows[${i}].end_date=this.value"></div>
+      <button class="btn btn-sm btn-danger" onclick="semesterRows.splice(${i},1);renderSemesterInputs()" style="align-self:end">✕</button>
+    </div>`).join('');
+}
+async function saveSemesters(){
+  const year=parseInt(document.getElementById('sem-year').value);
+  const valid=semesterRows.filter(s=>s.name&&s.start_date&&s.end_date);
+  if(!valid.length){alert('최소 1개의 학기를 설정해주세요');return;}
+  semesters=semesters.filter(s=>s.year!==year);
+  const newSems=valid.map((s,i)=>({id:s.id||Date.now()+i,year,...s}));
+  if(sb){try{await sb.from('semesters').delete().eq('year',year);const{data}=await sb.from('semesters').insert(newSems.map(s=>({name:s.name,year:s.year,start_date:s.start_date,end_date:s.end_date}))).select();if(data)newSems.forEach((s,i)=>{if(data[i])s.id=data[i].id;});}catch(e){}}
+  semesters.push(...newSems); saveLocal();
+  renderSemesterTabs(); renderSemesterList(); renderDownloadButtons();
+  closeOverlay('semester-setting-overlay');
+}
+function renderSemesterList(){
+  const el=document.getElementById('semester-list');
+  if(!semesters.length){el.innerHTML='<p style="font-size:13px;color:var(--text-soft);margin-bottom:16px">설정된 학기가 없습니다</p>';return;}
+  const years=[...new Set(semesters.map(s=>s.year))].sort();
+  el.innerHTML=years.map(y=>`<div style="margin-bottom:12px"><div style="font-size:13px;font-weight:700;color:var(--text-mid);margin-bottom:6px">${y}년</div>${semesters.filter(s=>s.year===y).map(s=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-weight:600">${s.name}</span><span style="color:var(--text-soft)">${s.start_date} ~ ${s.end_date}</span></div>`).join('')}</div>`).join('')+`<button class="btn btn-sm" onclick="openSemesterModal()" style="margin-top:4px;margin-bottom:16px">수정</button>`;
+}
+
+// ── 엑셀 다운로드 ──
+function renderDownloadButtons(){
+  const years=[...new Set(firings.map(f=>new Date(f.start_at).getFullYear()))].sort().reverse();
+  let html=`<button class="download-btn" onclick="openDownloadModal()">📥 전체 내보내기</button>`;
+  years.forEach(y=>{ html+=`<button class="download-btn" onclick="downloadByYear(${y})">📥 ${y}년 소성 내역</button>`; });
+  semesters.forEach(s=>{ html+=`<button class="download-btn" onclick="downloadBySemester(${s.id})">📥 ${s.year}년 ${s.name}</button>`; });
+  document.getElementById('download-grid').innerHTML=html;
+}
+function openDownloadModal(){
+  const years=[...new Set(firings.map(f=>new Date(f.start_at).getFullYear()))].sort().reverse();
+  document.getElementById('dl-year').innerHTML=years.map(y=>`<option value="${y}">${y}년</option>`).join('');
+  document.getElementById('dl-semester').innerHTML=semesters.map(s=>`<option value="${s.id}">${s.year}년 ${s.name}</option>`).join('');
+  document.getElementById('dl-range').value='all';
+  document.getElementById('dl-year-field').style.display='none';
+  document.getElementById('dl-semester-field').style.display='none';
+  openOverlay('download-overlay');
+}
+function onDlRangeChange(){
+  const v=document.getElementById('dl-range').value;
+  document.getElementById('dl-year-field').style.display=v==='year'?'block':'none';
+  document.getElementById('dl-semester-field').style.display=v==='semester'?'block':'none';
+}
+function downloadExcel(){
+  const range=document.getElementById('dl-range').value;
+  if(range==='year'){downloadByYear(parseInt(document.getElementById('dl-year').value));}
+  else if(range==='semester'){downloadBySemester(document.getElementById('dl-semester').value);}
+  else{exportToExcel(firings,'소성내역_전체');}
+  closeOverlay('download-overlay');
+}
+function downloadByYear(y){exportToExcel(firings.filter(f=>new Date(f.start_at).getFullYear()===y),`소성내역_${y}년`);}
+function downloadBySemester(sid){
+  const sem=semesters.find(s=>String(s.id)===String(sid));
+  if(!sem)return;
+  const s=new Date(sem.start_date),e=new Date(sem.end_date);e.setHours(23,59,59,999);
+  exportToExcel(firings.filter(f=>new Date(f.start_at)>=s&&new Date(f.start_at)<=e),`소성내역_${sem.year}년_${sem.name}`);
+}
+function exportToExcel(data,filename){
+  if(!data.length){alert('해당 기간 소성 내역이 없습니다');return;}
+  const rows=data.map(f=>({
+    '가마':kilns.find(k=>k.id===f.kiln_id)?.name||'-','소성종류':f.firing_name||'-',
+    '학생이름':f.student_name||'-','담당자':f.manager_name||'-',
+    '소성시작':fmtDate(new Date(f.start_at)),'최고온도도달':fmtDate(new Date(f.peak_at)),'소성완전종료':fmtDate(new Date(f.end_at)),
+    '가열시간(h)':f.heat_hours,'냉각시간(h)':f.cool_hours,'메모':f.memo||''
+  }));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'소성내역');
+  XLSX.writeFile(wb,`${filename}.xlsx`);
+}
+
+// ── 공통 유틸 ──
+function openOverlay(id){document.getElementById(id).classList.add('show');}
+function closeOverlay(id){
+  document.getElementById(id).classList.remove('show');
+  if(id==='login-overlay'){document.getElementById('pw-input').value='';document.getElementById('pw-err').style.display='none';}
+}
+function isSameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function d0(d){const r=new Date(d);r.setHours(0,0,0,0);return r;}
+function dKey(d){return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;}
+function fmt(d){const days=['일','월','화','수','목','금','토'];return `${d.getFullYear()}.${p2(d.getMonth()+1)}.${p2(d.getDate())}(${days[d.getDay()]}) ${p2(d.getHours())}:${p2(d.getMinutes())}`;}
+function fmtShort(d){return `${String(d.getMonth()+1).padStart(2,"0")}/${String(d.getDate()).padStart(2,"0")} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;}
+function fmtDate(d){return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}`;}
+function p2(n){return String(n).padStart(2,'0');}
+function addH(d,h){return new Date(d.getTime()+h*3600000);}
+function formatH(h){const hrs=Math.floor(h),mins=Math.round((h-hrs)*60);return mins>0?`${hrs}시간 ${mins}분`:`${hrs}시간`;}
+
+init();
+window.addEventListener('resize',()=>{ clearTimeout(window._rt); window._rt=setTimeout(buildCalendarCells,150); });
+</script>
+</body>
+</html>
