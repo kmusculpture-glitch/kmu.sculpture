@@ -759,16 +759,18 @@ function buildCal(){
 
   for(let row=0;row<numRows;row++){
     const rowCells=cellDates.slice(row*7,(row+1)*7);
-    const slotsInRow=rowSlots[row].filter(Boolean).length||rowSlots[row].length;
-    const actualSlots=Object.values(itemSlot).filter(s=>s!==undefined).length>0
-      ? Math.max(0,...allItems.map((item,idx)=>{
-          const si=dateIdx[dKey(item.sd)];
-          if(si===undefined) return -1;
-          if(Math.floor(si/7)!==row) return -1;
-          return itemSlot[idx]??-1;
-        }))+1
-      : 0;
-    const minH=Math.max(110, DATE_H+actualSlots*(BAR_H+BAR_GAP)+BAR_GAP+PAD*2);
+
+    // 이 행에 걸치는 아이템의 최대 슬롯 번호 계산
+    let maxSlotInRow=-1;
+    allItems.forEach((item,idx)=>{
+      const si=dateIdx[dKey(item.sd)], ei=dateIdx[dKey(item.ed)];
+      if(si===undefined||ei===undefined) return;
+      if(Math.floor(si/7)>row||Math.floor(ei/7)<row) return;
+      const s=itemSlot[idx];
+      if(s!==undefined&&s>maxSlotInRow) maxSlotInRow=s;
+    });
+    const actualSlots=maxSlotInRow+1; // 0이면 슬롯 없음
+    const minH=Math.max(110, DATE_H+(actualSlots>0?actualSlots*(BAR_H+BAR_GAP)+BAR_GAP:0)+PAD*2);
 
     const rowWrap=document.createElement('div');
     rowWrap.style.cssText='position:relative;';
