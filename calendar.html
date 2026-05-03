@@ -606,13 +606,26 @@ function switchMainTab(tab, el){
 function switchAdminTab(tab, el){
   adminTab=tab;
   document.querySelectorAll('.atab').forEach(e=>e.classList.remove('active'));
-  el.classList.add('active');
-  document.querySelectorAll('.panel').forEach(e=>e.classList.remove('active'));
-  const map={cal:'panel-cal',repairs:'panel-repairs',kilns:'panel-kilns',semesters:'panel-semesters'};
-  document.getElementById(map[tab]).classList.add('active');
-  if(tab==='repairs'){renderRepairFilter();renderRepairs();}
-  if(tab==='kilns') renderKilnSettings();
-  if(tab==='semesters'){renderSemesterDisplay();renderDlBtns();}
+  if(el) el.classList.add('active');
+  // 캘린더 패널은 항상 active 유지, 나머지만 전환
+  ['panel-repairs','panel-kilns','panel-semesters'].forEach(id=>{
+    document.getElementById(id).classList.remove('active');
+  });
+  if(tab==='cal'){
+    document.getElementById('panel-cal').classList.add('active');
+  } else if(tab==='repairs'){
+    document.getElementById('panel-cal').classList.remove('active');
+    document.getElementById('panel-repairs').classList.add('active');
+    renderRepairFilter(); renderRepairs();
+  } else if(tab==='kilns'){
+    document.getElementById('panel-cal').classList.remove('active');
+    document.getElementById('panel-kilns').classList.add('active');
+    renderKilnSettings();
+  } else if(tab==='semesters'){
+    document.getElementById('panel-cal').classList.remove('active');
+    document.getElementById('panel-semesters').classList.add('active');
+    renderSemesterDisplay(); renderDlBtns();
+  }
 }
 
 // ── 관리자 ──
@@ -640,7 +653,11 @@ function logoutAdmin(){
   document.getElementById('admin-btn').classList.remove('on');
   document.getElementById('admin-tabs').classList.remove('show');
   ['btn-add-ev','btn-add-student','btn-add-firing','btn-dl'].forEach(id=>document.getElementById(id).classList.add('hidden'));
-  switchAdminTab('cal',document.querySelector('.atab'));
+  // 캘린더 패널로 복귀
+  ['panel-repairs','panel-kilns','panel-semesters'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById('panel-cal').classList.add('active');
+  adminTab='cal';
+  document.querySelectorAll('.atab').forEach((e,i)=>e.classList.toggle('active',i===0));
   buildCal();
 }
 
