@@ -555,10 +555,9 @@ async function loadAll(){
   }catch(e){}
   if(sb){
     try{
-      const [kr,sr_,fr,er,rr,semr]=await Promise.all([
+      const [kr,fr,er,rr,semr]=await Promise.all([
         sb.from('kilns').select('*').order('sort_order'),
         sb.from('firings').select('*').order('start_at'),
-        sb.from('firings').select('*').order('start_at'), // 학생+일반 구분은 student_name으로
         sb.from('kiln_events').select('*').order('start_date'),
         sb.from('kiln_repairs').select('*').order('repair_date',{ascending:false}),
         sb.from('semesters').select('*').order('start_date')
@@ -870,10 +869,6 @@ function renderLegend(){
       html+=`<div class="legend-item"><div class="ldot" style="background:${['#EF9A9A','#FFCC80','#A5D6A7','#90CAF9','#CE93D8'][i%5]}"></div>${k.name}</div>`;
     });
   }
-  Object.entries(EV_LBL).forEach(([t,l])=>{
-    const bds={maintenance:'#7B1FA2',cleaning:'#0288D1',closed:'#C62828',other:'#827717'};
-    html+=`<div class="legend-item"><div class="ldot" style="background:${bds[t]}20;border:1.5px solid ${bds[t]}"></div>${l}</div>`;
-  });
   el.innerHTML=html;
 }
 
