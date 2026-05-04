@@ -811,13 +811,6 @@ function buildCal(){
 
       // 날짜별로 하나씩 바를 그림 → 시작날만 진한색, 나머지 연한색
       for(let col=c0; col<=c1; col++){
-        // 주말 또는 소성불가 날짜는 바 그리지 않음
-        const colDate=rc[col]?.d;
-        if(colDate){
-          const colDow=colDate.getDay();
-          if(colDow===0||colDow===6) continue; // 주말 스킵
-          if(blk.has(dk(d0(colDate)))) continue; // 소성불가 스킵
-        }
         const isThisFirst = (col===c0 && isF); // 전체 일정의 진짜 첫날
         const isThisLast  = (col===c1 && isL); // 전체 일정의 진짜 마지막날
         const isColFirst  = (col===c0);         // 이 행에서 첫 칸
