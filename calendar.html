@@ -721,14 +721,16 @@ function switchTab(tab,el){
   document.querySelectorAll('.mt').forEach(e=>e.classList.remove('on'));
   el.classList.add('on');
   if(tab==='info'){
+    co('ov-avail'); // 혹시 열려있으면 닫기
     ge('pnl-cal').classList.remove('on');
     ge('pnl-info').classList.add('on');
     renderKilnInfo();
-    ['btn-ev','btn-st','btn-fi','btn-list','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
+    ['btn-avail','btn-ev','btn-st','btn-fi','btn-list','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
     return;
   }
   ge('pnl-info').classList.remove('on');
   ge('pnl-cal').classList.add('on');
+  ge('btn-avail').classList.remove('h'); // 소성 가능 일자 버튼 복원
   ge('btn-st').classList.toggle('h',tab!=='res'||!isAdm);
   ge('btn-fi').classList.toggle('h',tab!=='his'||!isAdm);
   ge('btn-list').classList.toggle('h',tab!=='his');
