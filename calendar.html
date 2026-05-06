@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -164,15 +163,15 @@ main{max-width:1400px;margin:0 auto;padding:12px 16px 60px;}
 /* 공통 */
 .card{background:#fff;border:1px solid #DADCE0;border-radius:8px;padding:14px;margin-bottom:10px;}
 .slbl{font-size:11px;font-weight:700;letter-spacing:.06em;color:#9AA0A6;text-transform:uppercase;margin-bottom:6px;margin-top:14px;display:flex;align-items:center;gap:6px;}
-.slbl::after{content:’’;flex:1;height:1px;background:#DADCE0;}
+.slbl::after{content:'';flex:1;height:1px;background:#DADCE0;}
 .slbl:first-child{margin-top:0;}
 label{font-size:12px;font-weight:600;color:#5F6368;display:block;margin-bottom:3px;}
 select,input[type=date],input[type=time],input[type=number],input[type=text],input[type=password]{
-width:100%;padding:7px 10px;border:1px solid #BDBDBD;border-radius:4px;
-font-size:13px;font-family:inherit;background:#fff;color:#202124;
-outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s;}
+  width:100%;padding:7px 10px;border:1px solid #BDBDBD;border-radius:4px;
+  font-size:13px;font-family:inherit;background:#fff;color:#202124;
+  outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s;}
 select:focus,input:focus{border-color:#1A73E8;box-shadow:0 0 0 2px rgba(26,115,232,.15);}
-select{background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘8’%3E%3Cpath d=‘M1 1l5 5 5-5’ stroke=’%23888’ stroke-width=‘1.5’ fill=‘none’ stroke-linecap=‘round’/%3E%3C/svg%3E”);background-repeat:no-repeat;background-position:right 8px center;padding-right:26px;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:26px;}
 textarea{width:100%;padding:7px 10px;border:1px solid #BDBDBD;border-radius:4px;font-size:13px;font-family:inherit;background:#fff;color:#202124;resize:vertical;line-height:1.6;outline:none;}
 textarea:focus{border-color:#1A73E8;}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
@@ -202,8 +201,8 @@ textarea:focus{border-color:#1A73E8;}
 .tlp{color:#E8710A!important;font-weight:700!important;}
 
 /* 모달 */
-.ov{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:20px;}
-.ov.on{display:flex;animation:fi .18s ease;}
+.ov{display:none!important;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:20px;}
+.ov.on{display:flex!important;animation:fi .18s ease;}
 .mo{background:#fff;border:1px solid #DADCE0;border-radius:8px;padding:20px;width:100%;max-width:480px;box-shadow:0 8px 30px rgba(0,0,0,.2);animation:su .18s ease;max-height:92vh;overflow-y:auto;}
 .mo.sm{max-width:340px;}
 .mo-t{font-size:15px;font-weight:700;color:#202124;margin-bottom:3px;}
@@ -218,12 +217,10 @@ textarea:focus{border-color:#1A73E8;}
 @keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:768px){.cell{min-height:70px;}.mon-lbl{font-size:16px;min-width:100px;}main{padding:8px 10px 60px;}.g2{grid-template-columns:1fr;}}
 </style>
-
 </head>
 <body>
 
 <!-- 소성 가능 일자 모달 -->
-
 <div class="ov" id="ov-avail">
   <div class="mo" style="max-width:600px;max-height:90vh;overflow-y:auto">
     <p class="mo-t">🔍 소성 가능 일자 찾기</p>
@@ -259,7 +256,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 로그인 모달 -->
-
 <div class="ov" id="ov-login">
   <div class="mo sm">
     <p class="mo-t">🔒 관리자 로그인</p>
@@ -276,7 +272,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 학생 예약 모달 -->
-
 <div class="ov" id="ov-st">
   <div class="mo">
     <p class="mo-t" id="st-title">📅 학생 예약 등록</p>
@@ -318,7 +313,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 일반 소성 모달 -->
-
 <div class="ov" id="ov-fi">
   <div class="mo">
     <p class="mo-t" id="fi-title">🔥 소성 내역 등록</p>
@@ -347,7 +341,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 가마 외 일정 모달 -->
-
 <div class="ov" id="ov-ev">
   <div class="mo">
     <p class="mo-t">🔧 가마 외 일정 등록</p>
@@ -378,7 +371,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 상세 모달 -->
-
 <div class="ov" id="ov-dt">
   <div class="mo sm">
     <p class="mo-t" id="dt-title">상세 정보</p>
@@ -388,7 +380,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 수리 내역 모달 -->
-
 <div class="ov" id="ov-rp">
   <div class="mo sm">
     <p class="mo-t">🔩 수리 내역 추가</p>
@@ -403,7 +394,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 학기 모달 -->
-
 <div class="ov" id="ov-sem">
   <div class="mo">
     <p class="mo-t">📚 학기 설정</p>
@@ -418,7 +408,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 엑셀 업로드 모달 -->
-
 <div class="ov" id="ov-ul">
   <div class="mo">
     <p class="mo-t">📤 소성 내역 엑셀 업로드</p>
@@ -448,7 +437,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 엑셀 다운로드 모달 -->
-
 <div class="ov" id="ov-dl">
   <div class="mo sm">
     <p class="mo-t">📥 엑셀 다운로드</p>
@@ -469,7 +457,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 헤더 -->
-
 <div class="hd">
   <div class="hd-in">
     <div class="hd-l">
@@ -484,7 +471,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 탭 바 -->
-
 <div class="mt-bar">
   <div class="mt-in">
     <div class="mt-tabs">
@@ -502,7 +488,6 @@ textarea:focus{border-color:#1A73E8;}
 </div>
 
 <!-- 본문 -->
-
 <main>
   <!-- 캘린더 패널 -->
   <div class="pnl on" id="pnl-cal">
@@ -547,59 +532,56 @@ textarea:focus{border-color:#1A73E8;}
     </div>
   </div>
 
-```
-<!-- 검색 조건 -->
-<div class="card" style="margin-bottom:14px">
-  <div class="g2" style="margin-bottom:10px">
-    <div class="f">
-      <label>검색 시작 날짜</label>
-      <input type="date" id="av-sd">
-    </div>
-    <div class="f">
-      <label>검색 종료 날짜</label>
-      <input type="date" id="av-ed">
-    </div>
-  </div>
-  <div class="g2 f">
-    <div>
-      <label>가마 선택</label>
-      <select id="av-kiln">
-        <option value="all">전체 가마</option>
-      </select>
-    </div>
-    <div>
-      <label>소성 종류</label>
-      <select id="av-type">
-        <option value="all">전체 소성 종류</option>
-      </select>
-    </div>
-  </div>
-  <div class="f" style="margin-bottom:0">
-    <label>소성 시작 가능 시간대</label>
-    <div style="display:flex;gap:8px;align-items:center">
-      <input type="time" id="av-from" value="08:00" style="flex:1">
-      <span style="color:#5F6368;font-size:13px">~</span>
-      <input type="time" id="av-to" value="18:00" style="flex:1">
-    </div>
-  </div>
-  <button class="btn bp" style="width:100%;margin-top:12px;padding:10px;font-size:14px" onclick="findAvail()">🔍 소성 가능 일자 찾기</button>
-</div>
 
-<!-- 결과 -->
-<div id="av-result" style="display:none">
-  <div id="av-result-header" style="font-size:14px;font-weight:700;margin-bottom:10px;color:#202124"></div>
-  <div id="av-result-body"></div>
-</div>
-<div id="av-loading" style="display:none;text-align:center;padding:30px;color:#5F6368">
-  <div class="spinner" style="margin:0 auto 10px"></div>
-  계산 중...
-</div>
-```
+    <!-- 검색 조건 -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="g2" style="margin-bottom:10px">
+        <div class="f">
+          <label>검색 시작 날짜</label>
+          <input type="date" id="av-sd">
+        </div>
+        <div class="f">
+          <label>검색 종료 날짜</label>
+          <input type="date" id="av-ed">
+        </div>
+      </div>
+      <div class="g2 f">
+        <div>
+          <label>가마 선택</label>
+          <select id="av-kiln">
+            <option value="all">전체 가마</option>
+          </select>
+        </div>
+        <div>
+          <label>소성 종류</label>
+          <select id="av-type">
+            <option value="all">전체 소성 종류</option>
+          </select>
+        </div>
+      </div>
+      <div class="f" style="margin-bottom:0">
+        <label>소성 시작 가능 시간대</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="time" id="av-from" value="08:00" style="flex:1">
+          <span style="color:#5F6368;font-size:13px">~</span>
+          <input type="time" id="av-to" value="18:00" style="flex:1">
+        </div>
+      </div>
+      <button class="btn bp" style="width:100%;margin-top:12px;padding:10px;font-size:14px" onclick="findAvail()">🔍 소성 가능 일자 찾기</button>
+    </div>
 
+    <!-- 결과 -->
+    <div id="av-result" style="display:none">
+      <div id="av-result-header" style="font-size:14px;font-weight:700;margin-bottom:10px;color:#202124"></div>
+      <div id="av-result-body"></div>
+    </div>
+    <div id="av-loading" style="display:none;text-align:center;padding:30px;color:#5F6368">
+      <div class="spinner" style="margin:0 auto 10px"></div>
+      계산 중...
+    </div>
   </div>
 
   <!-- 가마 안내 패널 -->
-
   <div class="pnl" id="pnl-info">
     <div style="margin-bottom:16px">
       <div style="font-size:18px;font-weight:700;margin-bottom:4px">🏺 가마별 소성 안내</div>
@@ -609,7 +591,6 @@ textarea:focus{border-color:#1A73E8;}
   </div>
 
   <!-- 수리 패널 -->
-
   <div class="pnl" id="pnl-rp">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
       <div style="font-size:14px;font-weight:700">가마 수리 내역</div>
@@ -620,7 +601,6 @@ textarea:focus{border-color:#1A73E8;}
   </div>
 
   <!-- 가마 설정 패널 -->
-
   <div class="pnl" id="pnl-ks">
     <div class="slbl">가마 및 소성 종류 설정</div>
     <p style="font-size:12px;color:#9AA0A6;margin-bottom:12px;line-height:1.6">가마 이름, 소성 종류, 가열/냉각 시간을 수정하고 저장을 눌러주세요.</p>
@@ -634,7 +614,6 @@ textarea:focus{border-color:#1A73E8;}
   </div>
 
   <!-- 학기 패널 -->
-
   <div class="pnl" id="pnl-sem">
     <div class="slbl">학기 설정</div>
     <div class="card">
@@ -1102,34 +1081,29 @@ function renderKilnInfo(){
         <div style="margin-top:10px;border-top:1px solid #F1F3F4;padding-top:10px;">
           <div style="font-size:11px;font-weight:700;color:#9AA0A6;margin-bottom:6px;letter-spacing:.04em">🔒 관리자 — 추가 설명 입력</div>
           <textarea id="note-${k.id}" rows="3" style="width:100%;padding:8px;border:1px solid #DADCE0;border-radius:6px;font-size:13px;font-family:inherit;resize:vertical;line-height:1.6" placeholder="학생들에게 보여줄 추가 안내 (예: 주의사항, 사용 팁 등)">${note}</textarea>
-
-```
-      <button class="btn bp" style="margin-top:6px;font-size:12px;padding:5px 14px" onclick="saveKilnNote(${k.id})">저장</button>
-    </div>`:''}
-  </div>
-</div>`;
-```
-
-}).join(’’);
+          <button class="btn bp" style="margin-top:6px;font-size:12px;padding:5px 14px" onclick="saveKilnNote(${k.id})">저장</button>
+        </div>`:''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function saveKilnNote(kilnId){
-const ta=ge(‘note-’+kilnId);
-if(!ta) return;
-kilnNotes[kilnId]=ta.value.trim();
-saveKilnNotes();
-renderKilnInfo();
+  const ta=ge('note-'+kilnId);
+  if(!ta) return;
+  kilnNotes[kilnId]=ta.value.trim();
+  saveKilnNotes();
+  renderKilnInfo();
 }
 
 // ── 상세 보기 ──
 function tlHtml(f){
-const th=f.heat_hours||0,tc=f.cool_hours||0,tot=th+tc;
-const hp=tot?Math.round(th/tot*100):50;
-return `<div style="margin-top:10px">
-<div style="font-size:11px;font-weight:700;color:#9AA0A6;margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase">소성 타임라인</div>
-<div class="tl"><div class="tlh" style="width:${hp}%">🔥 ${fH(th)}</div><div class="tlc">❄️ ${fH(tc)}</div></div>
-<div class="tlt"><span>${fS(new Date(f.start_at))}</span><span class="tlp">${fS(new Date(f.peak_at))}</span><span>${fS(new Date(f.end_at))}</span></div>
-
+  const th=f.heat_hours||0,tc=f.cool_hours||0,tot=th+tc;
+  const hp=tot?Math.round(th/tot*100):50;
+  return `<div style="margin-top:10px">
+    <div style="font-size:11px;font-weight:700;color:#9AA0A6;margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase">소성 타임라인</div>
+    <div class="tl"><div class="tlh" style="width:${hp}%">🔥 ${fH(th)}</div><div class="tlc">❄️ ${fH(tc)}</div></div>
+    <div class="tlt"><span>${fS(new Date(f.start_at))}</span><span class="tlp">${fS(new Date(f.peak_at))}</span><span>${fS(new Date(f.end_at))}</span></div>
   </div>`;
 }
 function showStDt(f){
@@ -1181,746 +1155,765 @@ function showEvDt(ev){
   oo('ov-dt');
 }
 
+
 // ── 절반 토글 ──
 let isHalf=false;
 function toggleHalf(){
-isHalf=!isHalf;
-updateHalfBtn();
+  isHalf=!isHalf;
+  updateHalfBtn();
 }
 function updateHalfBtn(){
-const btn=ge(‘btn-half’);
-if(!btn) return;
-if(isHalf){
-btn.style.background=’#1A73E8’;
-btn.style.color=’#fff’;
-btn.style.borderColor=’#1A73E8’;
-}else{
-btn.style.background=’#fff’;
-btn.style.color=’#5F6368’;
-btn.style.borderColor=’#BDBDBD’;
-}
+  const btn=ge('btn-half');
+  if(!btn) return;
+  if(isHalf){
+    btn.style.background='#1A73E8';
+    btn.style.color='#fff';
+    btn.style.borderColor='#1A73E8';
+  }else{
+    btn.style.background='#fff';
+    btn.style.color='#5F6368';
+    btn.style.borderColor='#BDBDBD';
+  }
 }
 
 // ── 학생 예약 ──
 function fillStKiln(){
-ge(‘st-kiln’).innerHTML=kilns.map((k,i)=>`<option value="${i}">${k.name}</option>`).join(’’);
-stKilnChange();
+  ge('st-kiln').innerHTML=kilns.map((k,i)=>`<option value="${i}">${k.name}</option>`).join('');
+  stKilnChange();
 }
 function stKilnChange(){
-const ki=+ge(‘st-kiln’).value;
-ge(‘st-type’).innerHTML=kilns[ki].types.map((t,i)=>`<option value="${i}">${t.name} (가열 ${fH(t.heatHours)} / 냉각 ${fH(t.coolHours)})</option>`).join(’’);
-stPreview();
+  const ki=+ge('st-kiln').value;
+  ge('st-type').innerHTML=kilns[ki].types.map((t,i)=>`<option value="${i}">${t.name} (가열 ${fH(t.heatHours)} / 냉각 ${fH(t.coolHours)})</option>`).join('');
+  stPreview();
 }
 function stPreview(){
-const sd=ge(‘st-date’).value,st=ge(‘st-time’).value;
-if(!sd||!st){ge(‘st-pv’).style.display=‘none’;return;}
-const ki=+ge(‘st-kiln’).value,fi=+ge(‘st-type’).value,f=kilns[ki].types[fi];
-const s=new Date(`${sd}T${st}`);
-ge(‘st-peak’).textContent=fmt(addH(s,f.heatHours));
-ge(‘st-end’).textContent=fmt(addH(addH(s,f.heatHours),f.coolHours));
-ge(‘st-pv’).style.display=‘block’;
+  const sd=ge('st-date').value,st=ge('st-time').value;
+  if(!sd||!st){ge('st-pv').style.display='none';return;}
+  const ki=+ge('st-kiln').value,fi=+ge('st-type').value,f=kilns[ki].types[fi];
+  const s=new Date(`${sd}T${st}`);
+  ge('st-peak').textContent=fmt(addH(s,f.heatHours));
+  ge('st-end').textContent=fmt(addH(addH(s,f.heatHours),f.coolHours));
+  ge('st-pv').style.display='block';
 }
 function openSt(editId=null){
-editStId=editId;
-ge(‘st-title’).textContent=editId?‘📅 학생 예약 수정’:‘📅 학생 예약 등록’;
-ge(‘st-id’).value=editId||’’;
-fillStKiln();
-if(!editId){
-ge(‘st-name’).value=’’; ge(‘st-date’).value=new Date().toISOString().split(‘T’)[0];
-ge(‘st-time’).value=‘09:00’; ge(‘st-mgr’).value=’’; ge(‘st-memo’).value=’’;
-ge(‘st-pv’).style.display=‘none’;
-isHalf=false; updateHalfBtn();
-}else{
-const f=students.find(s=>String(s.id)===String(editId));
-if(!f) return;
-ge(‘st-name’).value=f.student_name||’’;
-const ki=kilns.findIndex(k=>k.id===f.kiln_id);
-if(ki>=0){ ge(‘st-kiln’).value=ki; stKilnChange(); const ti=kilns[ki].types.findIndex(t=>t.name===f.firing_name); if(ti>=0) ge(‘st-type’).value=ti; }
-const s=new Date(f.start_at);
-ge(‘st-date’).value=s.toISOString().split(‘T’)[0];
-ge(‘st-time’).value=`${p2(s.getHours())}:${p2(s.getMinutes())}`;
-ge(‘st-mgr’).value=f.manager_name||’’; ge(‘st-memo’).value=f.memo||’’;
-isHalf=f.memo?.includes(’(절반)’)||false; updateHalfBtn();
-stPreview();
+  editStId=editId;
+  ge('st-title').textContent=editId?'📅 학생 예약 수정':'📅 학생 예약 등록';
+  ge('st-id').value=editId||'';
+  fillStKiln();
+  if(!editId){
+    ge('st-name').value=''; ge('st-date').value=new Date().toISOString().split('T')[0];
+    ge('st-time').value='09:00'; ge('st-mgr').value=''; ge('st-memo').value='';
+    ge('st-pv').style.display='none';
+    isHalf=false; updateHalfBtn();
+  }else{
+    const f=students.find(s=>String(s.id)===String(editId));
+    if(!f) return;
+    ge('st-name').value=f.student_name||'';
+    const ki=kilns.findIndex(k=>k.id===f.kiln_id);
+    if(ki>=0){ ge('st-kiln').value=ki; stKilnChange(); const ti=kilns[ki].types.findIndex(t=>t.name===f.firing_name); if(ti>=0) ge('st-type').value=ti; }
+    const s=new Date(f.start_at);
+    ge('st-date').value=s.toISOString().split('T')[0];
+    ge('st-time').value=`${p2(s.getHours())}:${p2(s.getMinutes())}`;
+    ge('st-mgr').value=f.manager_name||''; ge('st-memo').value=f.memo||'';
+    isHalf=f.memo?.includes('(절반)')||false; updateHalfBtn();
+    stPreview();
+  }
+  oo('ov-st');
 }
-oo(‘ov-st’);
-}
-function editSt(id){ co(‘ov-dt’); openSt(id); }
+function editSt(id){ co('ov-dt'); openSt(id); }
 async function submitSt(){
-const nm=ge(‘st-name’).value.trim(),sd=ge(‘st-date’).value,st=ge(‘st-time’).value;
-const ki=+ge(‘st-kiln’).value,fi=+ge(‘st-type’).value;
-if(!nm){alert(‘학생 이름을 입력해주세요’);return;}
-if(!sd||!st){alert(‘날짜와 시간을 입력해주세요’);return;}
-const kiln=kilns[ki],ft=kiln.types[fi],s=new Date(`${sd}T${st}`);
-const pk=addH(s,ft.heatHours),en=addH(pk,ft.coolHours);
-const memoVal=ge(‘st-memo’).value.trim();
-const data={kiln_id:kiln.id,firing_name:ft.name,student_name:isHalf?nm+’(절반)’:nm,manager_name:ge(‘st-mgr’).value.trim()||null,start_at:s.toISOString(),peak_at:pk.toISOString(),end_at:en.toISOString(),heat_hours:ft.heatHours,cool_hours:ft.coolHours,memo:memoVal||null};
-if(editStId){
-const idx=students.findIndex(x=>String(x.id)===String(editStId));
-if(idx>=0) students[idx]={…students[idx],…data};
-if(sb){try{await sb.from(‘firings’).update(data).eq(‘id’,editStId);}catch(e){}}
-}else{
-const ni={id:Date.now(),…data};
-if(sb){try{const{data:d}=await sb.from(‘firings’).insert(data).select().single();if(d)ni.id=d.id;}catch(e){}}
-students.push(ni);
-}
-saveLocal(); buildCal(); co(‘ov-st’);
+  const nm=ge('st-name').value.trim(),sd=ge('st-date').value,st=ge('st-time').value;
+  const ki=+ge('st-kiln').value,fi=+ge('st-type').value;
+  if(!nm){alert('학생 이름을 입력해주세요');return;}
+  if(!sd||!st){alert('날짜와 시간을 입력해주세요');return;}
+  const kiln=kilns[ki],ft=kiln.types[fi],s=new Date(`${sd}T${st}`);
+  const pk=addH(s,ft.heatHours),en=addH(pk,ft.coolHours);
+  const memoVal=ge('st-memo').value.trim();
+  const data={kiln_id:kiln.id,firing_name:ft.name,student_name:isHalf?nm+'(절반)':nm,manager_name:ge('st-mgr').value.trim()||null,start_at:s.toISOString(),peak_at:pk.toISOString(),end_at:en.toISOString(),heat_hours:ft.heatHours,cool_hours:ft.coolHours,memo:memoVal||null};
+  if(editStId){
+    const idx=students.findIndex(x=>String(x.id)===String(editStId));
+    if(idx>=0) students[idx]={...students[idx],...data};
+    if(sb){try{await sb.from('firings').update(data).eq('id',editStId);}catch(e){}}
+  }else{
+    const ni={id:Date.now(),...data};
+    if(sb){try{const{data:d}=await sb.from('firings').insert(data).select().single();if(d)ni.id=d.id;}catch(e){}}
+    students.push(ni);
+  }
+  saveLocal(); buildCal(); co('ov-st');
 }
 
 // ── 일반 소성 ──
 function fillFiKiln(){
-ge(‘fi-kiln’).innerHTML=kilns.map((k,i)=>`<option value="${i}">${k.name}</option>`).join(’’);
-fiKilnChange();
+  ge('fi-kiln').innerHTML=kilns.map((k,i)=>`<option value="${i}">${k.name}</option>`).join('');
+  fiKilnChange();
 }
 function fiKilnChange(){
-const ki=+ge(‘fi-kiln’).value;
-ge(‘fi-type’).innerHTML=kilns[ki].types.map((t,i)=>`<option value="${i}">${t.name} (가열 ${fH(t.heatHours)} / 냉각 ${fH(t.coolHours)})</option>`).join(’’);
-fiPreview();
+  const ki=+ge('fi-kiln').value;
+  ge('fi-type').innerHTML=kilns[ki].types.map((t,i)=>`<option value="${i}">${t.name} (가열 ${fH(t.heatHours)} / 냉각 ${fH(t.coolHours)})</option>`).join('');
+  fiPreview();
 }
 function fiPreview(){
-const sd=ge(‘fi-date’).value,st=ge(‘fi-time’).value;
-if(!sd||!st){ge(‘fi-pv’).style.display=‘none’;return;}
-const ki=+ge(‘fi-kiln’).value,fi=+ge(‘fi-type’).value,f=kilns[ki].types[fi];
-const s=new Date(`${sd}T${st}`);
-ge(‘fi-peak’).textContent=fmt(addH(s,f.heatHours));
-ge(‘fi-end’).textContent=fmt(addH(addH(s,f.heatHours),f.coolHours));
-ge(‘fi-pv’).style.display=‘block’;
+  const sd=ge('fi-date').value,st=ge('fi-time').value;
+  if(!sd||!st){ge('fi-pv').style.display='none';return;}
+  const ki=+ge('fi-kiln').value,fi=+ge('fi-type').value,f=kilns[ki].types[fi];
+  const s=new Date(`${sd}T${st}`);
+  ge('fi-peak').textContent=fmt(addH(s,f.heatHours));
+  ge('fi-end').textContent=fmt(addH(addH(s,f.heatHours),f.coolHours));
+  ge('fi-pv').style.display='block';
 }
 function openFi(editId=null){
-editFiId=editId;
-ge(‘fi-title’).textContent=editId?‘🔥 소성 내역 수정’:‘🔥 소성 내역 등록’;
-ge(‘fi-id’).value=editId||’’;
-fillFiKiln();
-if(!editId){
-ge(‘fi-date’).value=new Date().toISOString().split(‘T’)[0];
-ge(‘fi-time’).value=‘09:00’; ge(‘fi-mgr’).value=’’; ge(‘fi-memo’).value=’’;
-ge(‘fi-pv’).style.display=‘none’;
-}else{
-const f=firings.find(x=>String(x.id)===String(editId));
-if(!f) return;
-const ki=kilns.findIndex(k=>k.id===f.kiln_id);
-if(ki>=0){ ge(‘fi-kiln’).value=ki; fiKilnChange(); const ti=kilns[ki].types.findIndex(t=>t.name===f.firing_name); if(ti>=0) ge(‘fi-type’).value=ti; }
-const s=new Date(f.start_at);
-ge(‘fi-date’).value=s.toISOString().split(‘T’)[0];
-ge(‘fi-time’).value=`${p2(s.getHours())}:${p2(s.getMinutes())}`;
-ge(‘fi-mgr’).value=f.manager_name||’’; ge(‘fi-memo’).value=f.memo||’’;
-fiPreview();
+  editFiId=editId;
+  ge('fi-title').textContent=editId?'🔥 소성 내역 수정':'🔥 소성 내역 등록';
+  ge('fi-id').value=editId||'';
+  fillFiKiln();
+  if(!editId){
+    ge('fi-date').value=new Date().toISOString().split('T')[0];
+    ge('fi-time').value='09:00'; ge('fi-mgr').value=''; ge('fi-memo').value='';
+    ge('fi-pv').style.display='none';
+  }else{
+    const f=firings.find(x=>String(x.id)===String(editId));
+    if(!f) return;
+    const ki=kilns.findIndex(k=>k.id===f.kiln_id);
+    if(ki>=0){ ge('fi-kiln').value=ki; fiKilnChange(); const ti=kilns[ki].types.findIndex(t=>t.name===f.firing_name); if(ti>=0) ge('fi-type').value=ti; }
+    const s=new Date(f.start_at);
+    ge('fi-date').value=s.toISOString().split('T')[0];
+    ge('fi-time').value=`${p2(s.getHours())}:${p2(s.getMinutes())}`;
+    ge('fi-mgr').value=f.manager_name||''; ge('fi-memo').value=f.memo||'';
+    fiPreview();
+  }
+  oo('ov-fi');
 }
-oo(‘ov-fi’);
-}
-function editFi(id){ co(‘ov-dt’); openFi(id); }
+function editFi(id){ co('ov-dt'); openFi(id); }
 async function submitFi(){
-const sd=ge(‘fi-date’).value,st=ge(‘fi-time’).value;
-if(!sd||!st){alert(‘날짜와 시간을 입력해주세요’);return;}
-const ki=+ge(‘fi-kiln’).value,fi=+ge(‘fi-type’).value;
-const kiln=kilns[ki],ft=kiln.types[fi],s=new Date(`${sd}T${st}`);
-const pk=addH(s,ft.heatHours),en=addH(pk,ft.coolHours);
-const data={kiln_id:kiln.id,firing_name:ft.name,student_name:null,manager_name:ge(‘fi-mgr’).value.trim()||null,start_at:s.toISOString(),peak_at:pk.toISOString(),end_at:en.toISOString(),heat_hours:ft.heatHours,cool_hours:ft.coolHours,memo:ge(‘fi-memo’).value.trim()||null};
-if(editFiId){
-const idx=firings.findIndex(x=>String(x.id)===String(editFiId));
-if(idx>=0) firings[idx]={…firings[idx],…data};
-if(sb){try{await sb.from(‘firings’).update(data).eq(‘id’,editFiId);}catch(e){}}
-}else{
-const ni={id:Date.now(),…data};
-if(sb){try{const{data:d}=await sb.from(‘firings’).insert(data).select().single();if(d)ni.id=d.id;}catch(e){}}
-firings.push(ni);
-}
-saveLocal(); buildCal(); co(‘ov-fi’);
+  const sd=ge('fi-date').value,st=ge('fi-time').value;
+  if(!sd||!st){alert('날짜와 시간을 입력해주세요');return;}
+  const ki=+ge('fi-kiln').value,fi=+ge('fi-type').value;
+  const kiln=kilns[ki],ft=kiln.types[fi],s=new Date(`${sd}T${st}`);
+  const pk=addH(s,ft.heatHours),en=addH(pk,ft.coolHours);
+  const data={kiln_id:kiln.id,firing_name:ft.name,student_name:null,manager_name:ge('fi-mgr').value.trim()||null,start_at:s.toISOString(),peak_at:pk.toISOString(),end_at:en.toISOString(),heat_hours:ft.heatHours,cool_hours:ft.coolHours,memo:ge('fi-memo').value.trim()||null};
+  if(editFiId){
+    const idx=firings.findIndex(x=>String(x.id)===String(editFiId));
+    if(idx>=0) firings[idx]={...firings[idx],...data};
+    if(sb){try{await sb.from('firings').update(data).eq('id',editFiId);}catch(e){}}
+  }else{
+    const ni={id:Date.now(),...data};
+    if(sb){try{const{data:d}=await sb.from('firings').insert(data).select().single();if(d)ni.id=d.id;}catch(e){}}
+    firings.push(ni);
+  }
+  saveLocal(); buildCal(); co('ov-fi');
 }
 
 // ── 가마 외 이벤트 ──
 function fillEvKiln(){
-ge(‘ev-kiln’).innerHTML=`<option value="">전체 가마</option>`+kilns.map(k=>`<option value="${k.id}">${k.name}</option>`).join(’’);
+  ge('ev-kiln').innerHTML=`<option value="">전체 가마</option>`+kilns.map(k=>`<option value="${k.id}">${k.name}</option>`).join('');
 }
 function selEv(t){
-evType=t;
-document.querySelectorAll(’#ev-type-g .ro’).forEach((el,i)=>el.classList.toggle(‘s’,[‘m’,‘c’,‘x’,‘o’][i]===t));
+  evType=t;
+  document.querySelectorAll('#ev-type-g .ro').forEach((el,i)=>el.classList.toggle('s',['m','c','x','o'][i]===t));
 }
 function openEv(editId=null){
-editEvId=editId; fillEvKiln();
-if(!editId){
-ge(‘ev-id’).value=’’; ge(‘ev-title’).value=’’;
-ge(‘ev-sd’).value=ge(‘ev-ed’).value=new Date().toISOString().split(‘T’)[0];
-ge(‘ev-memo’).value=’’; selEv(‘m’);
-}else{
-const ev=events.find(e=>String(e.id)===String(editId)); if(!ev) return;
-ge(‘ev-id’).value=editId; ge(‘ev-title’).value=ev.title;
-ge(‘ev-sd’).value=ev.start_date; ge(‘ev-ed’).value=ev.end_date;
-ge(‘ev-memo’).value=ev.memo||’’;
-const et=ev.evType||ev.event_type?.charAt(0)||‘o’;
-selEv(et);
-if(ev.kiln_id) ge(‘ev-kiln’).value=ev.kiln_id;
+  editEvId=editId; fillEvKiln();
+  if(!editId){
+    ge('ev-id').value=''; ge('ev-title').value='';
+    ge('ev-sd').value=ge('ev-ed').value=new Date().toISOString().split('T')[0];
+    ge('ev-memo').value=''; selEv('m');
+  }else{
+    const ev=events.find(e=>String(e.id)===String(editId)); if(!ev) return;
+    ge('ev-id').value=editId; ge('ev-title').value=ev.title;
+    ge('ev-sd').value=ev.start_date; ge('ev-ed').value=ev.end_date;
+    ge('ev-memo').value=ev.memo||'';
+    const et=ev.evType||ev.event_type?.charAt(0)||'o';
+    selEv(et);
+    if(ev.kiln_id) ge('ev-kiln').value=ev.kiln_id;
+  }
+  oo('ov-ev');
 }
-oo(‘ov-ev’);
-}
-function editEv(id){ co(‘ov-dt’); openEv(id); }
+function editEv(id){ co('ov-dt'); openEv(id); }
 async function submitEv(){
-const title=ge(‘ev-title’).value.trim(),sd=ge(‘ev-sd’).value,ed=ge(‘ev-ed’).value;
-if(!title||!sd||!ed){alert(‘제목과 날짜를 입력해주세요’);return;}
-if(sd>ed){alert(‘종료 날짜가 시작 날짜보다 빠릅니다’);return;}
-const kilnId=ge(‘ev-kiln’).value||null;
-const etMap={m:‘maintenance’,c:‘cleaning’,x:‘closed’,o:‘other’};
-const data={title,event_type:etMap[evType],kiln_id:kilnId?+kilnId:null,start_date:sd,end_date:ed,memo:ge(‘ev-memo’).value.trim()||null,evType};
-if(editEvId){
-const idx=events.findIndex(e=>String(e.id)===String(editEvId));
-if(idx>=0) events[idx]={…events[idx],…data};
-if(sb){try{const{evType:*,…dbData}=data;await sb.from(‘kiln_events’).update(dbData).eq(‘id’,editEvId);}catch(e){}}
-}else{
-const ni={id:Date.now(),…data};
-if(sb){try{const{evType:*,…dbData}=data;const{data:d}=await sb.from(‘kiln_events’).insert(dbData).select().single();if(d)ni.id=d.id;}catch(e){}}
-events.push(ni);
-}
-saveLocal(); buildCal(); co(‘ov-ev’);
+  const title=ge('ev-title').value.trim(),sd=ge('ev-sd').value,ed=ge('ev-ed').value;
+  if(!title||!sd||!ed){alert('제목과 날짜를 입력해주세요');return;}
+  if(sd>ed){alert('종료 날짜가 시작 날짜보다 빠릅니다');return;}
+  const kilnId=ge('ev-kiln').value||null;
+  const etMap={m:'maintenance',c:'cleaning',x:'closed',o:'other'};
+  const data={title,event_type:etMap[evType],kiln_id:kilnId?+kilnId:null,start_date:sd,end_date:ed,memo:ge('ev-memo').value.trim()||null,evType};
+  if(editEvId){
+    const idx=events.findIndex(e=>String(e.id)===String(editEvId));
+    if(idx>=0) events[idx]={...events[idx],...data};
+    if(sb){try{const{evType:_,...dbData}=data;await sb.from('kiln_events').update(dbData).eq('id',editEvId);}catch(e){}}
+  }else{
+    const ni={id:Date.now(),...data};
+    if(sb){try{const{evType:_,...dbData}=data;const{data:d}=await sb.from('kiln_events').insert(dbData).select().single();if(d)ni.id=d.id;}catch(e){}}
+    events.push(ni);
+  }
+  saveLocal(); buildCal(); co('ov-ev');
 }
 
 // ── 삭제 ──
 async function delRec(type,id){
-if(!confirm(‘삭제할까요?’)) return;
-if(type===‘st’){
-if(sb){try{await sb.from(‘firings’).delete().eq(‘id’,id);}catch(e){}}
-students=students.filter(x=>String(x.id)!==String(id));
-}else if(type===‘fi’){
-if(sb){try{await sb.from(‘firings’).delete().eq(‘id’,id);}catch(e){}}
-firings=firings.filter(x=>String(x.id)!==String(id));
-}else if(type===‘ev’){
-if(sb){try{await sb.from(‘kiln_events’).delete().eq(‘id’,id);}catch(e){}}
-events=events.filter(x=>String(x.id)!==String(id));
-}
-saveLocal(); buildCal(); co(‘ov-dt’);
+  if(!confirm('삭제할까요?')) return;
+  if(type==='st'){
+    if(sb){try{await sb.from('firings').delete().eq('id',id);}catch(e){}}
+    students=students.filter(x=>String(x.id)!==String(id));
+  }else if(type==='fi'){
+    if(sb){try{await sb.from('firings').delete().eq('id',id);}catch(e){}}
+    firings=firings.filter(x=>String(x.id)!==String(id));
+  }else if(type==='ev'){
+    if(sb){try{await sb.from('kiln_events').delete().eq('id',id);}catch(e){}}
+    events=events.filter(x=>String(x.id)!==String(id));
+  }
+  saveLocal(); buildCal(); co('ov-dt');
 }
 
 // ── 수리 내역 ──
 function renderRpFilter(){
-ge(‘rp-filter’).innerHTML=
-`<button class="btn bs${rpFilter==='all'?' bp':''}" onclick="setRpF('all')">전체</button>`+
-kilns.map(k=>`<button class="btn bs${rpFilter===String(k.id)?' bp':''}" onclick="setRpF('${k.id}')">${k.name}</button>`).join(’’);
+  ge('rp-filter').innerHTML=
+    `<button class="btn bs${rpFilter==='all'?' bp':''}" onclick="setRpF('all')">전체</button>`+
+    kilns.map(k=>`<button class="btn bs${rpFilter===String(k.id)?' bp':''}" onclick="setRpF('${k.id}')">${k.name}</button>`).join('');
 }
 function setRpF(f){rpFilter=f;renderRpFilter();renderRepairs();}
 function renderRepairs(){
-const list=rpFilter===‘all’?repairs:repairs.filter(r=>String(r.kiln_id)===rpFilter);
-ge(‘rp-list’).innerHTML=list.length
-?list.map(r=>`<div class="ritem"><div style="flex:1"><div class="rd">${r.repair_date}</div><div class="rk">${kilns.find(k=>k.id===r.kiln_id)?.name||'-'}</div><div class="re">${r.description}</div></div><button class="btn bs bd" onclick="delRp(${r.id})">삭제</button></div>`).join(’’)
-:`<div style="text-align:center;padding:40px;color:#9AA0A6">수리 내역이 없습니다</div>`;
+  const list=rpFilter==='all'?repairs:repairs.filter(r=>String(r.kiln_id)===rpFilter);
+  ge('rp-list').innerHTML=list.length
+    ?list.map(r=>`<div class="ritem"><div style="flex:1"><div class="rd">${r.repair_date}</div><div class="rk">${kilns.find(k=>k.id===r.kiln_id)?.name||'-'}</div><div class="re">${r.description}</div></div><button class="btn bs bd" onclick="delRp(${r.id})">삭제</button></div>`).join('')
+    :`<div style="text-align:center;padding:40px;color:#9AA0A6">수리 내역이 없습니다</div>`;
 }
 function fillRpKiln(){
-ge(‘rp-kiln’).innerHTML=kilns.map(k=>`<option value="${k.id}">${k.name}</option>`).join(’’);
-ge(‘rp-date’).value=new Date().toISOString().split(‘T’)[0];
+  ge('rp-kiln').innerHTML=kilns.map(k=>`<option value="${k.id}">${k.name}</option>`).join('');
+  ge('rp-date').value=new Date().toISOString().split('T')[0];
 }
 async function submitRp(){
-const ki=+ge(‘rp-kiln’).value,dt=ge(‘rp-date’).value,ds=ge(‘rp-desc’).value.trim();
-if(!dt||!ds){alert(‘날짜와 수리 내용을 입력해주세요’);return;}
-const ni={id:Date.now(),kiln_id:ki,repair_date:dt,description:ds};
-if(sb){try{const{data}=await sb.from(‘kiln_repairs’).insert({kiln_id:ki,repair_date:dt,description:ds}).select().single();if(data)ni.id=data.id;}catch(e){}}
-repairs.unshift(ni); saveLocal(); ge(‘rp-desc’).value=’’; renderRepairs(); co(‘ov-rp’);
+  const ki=+ge('rp-kiln').value,dt=ge('rp-date').value,ds=ge('rp-desc').value.trim();
+  if(!dt||!ds){alert('날짜와 수리 내용을 입력해주세요');return;}
+  const ni={id:Date.now(),kiln_id:ki,repair_date:dt,description:ds};
+  if(sb){try{const{data}=await sb.from('kiln_repairs').insert({kiln_id:ki,repair_date:dt,description:ds}).select().single();if(data)ni.id=data.id;}catch(e){}}
+  repairs.unshift(ni); saveLocal(); ge('rp-desc').value=''; renderRepairs(); co('ov-rp');
 }
 async function delRp(id){
-if(!confirm(‘삭제?’)) return;
-if(sb){try{await sb.from(‘kiln_repairs’).delete().eq(‘id’,id);}catch(e){}}
-repairs=repairs.filter(r=>r.id!==id); saveLocal(); renderRepairs();
+  if(!confirm('삭제?')) return;
+  if(sb){try{await sb.from('kiln_repairs').delete().eq('id',id);}catch(e){}}
+  repairs=repairs.filter(r=>r.id!==id); saveLocal(); renderRepairs();
 }
 
 // ── 가마 설정 ──
 function renderKs(){
-ge(‘ks-list’).innerHTML=kilns.map((k,ki)=>` <div class="ks-item"> <div class="ks-nr"> <input class="ks-ni" type="text" value="${ea(k.name)}" oninput="kilns[${ki}].name=this.value"> <button class="btn bs bd" onclick="delKs(${ki})">삭제</button> </div> <div class="trow" style="margin-bottom:4px"> <span class="th">소성 종류</span><span class="th">가열(h)</span><span class="th">냉각(h)</span><span></span> </div> ${k.types.map((t,ti)=>`
-<div class="trow">
-<input type="text" value="${ea(t.name)}" oninput="kilns[${ki}].types[${ti}].name=this.value">
-<input type="number" value="${t.heatHours}" min="0.5" step="0.5" oninput="kilns[${ki}].types[${ti}].heatHours=parseFloat(this.value)||0">
-<input type="number" value="${t.coolHours}" min="0.5" step="0.5" oninput="kilns[${ki}].types[${ti}].coolHours=parseFloat(this.value)||0">
-<button class="btn bs bd" onclick="delTy(${ki},${ti})">✕</button>
-</div>`).join('')} <button class="btn bs" onclick="addTy(${ki})" style="margin-top:6px">+ 소성 종류 추가</button> </div>`).join(’’);
+  ge('ks-list').innerHTML=kilns.map((k,ki)=>`
+    <div class="ks-item">
+      <div class="ks-nr">
+        <input class="ks-ni" type="text" value="${ea(k.name)}" oninput="kilns[${ki}].name=this.value">
+        <button class="btn bs bd" onclick="delKs(${ki})">삭제</button>
+      </div>
+      <div class="trow" style="margin-bottom:4px">
+        <span class="th">소성 종류</span><span class="th">가열(h)</span><span class="th">냉각(h)</span><span></span>
+      </div>
+      ${k.types.map((t,ti)=>`
+        <div class="trow">
+          <input type="text" value="${ea(t.name)}" oninput="kilns[${ki}].types[${ti}].name=this.value">
+          <input type="number" value="${t.heatHours}" min="0.5" step="0.5" oninput="kilns[${ki}].types[${ti}].heatHours=parseFloat(this.value)||0">
+          <input type="number" value="${t.coolHours}" min="0.5" step="0.5" oninput="kilns[${ki}].types[${ti}].coolHours=parseFloat(this.value)||0">
+          <button class="btn bs bd" onclick="delTy(${ki},${ti})">✕</button>
+        </div>`).join('')}
+      <button class="btn bs" onclick="addTy(${ki})" style="margin-top:6px">+ 소성 종류 추가</button>
+    </div>`).join('');
 }
-function addKs(){kilns.push({id:Date.now(),name:`가마 ${kilns.length+1}`,sort_order:kilns.length+1,types:[{name:‘초벌’,heatHours:6,coolHours:12}]});renderKs();}
-function delKs(ki){if(kilns.length<=1){alert(‘최소 1개 이상’);return;}if(confirm(‘삭제?’)){kilns.splice(ki,1);renderKs();}}
-function addTy(ki){kilns[ki].types.push({name:‘새 소성’,heatHours:6,coolHours:12});renderKs();}
-function delTy(ki,ti){if(kilns[ki].types.length<=1){alert(‘최소 1개’);return;}kilns[ki].types.splice(ti,1);renderKs();}
+function addKs(){kilns.push({id:Date.now(),name:`가마 ${kilns.length+1}`,sort_order:kilns.length+1,types:[{name:'초벌',heatHours:6,coolHours:12}]});renderKs();}
+function delKs(ki){if(kilns.length<=1){alert('최소 1개 이상');return;}if(confirm('삭제?')){kilns.splice(ki,1);renderKs();}}
+function addTy(ki){kilns[ki].types.push({name:'새 소성',heatHours:6,coolHours:12});renderKs();}
+function delTy(ki,ti){if(kilns[ki].types.length<=1){alert('최소 1개');return;}kilns[ki].types.splice(ti,1);renderKs();}
 async function saveKs(){
-if(sb){try{await sb.from(‘kilns’).delete().neq(‘id’,0);await sb.from(‘kilns’).insert(kilns.map((k,i)=>({name:k.name,sort_order:i+1,types:k.types})));}catch(e){console.warn(e);}}
-saveLocal(); buildCal(); renderLegend();
-const el=ge(‘ks-ok’); el.style.display=‘inline-block’; setTimeout(()=>el.style.display=‘none’,2500);
+  if(sb){try{await sb.from('kilns').delete().neq('id',0);await sb.from('kilns').insert(kilns.map((k,i)=>({name:k.name,sort_order:i+1,types:k.types})));}catch(e){console.warn(e);}}
+  saveLocal(); buildCal(); renderLegend();
+  const el=ge('ks-ok'); el.style.display='inline-block'; setTimeout(()=>el.style.display='none',2500);
 }
 
 // ── 학기 ──
 let _semRows=[];
-function addSemRow(){_semRows.push({name:’’,start_date:’’,end_date:’’});renderSemRows();}
+function addSemRow(){_semRows.push({name:'',start_date:'',end_date:''});renderSemRows();}
 function renderSemRows(){
-ge(‘sem-rows’).innerHTML=_semRows.map((s,i)=>` <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:5px;margin-bottom:6px;align-items:end"> <div><label>이름</label><input type="text" value="${s.name||''}" oninput="_semRows[${i}].name=this.value" placeholder="1학기"></div> <div><label>시작</label><input type="date" value="${s.start_date||''}" oninput="_semRows[${i}].start_date=this.value"></div> <div><label>종료</label><input type="date" value="${s.end_date||''}" oninput="_semRows[${i}].end_date=this.value"></div> <button class="btn bs bd" onclick="_semRows.splice(${i},1);renderSemRows()" style="align-self:end">✕</button> </div>`).join(’’);
+  ge('sem-rows').innerHTML=_semRows.map((s,i)=>`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:5px;margin-bottom:6px;align-items:end">
+      <div><label>이름</label><input type="text" value="${s.name||''}" oninput="_semRows[${i}].name=this.value" placeholder="1학기"></div>
+      <div><label>시작</label><input type="date" value="${s.start_date||''}" oninput="_semRows[${i}].start_date=this.value"></div>
+      <div><label>종료</label><input type="date" value="${s.end_date||''}" oninput="_semRows[${i}].end_date=this.value"></div>
+      <button class="btn bs bd" onclick="_semRows.splice(${i},1);renderSemRows()" style="align-self:end">✕</button>
+    </div>`).join('');
 }
 async function saveSem(){
-const yr=+ge(‘sem-yr’).value;
-const valid=_semRows.filter(s=>s.name&&s.start_date&&s.end_date);
-if(!valid.length){alert(‘최소 1개 이상 설정해주세요’);return;}
-sems=sems.filter(s=>s.year!==yr);
-const ns=valid.map((s,i)=>({id:s.id||Date.now()+i,year:yr,…s}));
-if(sb){try{await sb.from(‘semesters’).delete().eq(‘year’,yr);const{data}=await sb.from(‘semesters’).insert(ns.map(s=>({name:s.name,year:s.year,start_date:s.start_date,end_date:s.end_date}))).select();if(data)ns.forEach((s,i)=>{if(data[i])s.id=data[i].id;});}catch(e){}}
-sems.push(…ns); saveLocal(); renderSemDisp(); renderDlBtns(); co(‘ov-sem’);
+  const yr=+ge('sem-yr').value;
+  const valid=_semRows.filter(s=>s.name&&s.start_date&&s.end_date);
+  if(!valid.length){alert('최소 1개 이상 설정해주세요');return;}
+  sems=sems.filter(s=>s.year!==yr);
+  const ns=valid.map((s,i)=>({id:s.id||Date.now()+i,year:yr,...s}));
+  if(sb){try{await sb.from('semesters').delete().eq('year',yr);const{data}=await sb.from('semesters').insert(ns.map(s=>({name:s.name,year:s.year,start_date:s.start_date,end_date:s.end_date}))).select();if(data)ns.forEach((s,i)=>{if(data[i])s.id=data[i].id;});}catch(e){}}
+  sems.push(...ns); saveLocal(); renderSemDisp(); renderDlBtns(); co('ov-sem');
 }
 function renderSemDisp(){
-const el=ge(‘sem-disp’);
-if(!sems.length){el.innerHTML=’<p style="font-size:12px;color:#9AA0A6;margin-bottom:12px">설정된 학기가 없습니다</p>’;return;}
-const yrs=[…new Set(sems.map(s=>s.year))].sort();
-el.innerHTML=yrs.map(y=>`<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:700;color:#5F6368;margin-bottom:4px">${y}년</div>${sems.filter(s=>s.year===y).map(s=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #DADCE0"><span style="font-weight:600">${s.name}</span><span style="color:#9AA0A6">${s.start_date} ~ ${s.end_date}</span></div>`).join('')}</div>`).join(’’)+`<button class="btn bs" onclick="openSemMo()" style="margin-top:4px;margin-bottom:12px">수정</button>`;
+  const el=ge('sem-disp');
+  if(!sems.length){el.innerHTML='<p style="font-size:12px;color:#9AA0A6;margin-bottom:12px">설정된 학기가 없습니다</p>';return;}
+  const yrs=[...new Set(sems.map(s=>s.year))].sort();
+  el.innerHTML=yrs.map(y=>`<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:700;color:#5F6368;margin-bottom:4px">${y}년</div>${sems.filter(s=>s.year===y).map(s=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #DADCE0"><span style="font-weight:600">${s.name}</span><span style="color:#9AA0A6">${s.start_date} ~ ${s.end_date}</span></div>`).join('')}</div>`).join('')+`<button class="btn bs" onclick="openSemMo()" style="margin-top:4px;margin-bottom:12px">수정</button>`;
 }
 function openSemMo(){
-const yr=new Date().getFullYear();
-ge(‘sem-yr’).value=yr;
-_semRows=sems.filter(s=>s.year===yr).map(s=>({…s}));
-if(!_semRows.length) _semRows=[{name:‘1학기’,start_date:’’,end_date:’’},{name:‘여름방학’,start_date:’’,end_date:’’},{name:‘2학기’,start_date:’’,end_date:’’},{name:‘겨울방학’,start_date:’’,end_date:’’}];
-renderSemRows(); oo(‘ov-sem’);
+  const yr=new Date().getFullYear();
+  ge('sem-yr').value=yr;
+  _semRows=sems.filter(s=>s.year===yr).map(s=>({...s}));
+  if(!_semRows.length) _semRows=[{name:'1학기',start_date:'',end_date:''},{name:'여름방학',start_date:'',end_date:''},{name:'2학기',start_date:'',end_date:''},{name:'겨울방학',start_date:'',end_date:''}];
+  renderSemRows(); oo('ov-sem');
 }
+
 
 // ── 소성 가능 일자 찾기 ──
 function openAvailModal(){
-oo(‘ov-avail’);
-// 날짜 기본값: 오늘~한달 후
-const today=new Date();
-const nextMonth=new Date(today); nextMonth.setMonth(nextMonth.getMonth()+1);
-ge(‘av-sd’).value=today.toISOString().split(‘T’)[0];
-ge(‘av-ed’).value=nextMonth.toISOString().split(‘T’)[0];
-// 가마 셀렉트 채우기
-const kilnSel=ge(‘av-kiln’);
-kilnSel.innerHTML=’<option value="all">전체 가마</option>’+
-kilns.map(k=>`<option value="${k.id}">${k.name}</option>`).join(’’);
-kilnSel.onchange=updateAvailTypes;
-updateAvailTypes();
-ge(‘av-result’).style.display=‘none’;
+  // 초기화 먼저
+  const today=new Date();
+  const nextMonth=new Date(today); nextMonth.setMonth(nextMonth.getMonth()+1);
+  ge('av-sd').value=today.toISOString().split('T')[0];
+  ge('av-ed').value=nextMonth.toISOString().split('T')[0];
+  const kilnSel=ge('av-kiln');
+  kilnSel.innerHTML='<option value="all">전체 가마</option>'+
+    kilns.map(k=>`<option value="${k.id}">${k.name}</option>`).join('');
+  kilnSel.onchange=updateAvailTypes;
+  updateAvailTypes();
+  ge('av-result').style.display='none';
+  // 초기화 완료 후 모달 열기
+  oo('ov-avail');
 }
 
 function updateAvailTypes(){
-const kilnVal=ge(‘av-kiln’).value;
-const typeSel=ge(‘av-type’);
-typeSel.innerHTML=’<option value="all">전체 소성 종류</option>’;
-if(kilnVal===‘all’){
-// 전체 가마의 모든 소성 종류
-const allTypes=new Set();
-kilns.forEach(k=>k.types.forEach(t=>allTypes.add(t.name)));
-typeSel.innerHTML+=[…allTypes].map(n=>`<option value="${n}">${n}</option>`).join(’’);
-}else{
-const k=kilns.find(x=>String(x.id)===kilnVal);
-if(k) typeSel.innerHTML+=k.types.map(t=>`<option value="${t.name}">${t.name} (가열 ${fH(t.heatHours)} / 냉각 ${fH(t.coolHours)})</option>`).join(’’);
-}
+  const kilnVal=ge('av-kiln').value;
+  const typeSel=ge('av-type');
+  typeSel.innerHTML='<option value="all">전체 소성 종류</option>';
+  if(kilnVal==='all'){
+    // 전체 가마의 모든 소성 종류
+    const allTypes=new Set();
+    kilns.forEach(k=>k.types.forEach(t=>allTypes.add(t.name)));
+    typeSel.innerHTML+=[...allTypes].map(n=>`<option value="${n}">${n}</option>`).join('');
+  }else{
+    const k=kilns.find(x=>String(x.id)===kilnVal);
+    if(k) typeSel.innerHTML+=k.types.map(t=>`<option value="${t.name}">${t.name} (가열 ${fH(t.heatHours)} / 냉각 ${fH(t.coolHours)})</option>`).join('');
+  }
 }
 
 function findAvail(){
-const sdStr=ge(‘av-sd’).value, edStr=ge(‘av-ed’).value;
-const fromTime=ge(‘av-from’).value||‘08:00’;
-const toTime  =ge(‘av-to’).value  ||‘18:00’;
-const kilnVal =ge(‘av-kiln’).value;
-const typeVal =ge(‘av-type’).value;
+  const sdStr=ge('av-sd').value, edStr=ge('av-ed').value;
+  const fromTime=ge('av-from').value||'08:00';
+  const toTime  =ge('av-to').value  ||'18:00';
+  const kilnVal =ge('av-kiln').value;
+  const typeVal =ge('av-type').value;
 
-if(!sdStr||!edStr){alert(‘날짜를 입력해주세요’);return;}
+  if(!sdStr||!edStr){alert('날짜를 입력해주세요');return;}
 
-ge(‘av-result’).style.display=‘none’;
-ge(‘av-loading’).style.display=‘block’;
+  ge('av-result').style.display='none';
+  ge('av-loading').style.display='block';
 
-setTimeout(()=>{
-try{
-const results=calcAvail(sdStr,edStr,fromTime,toTime,kilnVal,typeVal);
-renderAvailResults(results,kilnVal,typeVal);
-}catch(e){
-alert(’계산 중 오류: ’+e.message);
-}
-ge(‘av-loading’).style.display=‘none’;
-},100);
+  setTimeout(()=>{
+    try{
+      const results=calcAvail(sdStr,edStr,fromTime,toTime,kilnVal,typeVal);
+      renderAvailResults(results,kilnVal,typeVal);
+    }catch(e){
+      alert('계산 중 오류: '+e.message);
+    }
+    ge('av-loading').style.display='none';
+  },100);
 }
 
 function calcAvail(sdStr,edStr,fromTime,toTime,kilnVal,typeVal){
-const startD=new Date(sdStr+‘T00:00:00’);
-const endD  =new Date(edStr+‘T23:59:59’);
-const [fH2,fM]=fromTime.split(’:’).map(Number);
-const [tH2,tM]=toTime.split(’:’).map(Number);
+  const startD=new Date(sdStr+'T00:00:00');
+  const endD  =new Date(edStr+'T23:59:59');
+  const [fH2,fM]=fromTime.split(':').map(Number);
+  const [tH2,tM]=toTime.split(':').map(Number);
 
-// 검색할 가마+소성 종류 목록
-const targets=[];
-kilns.forEach(k=>{
-if(kilnVal!==‘all’&&String(k.id)!==kilnVal) return;
-k.types.forEach(t=>{
-if(typeVal!==‘all’&&t.name!==typeVal) return;
-targets.push({kiln:k, type:t});
-});
-});
-
-// 기존 소성 전력 사용 구간 (가열 시간만)
-const powerSlots=[…students,…firings].map(f=>({
-start:new Date(f.start_at),
-end:new Date(f.peak_at) // 전력 종료 = 최고온도 도달 시점
-}));
-
-const results=[];
-
-// 날짜별로 순회
-for(let d=new Date(startD);d<=endD;d.setDate(d.getDate()+1)){
-const dow=d.getDay();
-if(dow===0||dow===6) continue; // 주말 제외
-const dKey2=dk(d0(new Date(d)));
-if(blkSet&&blkSet.has(dKey2)) continue; // 소성불가일 제외
-
-```
-// 이 날의 가능한 시작 시간들 (from~to 범위, 30분 단위)
-for(let h=fH2;h<=tH2;h++){
-  for(let m=(h===fH2?fM:0);m<60;m+=30){
-    if(h===tH2&&m>tM) break;
-
-    targets.forEach(({kiln,type})=>{
-      const trialStart=new Date(d);
-      trialStart.setHours(h,m,0,0);
-      const trialPeak=addH(trialStart,type.heatHours); // 전력 종료
-      const trialEnd =addH(trialPeak,type.coolHours);  // 소성 완전 종료
-
-      // 전력 겹치는 기존 소성이 있는지 확인
-      const conflict=powerSlots.some(s=>{
-        // 새 소성의 가열구간(trialStart~trialPeak)과 기존 가열구간이 겹치면 불가
-        return trialStart < s.end && trialPeak > s.start;
-      });
-
-      if(!conflict){
-        // 중복 제거 (같은 가마+날짜+시간 조합)
-        const key=`${kiln.id}_${trialStart.toISOString()}`;
-        if(!results.find(r=>r.key===key)){
-          results.push({
-            key, kiln, type,
-            start:new Date(trialStart),
-            peak:new Date(trialPeak),
-            end:new Date(trialEnd)
-          });
-        }
-      }
+  // 검색할 가마+소성 종류 목록
+  const targets=[];
+  kilns.forEach(k=>{
+    if(kilnVal!=='all'&&String(k.id)!==kilnVal) return;
+    k.types.forEach(t=>{
+      if(typeVal!=='all'&&t.name!==typeVal) return;
+      targets.push({kiln:k, type:t});
     });
+  });
+
+  // 기존 소성 전력 사용 구간 (가열 시간만)
+  const powerSlots=[...students,...firings].map(f=>({
+    start:new Date(f.start_at),
+    end:new Date(f.peak_at) // 전력 종료 = 최고온도 도달 시점
+  }));
+
+  const results=[];
+
+  // 날짜별로 순회
+  for(let d=new Date(startD);d<=endD;d.setDate(d.getDate()+1)){
+    const dow=d.getDay();
+    if(dow===0||dow===6) continue; // 주말 제외
+    const dKey2=dk(d0(new Date(d)));
+    if(blkSet&&blkSet.has(dKey2)) continue; // 소성불가일 제외
+
+    // 이 날의 가능한 시작 시간들 (from~to 범위, 30분 단위)
+    for(let h=fH2;h<=tH2;h++){
+      for(let m=(h===fH2?fM:0);m<60;m+=30){
+        if(h===tH2&&m>tM) break;
+
+        targets.forEach(({kiln,type})=>{
+          const trialStart=new Date(d);
+          trialStart.setHours(h,m,0,0);
+          const trialPeak=addH(trialStart,type.heatHours); // 전력 종료
+          const trialEnd =addH(trialPeak,type.coolHours);  // 소성 완전 종료
+
+          // 전력 겹치는 기존 소성이 있는지 확인
+          const conflict=powerSlots.some(s=>{
+            // 새 소성의 가열구간(trialStart~trialPeak)과 기존 가열구간이 겹치면 불가
+            return trialStart < s.end && trialPeak > s.start;
+          });
+
+          if(!conflict){
+            // 중복 제거 (같은 가마+날짜+시간 조합)
+            const key=`${kiln.id}_${trialStart.toISOString()}`;
+            if(!results.find(r=>r.key===key)){
+              results.push({
+                key, kiln, type,
+                start:new Date(trialStart),
+                peak:new Date(trialPeak),
+                end:new Date(trialEnd)
+              });
+            }
+          }
+        });
+      }
+    }
   }
-}
-```
 
-}
-
-// 날짜 → 가마 → 시간 순 정렬
-results.sort((a,b)=>a.start-b.start||a.kiln.name.localeCompare(b.kiln.name));
-return results;
+  // 날짜 → 가마 → 시간 순 정렬
+  results.sort((a,b)=>a.start-b.start||a.kiln.name.localeCompare(b.kiln.name));
+  return results;
 }
 
 // 전역 blocked set 참조 (buildCal에서 세팅)
 let blkSet=new Set();
 
 function renderAvailResults(results,kilnVal,typeVal){
-const el=ge(‘av-result’);
-const body=ge(‘av-result-body’);
-el.style.display=‘block’;
+  const el=ge('av-result');
+  const body=ge('av-result-body');
+  el.style.display='block';
 
-if(!results.length){
-ge(‘av-result-header’).textContent=‘❌ 해당 기간에 소성 가능한 일자가 없습니다’;
-body.innerHTML=’<div style="color:#9AA0A6;font-size:13px;padding:20px 0">다른 날짜 범위나 조건으로 다시 검색해보세요</div>’;
-return;
-}
+  if(!results.length){
+    ge('av-result-header').textContent='❌ 해당 기간에 소성 가능한 일자가 없습니다';
+    body.innerHTML='<div style="color:#9AA0A6;font-size:13px;padding:20px 0">다른 날짜 범위나 조건으로 다시 검색해보세요</div>';
+    return;
+  }
 
-ge(‘av-result-header’).textContent=`✅ ${results.length}개의 가능한 시간대를 찾았습니다`;
+  ge('av-result-header').textContent=`✅ ${results.length}개의 가능한 시간대를 찾았습니다`;
 
-// 날짜별로 그룹핑
-const byDate={};
-results.forEach(r=>{
-const dk2=dk(d0(r.start));
-if(!byDate[dk2]) byDate[dk2]=[];
-byDate[dk2].push(r);
-});
+  // 날짜별로 그룹핑
+  const byDate={};
+  results.forEach(r=>{
+    const dk2=dk(d0(r.start));
+    if(!byDate[dk2]) byDate[dk2]=[];
+    byDate[dk2].push(r);
+  });
 
-const colors=[’#D50000’,’#E67C00’,’#0B8043’,’#1A73E8’,’#8E24AA’];
-const days=[‘일’,‘월’,‘화’,‘수’,‘목’,‘금’,‘토’];
+  const colors=['#D50000','#E67C00','#0B8043','#1A73E8','#8E24AA'];
+  const days=['일','월','화','수','목','금','토'];
 
-body.innerHTML=Object.entries(byDate).map(([dateKey,items])=>{
-const d=new Date(dateKey);
-const dayStr=`${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`;
-return `<div style="margin-bottom:12px"> <div style="font-size:13px;font-weight:700;color:#5F6368;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #DADCE0">${dayStr}</div> <div style="display:flex;flex-direction:column;gap:6px"> ${items.map(r=>{ const ki=kilns.findIndex(k=>k.id===r.kiln.id); const col=colors[ki%colors.length]; return`
-<div style="background:#fff;border:1px solid #DADCE0;border-left:4px solid ${col};border-radius:6px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-<div>
-<div style="font-size:13px;font-weight:700;color:${col}">${r.kiln.name} · ${r.type.name}</div>
-<div style="font-size:12px;color:#5F6368;margin-top:2px">
-🔥 ${p2(r.start.getHours())}:${p2(r.start.getMinutes())} 시작
-→ 🌡️ ${p2(r.peak.getHours())}:${p2(r.peak.getMinutes())} 최고온도
-→ ❄️ ${p2(r.end.getHours())}:${p2(r.end.getDate()!==r.start.getDate()?r.end.getMonth()+1+‘월 ‘+r.end.getDate()+‘일 ‘:’’)}${p2(r.end.getHours())}:${p2(r.end.getMinutes())} 종료
-</div>
-<div style="font-size:11px;color:#9AA0A6;margin-top:2px">가열 ${fH(r.type.heatHours)} + 냉각 ${fH(r.type.coolHours)}</div>
-</div>
-</div>`; }).join('')} </div> </div>`;
-}).join(’’);
+  body.innerHTML=Object.entries(byDate).map(([dateKey,items])=>{
+    const d=new Date(dateKey);
+    const dayStr=`${d.getMonth()+1}월 ${d.getDate()}일 (${days[d.getDay()]})`;
+    return `
+      <div style="margin-bottom:12px">
+        <div style="font-size:13px;font-weight:700;color:#5F6368;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid #DADCE0">${dayStr}</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${items.map(r=>{
+            const ki=kilns.findIndex(k=>k.id===r.kiln.id);
+            const col=colors[ki%colors.length];
+            return `
+              <div style="background:#fff;border:1px solid #DADCE0;border-left:4px solid ${col};border-radius:6px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:${col}">${r.kiln.name} · ${r.type.name}</div>
+                  <div style="font-size:12px;color:#5F6368;margin-top:2px">
+                    🔥 ${p2(r.start.getHours())}:${p2(r.start.getMinutes())} 시작
+                    → 🌡️ ${p2(r.peak.getHours())}:${p2(r.peak.getMinutes())} 최고온도
+                    → ❄️ ${p2(r.end.getHours())}:${p2(r.end.getDate()!==r.start.getDate()?r.end.getMonth()+1+'월 '+r.end.getDate()+'일 ':'')}${p2(r.end.getHours())}:${p2(r.end.getMinutes())} 종료
+                  </div>
+                  <div style="font-size:11px;color:#9AA0A6;margin-top:2px">가열 ${fH(r.type.heatHours)} + 냉각 ${fH(r.type.coolHours)}</div>
+                </div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }).join('');
 }
 
 // ── 엑셀 업로드 ──
 let uploadRows=[];
 
 function initUpload(){
-ge(‘ul-file’).value=’’;
-ge(‘ul-preview’).style.display=‘none’;
-ge(‘ul-err’).style.display=‘none’;
-ge(‘ul-confirm-btn’).disabled=true;
-uploadRows=[];
-ge(‘ul-file’).onchange=handleUploadFile;
+  ge('ul-file').value='';
+  ge('ul-preview').style.display='none';
+  ge('ul-err').style.display='none';
+  ge('ul-confirm-btn').disabled=true;
+  uploadRows=[];
+  ge('ul-file').onchange=handleUploadFile;
 }
 
 function handleUploadFile(e){
-const file=e.target.files[0];
-if(!file) return;
-const reader=new FileReader();
-reader.onload=function(ev){
-try{
-const wb=XLSX.read(ev.target.result,{type:‘binary’});
-const ws=wb.Sheets[wb.SheetNames[0]];
-const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:’’});
-if(rows.length<2){showUlErr(‘데이터가 없습니다’);return;}
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const wb=XLSX.read(ev.target.result,{type:'binary'});
+      const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      if(rows.length<2){showUlErr('데이터가 없습니다');return;}
 
-```
-  // 헤더 행 찾기 (소성 날짜 포함된 행)
-  let headerRow=-1;
-  for(let i=0;i<Math.min(5,rows.length);i++){
-    const rowStr=rows[i].join('');
-    if(rowStr.includes('소성날짜')||rowStr.includes('소성 날짜')||rowStr.includes('날짜')){
-      headerRow=i; break;
-    }
-  }
-  if(headerRow===-1) headerRow=0;
+      // 헤더 행 찾기 (소성 날짜 포함된 행)
+      let headerRow=-1;
+      for(let i=0;i<Math.min(5,rows.length);i++){
+        const rowStr=rows[i].join('');
+        if(rowStr.includes('소성날짜')||rowStr.includes('소성 날짜')||rowStr.includes('날짜')){
+          headerRow=i; break;
+        }
+      }
+      if(headerRow===-1) headerRow=0;
 
-  const headers=rows[headerRow].map(h=>String(h).trim());
-  // 컬럼 인덱스 찾기
-  const findCol=(keywords)=>{
-    for(const kw of keywords){
-      const idx=headers.findIndex(h=>h.includes(kw));
-      if(idx>=0) return idx;
+      const headers=rows[headerRow].map(h=>String(h).trim());
+      // 컬럼 인덱스 찾기
+      const findCol=(keywords)=>{
+        for(const kw of keywords){
+          const idx=headers.findIndex(h=>h.includes(kw));
+          if(idx>=0) return idx;
+        }
+        return -1;
+      };
+      const colDate  =findCol(['소성날짜','소성 날짜','날짜','일자','date']);
+      const colKiln  =findCol(['가마종류','가마 종류','가마','kiln']);
+      const colMgr   =findCol(['담당자','담당','manager']);
+      const colMemo  =findCol(['비고','메모','memo','note']);
+
+      if(colDate===-1){showUlErr('소성 날짜 컬럼을 찾을 수 없습니다. 컬럼명에 "날짜"가 포함되어야 합니다');return;}
+
+      // 데이터 파싱
+      uploadRows=[];
+      for(let i=headerRow+1;i<rows.length;i++){
+        const row=rows[i];
+        const rawDate=String(row[colDate]||'').trim();
+        if(!rawDate||rawDate==='') continue;
+
+        // 날짜+시간 파싱
+        const parsed=parseKoreanDateTime(rawDate);
+        if(!parsed) continue;
+
+        // 가마 파싱
+        const rawKiln=colKiln>=0?String(row[colKiln]||'').trim():'';
+        const {kilnId,firingName}=parseKilnType(rawKiln);
+
+        const mgr  =colMgr >=0?String(row[colMgr] ||'').trim():null;
+        const memo =colMemo>=0?String(row[colMemo]||'').trim():null;
+
+        uploadRows.push({
+          start:parsed, kilnId, firingName,
+          manager_name:mgr||null, memo:memo||null, rawDate, rawKiln
+        });
+      }
+
+      if(!uploadRows.length){showUlErr('파싱된 데이터가 없습니다. 날짜 형식을 확인해주세요');return;}
+
+      // 미리보기
+      ge('ul-err').style.display='none';
+      ge('ul-preview').style.display='block';
+      ge('ul-count').textContent=`✅ 총 ${uploadRows.length}건 인식됨`;
+      ge('ul-preview-body').innerHTML=uploadRows.slice(0,5).map(r=>`
+        <div style="padding:3px 0;border-bottom:1px solid #DADCE0">
+          📅 ${r.rawDate} | ${r.rawKiln||'가마미상'} | 담당: ${r.manager_name||'-'}
+        </div>`).join('');
+      ge('ul-confirm-btn').disabled=false;
+    }catch(err){
+      showUlErr('파일 읽기 오류: '+err.message);
     }
-    return -1;
   };
-  const colDate  =findCol(['소성날짜','소성 날짜','날짜','일자','date']);
-  const colKiln  =findCol(['가마종류','가마 종류','가마','kiln']);
-  const colMgr   =findCol(['담당자','담당','manager']);
-  const colMemo  =findCol(['비고','메모','memo','note']);
-
-  if(colDate===-1){showUlErr('소성 날짜 컬럼을 찾을 수 없습니다. 컬럼명에 "날짜"가 포함되어야 합니다');return;}
-
-  // 데이터 파싱
-  uploadRows=[];
-  for(let i=headerRow+1;i<rows.length;i++){
-    const row=rows[i];
-    const rawDate=String(row[colDate]||'').trim();
-    if(!rawDate||rawDate==='') continue;
-
-    // 날짜+시간 파싱
-    const parsed=parseKoreanDateTime(rawDate);
-    if(!parsed) continue;
-
-    // 가마 파싱
-    const rawKiln=colKiln>=0?String(row[colKiln]||'').trim():'';
-    const {kilnId,firingName}=parseKilnType(rawKiln);
-
-    const mgr  =colMgr >=0?String(row[colMgr] ||'').trim():null;
-    const memo =colMemo>=0?String(row[colMemo]||'').trim():null;
-
-    uploadRows.push({
-      start:parsed, kilnId, firingName,
-      manager_name:mgr||null, memo:memo||null, rawDate, rawKiln
-    });
-  }
-
-  if(!uploadRows.length){showUlErr('파싱된 데이터가 없습니다. 날짜 형식을 확인해주세요');return;}
-
-  // 미리보기
-  ge('ul-err').style.display='none';
-  ge('ul-preview').style.display='block';
-  ge('ul-count').textContent=`✅ 총 ${uploadRows.length}건 인식됨`;
-  ge('ul-preview-body').innerHTML=uploadRows.slice(0,5).map(r=>`
-    <div style="padding:3px 0;border-bottom:1px solid #DADCE0">
-      📅 ${r.rawDate} | ${r.rawKiln||'가마미상'} | 담당: ${r.manager_name||'-'}
-    </div>`).join('');
-  ge('ul-confirm-btn').disabled=false;
-}catch(err){
-  showUlErr('파일 읽기 오류: '+err.message);
-}
-```
-
-};
-reader.readAsBinaryString(file);
+  reader.readAsBinaryString(file);
 }
 
 function parseKoreanDateTime(str){
-// “2월 6일 오전 11시 37분” / “2025-02-06 11:37” / “2/6 11:37” 등 다양한 형식 처리
-str=str.replace(/\s+/g,’ ’).trim();
+  // "2월 6일 오전 11시 37분" / "2025-02-06 11:37" / "2/6 11:37" 등 다양한 형식 처리
+  str=str.replace(/\s+/g,' ').trim();
 
-// 한국어 형식: X월 X일 오전/오후 X시 X분
-const korMatch=str.match(/(\d+)월\s*(\d+)일[\s(]*(?:오전|오후)?\s*(\d+)시[\s:]*(\d+)?분?/);
-if(korMatch){
-const month=parseInt(korMatch[1])-1;
-const day  =parseInt(korMatch[2]);
-const ampm =str.includes(‘오후’)?‘pm’:‘am’;
-let hour   =parseInt(korMatch[3]);
-const min  =parseInt(korMatch[4]||‘0’);
-const year =new Date().getFullYear();
-if(ampm===‘pm’&&hour<12) hour+=12;
-if(ampm===‘am’&&hour===12) hour=0;
-const d=new Date(year,month,day,hour,min);
-if(!isNaN(d.getTime())) return d;
-}
+  // 한국어 형식: X월 X일 오전/오후 X시 X분
+  const korMatch=str.match(/(\d+)월\s*(\d+)일[\s(]*(?:오전|오후)?\s*(\d+)시[\s:]*(\d+)?분?/);
+  if(korMatch){
+    const month=parseInt(korMatch[1])-1;
+    const day  =parseInt(korMatch[2]);
+    const ampm =str.includes('오후')?'pm':'am';
+    let hour   =parseInt(korMatch[3]);
+    const min  =parseInt(korMatch[4]||'0');
+    const year =new Date().getFullYear();
+    if(ampm==='pm'&&hour<12) hour+=12;
+    if(ampm==='am'&&hour===12) hour=0;
+    const d=new Date(year,month,day,hour,min);
+    if(!isNaN(d.getTime())) return d;
+  }
 
-// 숫자 형식 시도
-const d=new Date(str);
-if(!isNaN(d.getTime())) return d;
+  // 숫자 형식 시도
+  const d=new Date(str);
+  if(!isNaN(d.getTime())) return d;
 
-// YYYY-MM-DD HH:MM
-const numMatch=str.match(/(\d{4})[.-/](\d{1,2})[.-/](\d{1,2})[\sT]?(\d{1,2})?:?(\d{1,2})?/);
-if(numMatch){
-const d2=new Date(
-parseInt(numMatch[1]),parseInt(numMatch[2])-1,parseInt(numMatch[3]),
-parseInt(numMatch[4]||0),parseInt(numMatch[5]||0)
-);
-if(!isNaN(d2.getTime())) return d2;
-}
-return null;
+  // YYYY-MM-DD HH:MM
+  const numMatch=str.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})[\sT]?(\d{1,2})?:?(\d{1,2})?/);
+  if(numMatch){
+    const d2=new Date(
+      parseInt(numMatch[1]),parseInt(numMatch[2])-1,parseInt(numMatch[3]),
+      parseInt(numMatch[4]||0),parseInt(numMatch[5]||0)
+    );
+    if(!isNaN(d2.getTime())) return d2;
+  }
+  return null;
 }
 
 function parseKilnType(raw){
-// “소형(초벌)” → kilnId=소형가마 id, firingName=“초벌”
-// “대형(건조)” → 대형가마, 건조
-// “중형” → 중형가마, 재벌(기본)
-const bracket=raw.match(/[（(]([^)）]+)[)）]/);
-const firingName=bracket?bracket[1].trim():null;
-const kilnName=raw.replace(/[（(][^)）]+[)）]/g,’’).trim();
+  // "소형(초벌)" → kilnId=소형가마 id, firingName="초벌"
+  // "대형(건조)" → 대형가마, 건조
+  // "중형" → 중형가마, 재벌(기본)
+  const bracket=raw.match(/[（(]([^)）]+)[)）]/);
+  const firingName=bracket?bracket[1].trim():null;
+  const kilnName=raw.replace(/[（(][^)）]+[)）]/g,'').trim();
 
-// 가마 매핑
-let kilnId=null;
-if(kilns.length){
-const found=kilns.find(k=>{
-const kn=k.name.replace(/가마/g,’’).trim();
-return kilnName.includes(kn)||kilnName.includes(k.name)||k.name.includes(kilnName);
-});
-if(found) kilnId=found.id;
-else if(kilnName.includes(‘대형’)) kilnId=kilns.find(k=>k.name.includes(‘대형’))?.id||kilns[0]?.id;
-else if(kilnName.includes(‘중형’)) kilnId=kilns.find(k=>k.name.includes(‘중형’))?.id||kilns[1]?.id;
-else if(kilnName.includes(‘소형’)) kilnId=kilns.find(k=>k.name.includes(‘소형’))?.id||kilns[2]?.id;
-else kilnId=kilns[0]?.id;
-}
+  // 가마 매핑
+  let kilnId=null;
+  if(kilns.length){
+    const found=kilns.find(k=>{
+      const kn=k.name.replace(/가마/g,'').trim();
+      return kilnName.includes(kn)||kilnName.includes(k.name)||k.name.includes(kilnName);
+    });
+    if(found) kilnId=found.id;
+    else if(kilnName.includes('대형')) kilnId=kilns.find(k=>k.name.includes('대형'))?.id||kilns[0]?.id;
+    else if(kilnName.includes('중형')) kilnId=kilns.find(k=>k.name.includes('중형'))?.id||kilns[1]?.id;
+    else if(kilnName.includes('소형')) kilnId=kilns.find(k=>k.name.includes('소형'))?.id||kilns[2]?.id;
+    else kilnId=kilns[0]?.id;
+  }
 
-// 소성 종류 매핑 (괄호에서 못 찾으면 가마의 기본 소성 종류)
-let fn=firingName;
-if(!fn&&kilnId){
-const k=kilns.find(x=>x.id===kilnId);
-fn=k?.types?.[0]?.name||null;
-}
+  // 소성 종류 매핑 (괄호에서 못 찾으면 가마의 기본 소성 종류)
+  let fn=firingName;
+  if(!fn&&kilnId){
+    const k=kilns.find(x=>x.id===kilnId);
+    fn=k?.types?.[0]?.name||null;
+  }
 
-return {kilnId, firingName:fn};
+  return {kilnId, firingName:fn};
 }
 
 function showUlErr(msg){
-ge(‘ul-err’).textContent=’⚠️ ’+msg;
-ge(‘ul-err’).style.display=‘block’;
-ge(‘ul-confirm-btn’).disabled=true;
+  ge('ul-err').textContent='⚠️ '+msg;
+  ge('ul-err').style.display='block';
+  ge('ul-confirm-btn').disabled=true;
 }
 
 async function confirmUpload(){
-if(!uploadRows.length) return;
-ge(‘ul-confirm-btn’).disabled=true;
-ge(‘ul-confirm-btn’).textContent=‘처리 중…’;
+  if(!uploadRows.length) return;
+  ge('ul-confirm-btn').disabled=true;
+  ge('ul-confirm-btn').textContent='처리 중...';
 
-let ok=0,fail=0;
-for(const r of uploadRows){
-if(!r.kilnId||!r.start) {fail++;continue;}
-const k=kilns.find(x=>x.id===r.kilnId);
-if(!k){fail++;continue;}
-const ft=k.types.find(t=>t.name===r.firingName)||k.types[0];
-if(!ft){fail++;continue;}
+  let ok=0,fail=0;
+  for(const r of uploadRows){
+    if(!r.kilnId||!r.start) {fail++;continue;}
+    const k=kilns.find(x=>x.id===r.kilnId);
+    if(!k){fail++;continue;}
+    const ft=k.types.find(t=>t.name===r.firingName)||k.types[0];
+    if(!ft){fail++;continue;}
 
-```
-const start=r.start;
-const peak=addH(start,ft.heatHours);
-const end=addH(peak,ft.coolHours);
-const data={
-  kiln_id:r.kilnId, firing_name:ft.name, student_name:null,
-  manager_name:r.manager_name||null,
-  start_at:start.toISOString(), peak_at:peak.toISOString(), end_at:end.toISOString(),
-  heat_hours:ft.heatHours, cool_hours:ft.coolHours,
-  memo:r.memo||null
-};
-const ni={id:Date.now()+ok,...data};
-if(sb){try{const{data:d}=await sb.from('firings').insert(data).select().single();if(d)ni.id=d.id;}catch(e){}}
-firings.push(ni);
-ok++;
-```
+    const start=r.start;
+    const peak=addH(start,ft.heatHours);
+    const end=addH(peak,ft.coolHours);
+    const data={
+      kiln_id:r.kilnId, firing_name:ft.name, student_name:null,
+      manager_name:r.manager_name||null,
+      start_at:start.toISOString(), peak_at:peak.toISOString(), end_at:end.toISOString(),
+      heat_hours:ft.heatHours, cool_hours:ft.coolHours,
+      memo:r.memo||null
+    };
+    const ni={id:Date.now()+ok,...data};
+    if(sb){try{const{data:d}=await sb.from('firings').insert(data).select().single();if(d)ni.id=d.id;}catch(e){}}
+    firings.push(ni);
+    ok++;
+  }
 
-}
-
-saveLocal(); buildCal();
-ge(‘ul-confirm-btn’).textContent=‘가져오기’;
-ge(‘ul-confirm-btn’).disabled=false;
-co(‘ov-ul’);
-alert(`✅ ${ok}건 가져오기 완료${fail>0?' ('+fail+'건 실패)':''}`);
+  saveLocal(); buildCal();
+  ge('ul-confirm-btn').textContent='가져오기';
+  ge('ul-confirm-btn').disabled=false;
+  co('ov-ul');
+  alert(`✅ ${ok}건 가져오기 완료${fail>0?' ('+fail+'건 실패)':''}`);
 }
 
 // ── 엑셀 다운로드 ──
 function renderDlBtns(){
-const all=[…students,…firings];
-const yrs=[…new Set(all.map(f=>new Date(f.start_at).getFullYear()))].sort().reverse();
-let h=`<button class="dl-btn" onclick="oo('ov-dl')">📥 전체 내보내기</button>`;
-yrs.forEach(y=>h+=`<button class="dl-btn" onclick="dlYr(${y})">📥 ${y}년 소성 내역</button>`);
-sems.forEach(s=>h+=`<button class="dl-btn" onclick="dlSem(${s.id})">📥 ${s.year}년 ${s.name}</button>`);
-ge(‘dl-btns’).innerHTML=h;
+  const all=[...students,...firings];
+  const yrs=[...new Set(all.map(f=>new Date(f.start_at).getFullYear()))].sort().reverse();
+  let h=`<button class="dl-btn" onclick="oo('ov-dl')">📥 전체 내보내기</button>`;
+  yrs.forEach(y=>h+=`<button class="dl-btn" onclick="dlYr(${y})">📥 ${y}년 소성 내역</button>`);
+  sems.forEach(s=>h+=`<button class="dl-btn" onclick="dlSem(${s.id})">📥 ${s.year}년 ${s.name}</button>`);
+  ge('dl-btns').innerHTML=h;
 }
 function openDl(){
-const all=[…students,…firings];
-const yrs=[…new Set(all.map(f=>new Date(f.start_at).getFullYear()))].sort().reverse();
-ge(‘dl-year’).innerHTML=yrs.map(y=>`<option value="${y}">${y}년</option>`).join(’’);
-ge(‘dl-sem’).innerHTML=sems.map(s=>`<option value="${s.id}">${s.year}년 ${s.name}</option>`).join(’’);
-ge(‘dl-range’).value=‘all’; ge(‘dl-yf’).style.display=ge(‘dl-sf’).style.display=‘none’;
-oo(‘ov-dl’);
+  const all=[...students,...firings];
+  const yrs=[...new Set(all.map(f=>new Date(f.start_at).getFullYear()))].sort().reverse();
+  ge('dl-year').innerHTML=yrs.map(y=>`<option value="${y}">${y}년</option>`).join('');
+  ge('dl-sem').innerHTML=sems.map(s=>`<option value="${s.id}">${s.year}년 ${s.name}</option>`).join('');
+  ge('dl-range').value='all'; ge('dl-yf').style.display=ge('dl-sf').style.display='none';
+  oo('ov-dl');
 }
 function dlChange(){
-const v=ge(‘dl-range’).value;
-ge(‘dl-yf’).style.display=v===‘year’?‘block’:‘none’;
-ge(‘dl-sf’).style.display=v===‘semester’?‘block’:‘none’;
+  const v=ge('dl-range').value;
+  ge('dl-yf').style.display=v==='year'?'block':'none';
+  ge('dl-sf').style.display=v==='semester'?'block':'none';
 }
 function doDl(){
-const v=ge(‘dl-range’).value;
-if(v===‘year’) dlYr(+ge(‘dl-year’).value);
-else if(v===‘semester’) dlSem(ge(‘dl-sem’).value);
-else toXl([…students,…firings],‘소성내역_전체’);
-co(‘ov-dl’);
+  const v=ge('dl-range').value;
+  if(v==='year') dlYr(+ge('dl-year').value);
+  else if(v==='semester') dlSem(ge('dl-sem').value);
+  else toXl([...students,...firings],'소성내역_전체');
+  co('ov-dl');
 }
-function dlYr(y){toXl([…students,…firings].filter(f=>new Date(f.start_at).getFullYear()===y),`소성내역_${y}년`);}
+function dlYr(y){toXl([...students,...firings].filter(f=>new Date(f.start_at).getFullYear()===y),`소성내역_${y}년`);}
 function dlSem(sid){
-const s=sems.find(x=>String(x.id)===String(sid)); if(!s) return;
-const sd=new Date(s.start_date),ed=new Date(s.end_date); ed.setHours(23,59,59,999);
-toXl([…students,…firings].filter(f=>new Date(f.start_at)>=sd&&new Date(f.start_at)<=ed),`소성내역_${s.year}년_${s.name}`);
+  const s=sems.find(x=>String(x.id)===String(sid)); if(!s) return;
+  const sd=new Date(s.start_date),ed=new Date(s.end_date); ed.setHours(23,59,59,999);
+  toXl([...students,...firings].filter(f=>new Date(f.start_at)>=sd&&new Date(f.start_at)<=ed),`소성내역_${s.year}년_${s.name}`);
 }
 function toXl(data,fn){
-if(!data.length){alert(‘해당 기간 내역이 없습니다’);return;}
-const rows=data.map(f=>{
-const s=new Date(f.start_at),pk=new Date(f.peak_at),en=new Date(f.end_at);
-return {
-‘구분’:f.student_name?‘학생예약’:‘일반소성’,
-‘소성 날짜’:`${s.getFullYear()}.${p2(s.getMonth()+1)}.${p2(s.getDate())}`,
-‘소성 시작 시간’:`${p2(s.getHours())}:${p2(s.getMinutes())}`,
-‘최고온도 도달’:`${pk.getFullYear()}.${p2(pk.getMonth()+1)}.${p2(pk.getDate())} ${p2(pk.getHours())}:${p2(pk.getMinutes())}`,
-‘소성 종료’:`${en.getFullYear()}.${p2(en.getMonth()+1)}.${p2(en.getDate())} ${p2(en.getHours())}:${p2(en.getMinutes())}`,
-‘가마 종류’:kilns.find(k=>k.id===f.kiln_id)?.name||’-’,
-‘소성 종류’:f.firing_name||’-’,
-‘학생 이름’:f.student_name||’-’,
-‘담당자’:f.manager_name||’-’,
-‘비고’:f.memo||’’
-};
-});
-const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb,ws,‘소성내역’);
-XLSX.writeFile(wb,`${fn}.xlsx`);
+  if(!data.length){alert('해당 기간 내역이 없습니다');return;}
+  const rows=data.map(f=>{
+    const s=new Date(f.start_at),pk=new Date(f.peak_at),en=new Date(f.end_at);
+    return {
+      '구분':f.student_name?'학생예약':'일반소성',
+      '소성 날짜':`${s.getFullYear()}.${p2(s.getMonth()+1)}.${p2(s.getDate())}`,
+      '소성 시작 시간':`${p2(s.getHours())}:${p2(s.getMinutes())}`,
+      '최고온도 도달':`${pk.getFullYear()}.${p2(pk.getMonth()+1)}.${p2(pk.getDate())} ${p2(pk.getHours())}:${p2(pk.getMinutes())}`,
+      '소성 종료':`${en.getFullYear()}.${p2(en.getMonth()+1)}.${p2(en.getDate())} ${p2(en.getHours())}:${p2(en.getMinutes())}`,
+      '가마 종류':kilns.find(k=>k.id===f.kiln_id)?.name||'-',
+      '소성 종류':f.firing_name||'-',
+      '학생 이름':f.student_name||'-',
+      '담당자':f.manager_name||'-',
+      '비고':f.memo||''
+    };
+  });
+  const ws=XLSX.utils.json_to_sheet(rows),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'소성내역');
+  XLSX.writeFile(wb,`${fn}.xlsx`);
 }
 
 // ── 유틸 ──
-function oo(id){ge(id).classList.add(‘on’);}
-function co(id){ge(id).classList.remove(‘on’);if(id===‘ov-login’){ge(‘pw-input’).value=’’;ge(‘pw-err’).style.display=‘none’;}}
+function oo(id){ge(id).classList.add('on');}
+function co(id){ge(id).classList.remove('on');if(id==='ov-login'){ge('pw-input').value='';ge('pw-err').style.display='none';}}
 function ge(id){return document.getElementById(id);}
 function sd(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
 function d0(d){const r=new Date(d);r.setHours(0,0,0,0);return r;}
 function dk(d){return `${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;}
-function fmt(d){const days=[‘일’,‘월’,‘화’,‘수’,‘목’,‘금’,‘토’];return `${d.getFullYear()}.${p2(d.getMonth()+1)}.${p2(d.getDate())}(${days[d.getDay()]}) ${p2(d.getHours())}:${p2(d.getMinutes())}`;}
+function fmt(d){const days=['일','월','화','수','목','금','토'];return `${d.getFullYear()}.${p2(d.getMonth()+1)}.${p2(d.getDate())}(${days[d.getDay()]}) ${p2(d.getHours())}:${p2(d.getMinutes())}`;}
 function fS(d){return `${p2(d.getMonth()+1)}/${p2(d.getDate())} ${p2(d.getHours())}:${p2(d.getMinutes())}`;}
-function p2(n){return String(n).padStart(2,‘0’);}
+function p2(n){return String(n).padStart(2,'0');}
 function addH(d,h){return new Date(d.getTime()+h*3600000);}
 function fH(h){const a=Math.floor(h),b=Math.round((h-a)*60);return b?`${a}시간 ${b}분`:`${a}시간`;}
-function ea(s){return String(s).replace(/”/g,’"’).replace(/’/g,’'’);}
+function ea(s){return String(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
 init();
-window.addEventListener(‘resize’,()=>{clearTimeout(window._rt);window._rt=setTimeout(buildCal,150);});
+window.addEventListener('resize',()=>{clearTimeout(window._rt);window._rt=setTimeout(buildCal,150);});
 </script>
-
 </body>
 </html>
