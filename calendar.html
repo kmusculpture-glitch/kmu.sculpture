@@ -220,6 +220,43 @@ textarea:focus{border-color:#1A73E8;}
 </head>
 <body>
 
+<!-- 소성 가능 일자 팝업 -->
+<div style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);overflow-y:auto;padding:20px;" id="ov-avail" onclick="if(event.target===this)co('ov-avail')">
+  <div style="background:#fff;border-radius:8px;padding:20px;width:100%;max-width:580px;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.2)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div>
+        <div style="font-size:16px;font-weight:700">🔍 소성 가능 일자 찾기</div>
+        <div style="font-size:12px;color:#5F6368;margin-top:2px">전력이 겹치지 않는 소성 가능 시간을 찾아드립니다</div>
+      </div>
+      <button onclick="co('ov-avail')" style="border:none;background:none;font-size:20px;cursor:pointer;color:#5F6368;padding:4px">✕</button>
+    </div>
+    <div class="g2 f">
+      <div><label>검색 시작 날짜</label><input type="date" id="av-sd"></div>
+      <div><label>검색 종료 날짜</label><input type="date" id="av-ed"></div>
+    </div>
+    <div class="g2 f">
+      <div><label>가마 선택</label><select id="av-kiln" onchange="updateAvailTypes()"><option value="all">전체 가마</option></select></div>
+      <div><label>소성 종류</label><select id="av-type"><option value="all">전체 소성 종류</option></select></div>
+    </div>
+    <div class="f">
+      <label>소성 시작 가능 시간대</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="time" id="av-from" value="08:00" style="flex:1">
+        <span style="color:#5F6368;font-size:13px">~</span>
+        <input type="time" id="av-to" value="18:00" style="flex:1">
+      </div>
+    </div>
+    <button class="btn bp" style="width:100%;margin-top:8px;padding:10px;font-size:14px" onclick="findAvail()">🔍 찾기</button>
+    <div id="av-loading" style="display:none;text-align:center;padding:20px;color:#5F6368;margin-top:8px">
+      <div class="spinner" style="margin:0 auto 8px"></div>계산 중...
+    </div>
+    <div id="av-result" style="display:none;margin-top:12px">
+      <div id="av-result-header" style="font-size:14px;font-weight:700;margin-bottom:10px"></div>
+      <div id="av-result-body" style="max-height:400px;overflow-y:auto;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- 로그인 모달 -->
 <div class="ov" id="ov-login">
   <div class="mo sm">
@@ -498,54 +535,6 @@ textarea:focus{border-color:#1A73E8;}
   </div>
 
 
-    <!-- 검색 조건 -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="g2" style="margin-bottom:10px">
-        <div class="f">
-          <label>검색 시작 날짜</label>
-          <input type="date" id="av-sd">
-        </div>
-        <div class="f">
-          <label>검색 종료 날짜</label>
-          <input type="date" id="av-ed">
-        </div>
-      </div>
-      <div class="g2 f">
-        <div>
-          <label>가마 선택</label>
-          <select id="av-kiln">
-            <option value="all">전체 가마</option>
-          </select>
-        </div>
-        <div>
-          <label>소성 종류</label>
-          <select id="av-type">
-            <option value="all">전체 소성 종류</option>
-          </select>
-        </div>
-      </div>
-      <div class="f" style="margin-bottom:0">
-        <label>소성 시작 가능 시간대</label>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="time" id="av-from" value="08:00" style="flex:1">
-          <span style="color:#5F6368;font-size:13px">~</span>
-          <input type="time" id="av-to" value="18:00" style="flex:1">
-        </div>
-      </div>
-      <button class="btn bp" style="width:100%;margin-top:12px;padding:10px;font-size:14px" onclick="findAvail()">🔍 소성 가능 일자 찾기</button>
-    </div>
-
-    <!-- 결과 -->
-    <div id="av-result" style="display:none">
-      <div id="av-result-header" style="font-size:14px;font-weight:700;margin-bottom:10px;color:#202124"></div>
-      <div id="av-result-body"></div>
-    </div>
-    <div id="av-loading" style="display:none;text-align:center;padding:30px;color:#5F6368">
-      <div class="spinner" style="margin:0 auto 10px"></div>
-      계산 중...
-    </div>
-  </div>
-
   <!-- 가마 안내 패널 -->
   <div class="pnl" id="pnl-info">
     <div style="margin-bottom:16px">
@@ -553,43 +542,6 @@ textarea:focus{border-color:#1A73E8;}
       <div style="font-size:13px;color:#5F6368">각 가마의 소성 종류별 가열 시간과 냉각 시간을 확인하세요</div>
     </div>
     <div id="kiln-info-cards"></div>
-  </div>
-
-  <!-- 소성 가능 일자 패널 -->
-  <div class="pnl" id="pnl-avail">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-      <div>
-        <div style="font-size:18px;font-weight:700;margin-bottom:4px">🔍 소성 가능 일자 찾기</div>
-        <div style="font-size:13px;color:#5F6368">등록된 소성 일정을 바탕으로 전력이 겹치지 않는 소성 가능 시간을 찾아드립니다</div>
-      </div>
-      <button class="btn" onclick="closeAvail()">← 뒤로</button>
-    </div>
-    <div class="card" style="margin-bottom:14px">
-      <div class="g2 f">
-        <div><label>검색 시작 날짜</label><input type="date" id="av-sd"></div>
-        <div><label>검색 종료 날짜</label><input type="date" id="av-ed"></div>
-      </div>
-      <div class="g2 f">
-        <div><label>가마 선택</label><select id="av-kiln" onchange="updateAvailTypes()"><option value="all">전체 가마</option></select></div>
-        <div><label>소성 종류</label><select id="av-type"><option value="all">전체 소성 종류</option></select></div>
-      </div>
-      <div class="f">
-        <label>소성 시작 가능 시간대</label>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="time" id="av-from" value="08:00" style="flex:1">
-          <span style="color:#5F6368;font-size:13px">~</span>
-          <input type="time" id="av-to" value="18:00" style="flex:1">
-        </div>
-      </div>
-      <button class="btn bp" style="width:100%;margin-top:8px;padding:10px;font-size:14px" onclick="findAvail()">🔍 찾기</button>
-    </div>
-    <div id="av-loading" style="display:none;text-align:center;padding:30px;color:#5F6368">
-      <div class="spinner" style="margin:0 auto 8px"></div>계산 중...
-    </div>
-    <div id="av-result" style="display:none">
-      <div id="av-result-header" style="font-size:14px;font-weight:700;margin-bottom:10px"></div>
-      <div id="av-result-body"></div>
-    </div>
   </div>
 
   <!-- 수리 패널 -->
@@ -745,7 +697,7 @@ function switchAt(tab,el){
   document.querySelectorAll('.at').forEach(e=>e.classList.remove('on'));
   el.classList.add('on');
   // 패널 전환
-  ['pnl-cal','pnl-rp','pnl-ks','pnl-sem','pnl-info','pnl-avail'].forEach(id=>ge(id).classList.remove('on'));
+  ['pnl-cal','pnl-rp','pnl-ks','pnl-sem','pnl-info'].forEach(id=>ge(id).classList.remove('on'));
   if(tab==='cal')  { ge('pnl-cal').classList.add('on'); }
   else if(tab==='rp')  { ge('pnl-rp').classList.add('on');  renderRpFilter(); renderRepairs(); }
   else if(tab==='ks')  { ge('pnl-ks').classList.add('on');  renderKs(); }
@@ -777,7 +729,7 @@ function logoutAdm(){
   ge('at-wrap').classList.remove('show');
   ['btn-ev','btn-st','btn-fi','btn-list','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
   // 캘린더 패널로 복귀
-  ['pnl-rp','pnl-ks','pnl-sem','pnl-info','pnl-avail'].forEach(id=>ge(id).classList.remove('on'));
+  ['pnl-rp','pnl-ks','pnl-sem','pnl-info'].forEach(id=>ge(id).classList.remove('on'));
   ge('pnl-cal').classList.add('on');
   document.querySelectorAll('.at').forEach((e,i)=>e.classList.toggle('on',i===0));
   atTab='cal'; buildCal();
@@ -1467,9 +1419,6 @@ function openSemMo(){
 
 // ── 소성 가능 일자 찾기 ──
 function openAvailModal(){
-  // 모든 패널 끄고 avail 패널 켜기
-  ['pnl-cal','pnl-info','pnl-rp','pnl-ks','pnl-sem'].forEach(id=>ge(id).classList.remove('on'));
-  ge('pnl-avail').classList.add('on');
   // 초기화
   const today=new Date();
   const nextMonth=new Date(today); nextMonth.setMonth(nextMonth.getMonth()+1);
@@ -1480,16 +1429,9 @@ function openAvailModal(){
     kilns.map(k=>`<option value="${k.id}">${k.name}</option>`).join('');
   updateAvailTypes();
   ge('av-result').style.display='none';
-}
-
-function closeAvail(){
-  ge('pnl-avail').classList.remove('on');
-  ge('pnl-cal').classList.add('on');
-  // 탭 복원
-  document.querySelectorAll('.mt').forEach((e,i)=>e.classList.toggle('on',i===0));
-  mainTab='res';
-  ge('btn-avail').classList.remove('h');
-  buildCal(); renderLegend();
+  ge('av-loading').style.display='none';
+  // 팝업 열기
+  ge('ov-avail').style.display='block';
 }
 
 function updateAvailTypes(){
@@ -1914,7 +1856,13 @@ function toXl(data,fn){
 
 // ── 유틸 ──
 function oo(id){ge(id).classList.add('on');}
-function co(id){ge(id).classList.remove('on');if(id==='ov-login'){ge('pw-input').value='';ge('pw-err').style.display='none';}}
+function co(id){
+  const el=ge(id);
+  if(!el) return;
+  if(id==='ov-avail'){ el.style.display='none'; return; }
+  el.classList.remove('on');
+  if(id==='ov-login'){ge('pw-input').value='';ge('pw-err').style.display='none';}
+}
 function ge(id){return document.getElementById(id);}
 function sd(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
 function d0(d){const r=new Date(d);r.setHours(0,0,0,0);return r;}
