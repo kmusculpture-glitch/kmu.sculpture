@@ -135,6 +135,10 @@ main{max-width:1400px;margin:0 auto;padding:12px 16px 60px;}
 .ki-type-val{font-size:13px;color:#5F6368;display:flex;align-items:center;gap:4px;}
 .ki-type-val b{color:#202124;font-weight:700;}
 
+/* 과거 학생 예약 — 회색 */
+.sc-past{background:#E0E0E0;border-left:3px solid #9E9E9E;color:#757575;}
+.sc-past.lt{background:#EEEEEE;border-left:3px solid #BDBDBD;color:#9E9E9E;}
+
 /* 가마 외 이벤트 */
 .evm{background:#EDE7F6;border-left:3px solid #7B1FA2;color:#7B1FA2;}
 .evc{background:#E1F5FE;border-left:3px solid #0288D1;color:#0288D1;}
@@ -477,7 +481,7 @@ textarea:focus{border-color:#1A73E8;}
   <div class="mt-in">
     <div class="mt-tabs">
       <button class="mt on" onclick="switchTab('res',this)">📅 학생 예약</button>
-      <button class="mt" onclick="switchTab('his',this)">🔥 소성 내역</button>
+      <button class="mt" id="tab-his" style="display:none" onclick="switchTab('his',this)">🔥 소성 내역</button>
       <button class="mt" onclick="switchTab('info',this)">🏺 가마 안내</button>
     </div>
     <div class="at-wrap" id="at-wrap">
@@ -604,7 +608,7 @@ const KHX=['#D50000','#E67C00','#0B8043','#1A73E8','#8E24AA'];
 const ECLS={m:'evm',c:'evc',x:'evx',o:'evo'};
 const ELBL={m:'가마보수',c:'가마청소',x:'휴무/공휴일',o:'기타'};
 const EICO={m:'🔧',c:'🧹',x:'🚫',o:'📌'};
-const MKC={sc0:'rgba(180,0,0,.6)',sc1:'rgba(180,90,0,.6)',sc2:'rgba(0,100,50,.6)',sc3:'rgba(0,60,160,.6)',sc4:'rgba(100,0,130,.6)',gc0:'rgba(150,0,0,.5)',gc1:'rgba(150,80,0,.5)',gc2:'rgba(0,80,30,.5)',gc3:'rgba(0,50,130,.5)',gc4:'rgba(90,0,110,.5)',evm:'rgba(90,0,130,.5)',evc:'rgba(0,80,150,.5)',evx:'rgba(150,0,0,.5)',evo:'rgba(80,70,0,.5)'};
+const MKC={'sc-past':'rgba(150,150,150,.5)',sc0:'rgba(180,0,0,.6)',sc1:'rgba(180,90,0,.6)',sc2:'rgba(0,100,50,.6)',sc3:'rgba(0,60,160,.6)',sc4:'rgba(100,0,130,.6)',gc0:'rgba(150,0,0,.5)',gc1:'rgba(150,80,0,.5)',gc2:'rgba(0,80,30,.5)',gc3:'rgba(0,50,130,.5)',gc4:'rgba(90,0,110,.5)',evm:'rgba(90,0,130,.5)',evc:'rgba(0,80,150,.5)',evx:'rgba(150,0,0,.5)',evo:'rgba(80,70,0,.5)'};
 
 // ── 초기화 ──
 async function init(){
@@ -711,6 +715,7 @@ function tryLogin(){
     isAdm=true; co('ov-login');
     ge('adm-btn').textContent='로그아웃'; ge('adm-btn').classList.add('on');
     ge('at-wrap').classList.add('show');
+    ge('tab-his').style.display='';
     ge('btn-ev').classList.remove('h');
     ge('btn-dl').classList.remove('h');
     ge('btn-ul').classList.remove('h');
@@ -727,6 +732,12 @@ function logoutAdm(){
   isAdm=false;
   ge('adm-btn').textContent='관리자'; ge('adm-btn').classList.remove('on');
   ge('at-wrap').classList.remove('show');
+  ge('tab-his').style.display='none';
+  if(mainTab==='his'){
+    mainTab='res';
+    document.querySelectorAll('.mt').forEach(e=>e.classList.remove('on'));
+    document.querySelector('.mt').classList.add('on');
+  }
   ['btn-ev','btn-st','btn-fi','btn-list','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
   // 캘린더 패널로 복귀
   ['pnl-rp','pnl-ks','pnl-sem','pnl-info'].forEach(id=>ge(id).classList.remove('on'));
@@ -791,9 +802,12 @@ function buildCal(){
       const lbl=mainTab==='res'
         ?(isHalfBar?`${cleanName} - ${f.firing_name||''} (절반)`:`${cleanName} - ${f.firing_name||''}`)
         :`${kn} ${f.firing_name||''}`.trim();
+    // 학생 예약에서 종료된 일정은 회색으로
+    const isPast = mainTab==='res' && d0(fe) < tod;
+    const finalCc = isPast ? 'sc-past' : cc;
     items.push({
       sd:d0(fs)<d0(ms)?d0(ms):d0(fs), ed:d0(fe)>d0(me)?d0(me):d0(fe),
-      fsd:d0(fs), fed:d0(fe), cc, lbl, ico:'',
+      fsd:d0(fs), fed:d0(fe), cc:finalCc, lbl, ico:'',
       onClick:()=>mainTab==='res'?showStDt(f):showFiDt(f)
     });
   });
