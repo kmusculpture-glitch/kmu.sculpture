@@ -478,10 +478,9 @@ textarea:focus{border-color:#1A73E8;}
     </div>
     <div style="background:#E8F0FE;border-radius:6px;padding:10px 12px;font-size:12px;color:#1A73E8;line-height:1.8;margin:8px 0">
       📋 <b>컬럼 형식 안내</b><br>
-      • <b>소성 날짜</b> — 날짜+시간 (예: 2월 6일 오전 11시 37분)<br>
-      • <b>가마종류</b> — 대형/중형/소형(초벌) 등<br>
-      • <b>담당자</b> — 담당자 이름<br>
-      • <b>비고</b> — 메모
+      • <b>소성 날짜</b> — 날짜+시간 (예: 2월 6일 오전 11시 37분), 시간이 날짜 옆 칸에 있어도 됨<br>
+      • <b>가마종류</b> — 대형/중형/소형(초벌) 등 · <b>담당자</b> · <b>비고</b><br>
+      • 이 사이트에서 <b>내려받은 엑셀</b>은 그대로 올리면 학생 예약과 소성 내역이 원래대로 복원됩니다. 이미 등록된 내역은 건너뜁니다.
     </div>
     <div id="ul-preview" style="display:none;margin-top:8px;">
       <div style="font-size:12px;font-weight:700;color:#5F6368;margin-bottom:6px">미리보기 (처음 5행)</div>
@@ -1940,6 +1939,7 @@ function renderAvailResults(results,kilnVal,typeVal){
 }
 
 // ── 엑셀 업로드 ──
+// 지원 형식: (1) 이 사이트에서 내려받은 엑셀  (2) 기존 수기 엑셀(소성 날짜 / 가마종류 / 담당자 / 비고)
 let uploadRows=[];
 
 function initUpload(){
@@ -1947,6 +1947,7 @@ function initUpload(){
   ge('ul-preview').style.display='none';
   ge('ul-err').style.display='none';
   ge('ul-confirm-btn').disabled=true;
+  ge('ul-confirm-btn').textContent='가져오기';
   uploadRows=[];
   ge('ul-file').onchange=handleUploadFile;
 }
@@ -1959,70 +1960,12 @@ function handleUploadFile(e){
     try{
       const wb=XLSX.read(ev.target.result,{type:'binary'});
       const ws=wb.Sheets[wb.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-      if(rows.length<2){showUlErr('데이터가 없습니다');return;}
-
-      // 헤더 행 찾기 (소성 날짜 포함된 행)
-      let headerRow=-1;
-      for(let i=0;i<Math.min(5,rows.length);i++){
-        const rowStr=rows[i].join('');
-        if(rowStr.includes('소성날짜')||rowStr.includes('소성 날짜')||rowStr.includes('날짜')){
-          headerRow=i; break;
-        }
-      }
-      if(headerRow===-1) headerRow=0;
-
-      const headers=rows[headerRow].map(h=>String(h).trim());
-      // 컬럼 인덱스 찾기
-      const findCol=(keywords)=>{
-        for(const kw of keywords){
-          const idx=headers.findIndex(h=>h.includes(kw));
-          if(idx>=0) return idx;
-        }
-        return -1;
-      };
-      const colDate  =findCol(['소성날짜','소성 날짜','날짜','일자','date']);
-      const colKiln  =findCol(['가마종류','가마 종류','가마','kiln']);
-      const colMgr   =findCol(['담당자','담당','manager']);
-      const colMemo  =findCol(['비고','메모','memo','note']);
-
-      if(colDate===-1){showUlErr('소성 날짜 컬럼을 찾을 수 없습니다. 컬럼명에 "날짜"가 포함되어야 합니다');return;}
-
-      // 데이터 파싱
-      uploadRows=[];
-      for(let i=headerRow+1;i<rows.length;i++){
-        const row=rows[i];
-        const rawDate=String(row[colDate]||'').trim();
-        if(!rawDate||rawDate==='') continue;
-
-        // 날짜+시간 파싱
-        const parsed=parseKoreanDateTime(rawDate);
-        if(!parsed) continue;
-
-        // 가마 파싱
-        const rawKiln=colKiln>=0?String(row[colKiln]||'').trim():'';
-        const {kilnId,firingName}=parseKilnType(rawKiln);
-
-        const mgr  =colMgr >=0?String(row[colMgr] ||'').trim():null;
-        const memo =colMemo>=0?String(row[colMemo]||'').trim():null;
-
-        uploadRows.push({
-          start:parsed, kilnId, firingName,
-          manager_name:mgr||null, memo:memo||null, rawDate, rawKiln
-        });
-      }
-
-      if(!uploadRows.length){showUlErr('파싱된 데이터가 없습니다. 날짜 형식을 확인해주세요');return;}
-
-      // 미리보기
-      ge('ul-err').style.display='none';
-      ge('ul-preview').style.display='block';
-      ge('ul-count').textContent=`✅ 총 ${uploadRows.length}건 인식됨`;
-      ge('ul-preview-body').innerHTML=uploadRows.slice(0,5).map(r=>`
-        <div style="padding:3px 0;border-bottom:1px solid #DADCE0">
-          📅 ${r.rawDate} | ${r.rawKiln||'가마미상'} | 담당: ${r.manager_name||'-'}
-        </div>`).join('');
-      ge('ul-confirm-btn').disabled=false;
+      // raw:false → 엑셀에 보이는 그대로의 글자로 읽음 (날짜·시간 서식 칸도 인식)
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
+      const res=parseUploadSheet(rows);
+      if(res.error){ uploadRows=[]; showUlErr(res.error); return; }
+      uploadRows=res.items;
+      showUploadPreview(res);
     }catch(err){
       showUlErr('파일 읽기 오류: '+err.message);
     }
@@ -2030,74 +1973,156 @@ function handleUploadFile(e){
   reader.readAsBinaryString(file);
 }
 
-function parseKoreanDateTime(str){
-  // "2월 6일 오전 11시 37분" / "2025-02-06 11:37" / "2/6 11:37" 등 다양한 형식 처리
-  str=str.replace(/\s+/g,' ').trim();
+function normH(s){ return String(s==null?'':s).replace(/\s+/g,''); }
 
-  // 한국어 형식: X월 X일 오전/오후 X시 X분
-  const korMatch=str.match(/(\d+)월\s*(\d+)일[\s(]*(?:오전|오후)?\s*(\d+)시[\s:]*(\d+)?분?/);
-  if(korMatch){
-    const month=parseInt(korMatch[1])-1;
-    const day  =parseInt(korMatch[2]);
-    const ampm =str.includes('오후')?'pm':'am';
-    let hour   =parseInt(korMatch[3]);
-    const min  =parseInt(korMatch[4]||'0');
-    const year =new Date().getFullYear();
-    if(ampm==='pm'&&hour<12) hour+=12;
-    if(ampm==='am'&&hour===12) hour=0;
-    const d=new Date(year,month,day,hour,min);
-    if(!isNaN(d.getTime())) return d;
+function timeFrom(s){
+  s=String(s==null?'':s);
+  let m=s.match(/(오전|오후)?\s*(\d{1,2})\s*시\s*(?:(\d{1,2})\s*분)?/);
+  let h,mi,ap;
+  if(m){ ap=m[1]; h=+m[2]; mi=+(m[3]||0); }
+  else{
+    m=s.match(/(오전|오후)?\s*(\d{1,2}):(\d{2})/);
+    if(!m) return null;
+    ap=m[1]; h=+m[2]; mi=+m[3];
   }
-
-  // 숫자 형식 시도
-  const d=new Date(str);
-  if(!isNaN(d.getTime())) return d;
-
-  // YYYY-MM-DD HH:MM
-  const numMatch=str.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})[\sT]?(\d{1,2})?:?(\d{1,2})?/);
-  if(numMatch){
-    const d2=new Date(
-      parseInt(numMatch[1]),parseInt(numMatch[2])-1,parseInt(numMatch[3]),
-      parseInt(numMatch[4]||0),parseInt(numMatch[5]||0)
-    );
-    if(!isNaN(d2.getTime())) return d2;
-  }
-  return null;
+  if(ap==='오후'&&h<12) h+=12;
+  if(ap==='오전'&&h===12) h=0;
+  if(h>23||mi>59) return null;
+  return {h:h,mi:mi};
 }
 
-function parseKilnType(raw){
-  // "소형(초벌)" → kilnId=소형가마 id, firingName="초벌"
-  // "대형(건조)" → 대형가마, 건조
-  // "중형" → 중형가마, 재벌(기본)
-  const bracket=raw.match(/[（(]([^)）]+)[)）]/);
-  const firingName=bracket?bracket[1].trim():null;
-  const kilnName=raw.replace(/[（(][^)）]+[)）]/g,'').trim();
+// 날짜 글자(+시간이 따로 있으면 그 글자)를 Date로. 시간이 없으면 hasTime:false
+function parseDT(str,nextStr){
+  str=String(str==null?'':str).replace(/\s+/g,' ').trim();
+  if(!str) return null;
+  let y=null,mo=null,d=null;
+  let m=str.match(/(\d{4})\s*[.\-\/년]\s*(\d{1,2})\s*[.\-\/월]\s*(\d{1,2})/);
+  if(m){ y=+m[1]; mo=+m[2]; d=+m[3]; }
+  else{
+    m=str.match(/(\d{1,2})\s*월\s*(\d{1,2})\s*일/);
+    if(m){ mo=+m[1]; d=+m[2]; }
+  }
+  if(mo==null) return null;
+  const tm=timeFrom(str)||timeFrom(nextStr);
+  const dt=new Date(y||new Date().getFullYear(),mo-1,d,tm?tm.h:9,tm?tm.mi:0);
+  if(isNaN(dt.getTime())||dt.getMonth()!==mo-1) return null;
+  dt._hasTime=!!tm;
+  return dt;
+}
 
-  // 가마 매핑
-  let kilnId=null;
-  if(kilns.length){
-    const found=kilns.find(k=>{
-      const kn=k.name.replace(/가마/g,'').trim();
-      return kilnName.includes(kn)||kilnName.includes(k.name)||k.name.includes(kilnName);
+function parseKilnType(raw,typeRaw){
+  raw=String(raw==null?'':raw).trim();
+  typeRaw=String(typeRaw==null?'':typeRaw).trim();
+  const br=raw.match(/[（(]([^)）]+)[)）]/);
+  const kName=raw.replace(/[（(][^)）]*[)）]/g,'').replace(/\s+/g,'');
+  if(!kName) return {kiln:null};
+  const tName=typeRaw||(br?br[1].trim():'');
+  const base=function(n){return String(n).replace(/\s+/g,'').replace(/가마$/,'');};
+  const k=kilns.find(function(x){return base(x.name)===base(kName);})
+       ||kilns.find(function(x){return base(kName).includes(base(x.name))||base(x.name).includes(base(kName));});
+  if(!k) return {kiln:null};
+  const ft=(tName&&k.types.find(function(t){return t.name===tName;}))||(!tName&&k.types[0])||k.types[0];
+  return {kiln:k,type:ft,firingName:tName||ft.name};
+}
+
+// 시트(2차원 배열) → 등록할 내역. 화면과 무관하게 동작하도록 분리
+function parseUploadSheet(rows){
+  if(!rows||rows.length<2) return {error:'데이터가 없습니다'};
+  let hr=-1;
+  for(let i=0;i<Math.min(6,rows.length);i++){
+    if(rows[i].some(function(c){return normH(c).includes('날짜');})){ hr=i; break; }
+  }
+  if(hr<0) return {error:'첫 줄에서 "소성 날짜" 컬럼을 찾을 수 없습니다. 컬럼명에 "날짜"가 들어 있어야 합니다'};
+  const heads=rows[hr].map(normH);
+  const find=function(kws){
+    for(const kw of kws){ const ix=heads.findIndex(function(x){return x&&x.includes(kw);}); if(ix>=0) return ix; }
+    return -1;
+  };
+  const cDate=find(['소성날짜','날짜','일자']);
+  const cTime=find(['소성시작시간','시작시간']);
+  const cPeak=find(['최고온도도달']);
+  const cEnd =find(['소성종료','소성완전종료']);
+  const cKiln=find(['가마종류','가마']);
+  const cType=find(['소성종류']);
+  const cName=find(['학생이름','학생']);
+  const cPurp=find(['목적']);
+  const cMgr =find(['담당자','담당']);
+  const cMemo=find(['비고','메모']);
+  const cKind=find(['구분']);
+
+  const keyOf=function(kid,iso,nm){ return kid+'|'+new Date(iso).toISOString().slice(0,16)+'|'+(nm||''); };
+  const seen=new Set([].concat(students,firings).map(function(f){return keyOf(f.kiln_id,f.start_at,f.student_name);}));
+
+  const items=[], failed=[]; let dup=0, noTime=0;
+  for(let i=hr+1;i<rows.length;i++){
+    const row=rows[i];
+    const get=function(c){ return c>=0&&row[c]!=null?String(row[c]).trim():''; };
+    const rawDate=get(cDate);
+    if(!rawDate) continue;
+    const start=parseDT(rawDate, cTime>=0?get(cTime):get(cDate+1));
+    if(!start){ failed.push(rawDate+' (날짜 형식)'); continue; }
+    const kt=parseKilnType(get(cKiln),get(cType));
+    if(!kt.kiln){ failed.push(rawDate+' (가마 종류: '+(get(cKiln)||'비어 있음')+')'); continue; }
+    if(!start._hasTime) noTime++;
+
+    // 최고온도·종료 시각이 엑셀에 있으면 그 값을 그대로 사용 (내려받은 파일 복원), 없으면 가마 설정으로 계산
+    let peak=null,end=null;
+    if(cPeak>=0&&cEnd>=0){
+      const p=parseDT(get(cPeak)),e=parseDT(get(cEnd));
+      if(p&&e&&p>start&&e>=p){ peak=p; end=e; }
+    }
+    let heat,cool;
+    if(peak){
+      heat=Math.round((peak-start)/3600000*10000)/10000;
+      cool=Math.round((end-peak)/3600000*10000)/10000;
+    }else{
+      heat=kt.type.heatHours; cool=kt.type.coolHours;
+      peak=addH(start,heat); end=addH(peak,cool);
+    }
+
+    let nm=get(cName); if(nm==='-') nm='';
+    const kind=get(cKind);
+    const isStudent=kind?kind.includes('학생'):!!nm;
+    if(isStudent&&!nm){ failed.push(rawDate+' (학생 이름 없음)'); continue; }
+    const key=keyOf(kt.kiln.id,start.toISOString(),isStudent?nm:'');
+    if(seen.has(key)){ dup++; continue; }
+    seen.add(key);
+
+    let mgr=get(cMgr); if(mgr==='-') mgr='';
+    items.push({
+      start:start, peak:peak, end:end, heat:heat, cool:cool,
+      kilnId:kt.kiln.id, kilnName:kt.kiln.name, firingName:kt.firingName,
+      isStudent:isStudent, student:isStudent?nm:null,
+      purpose:get(cPurp), manager_name:mgr||null, memo:get(cMemo)||null
     });
-    if(found) kilnId=found.id;
-    else if(kilnName.includes('대형')) kilnId=kilns.find(k=>k.name.includes('대형'))?.id||kilns[0]?.id;
-    else if(kilnName.includes('중형')) kilnId=kilns.find(k=>k.name.includes('중형'))?.id||kilns[1]?.id;
-    else if(kilnName.includes('소형')) kilnId=kilns.find(k=>k.name.includes('소형'))?.id||kilns[2]?.id;
-    else kilnId=kilns[0]?.id;
   }
-
-  // 소성 종류 매핑 (괄호에서 못 찾으면 가마의 기본 소성 종류)
-  let fn=firingName;
-  if(!fn&&kilnId){
-    const k=kilns.find(x=>x.id===kilnId);
-    fn=k?.types?.[0]?.name||null;
+  if(!items.length){
+    let msg='등록할 내역이 없습니다.';
+    if(dup) msg+=' 이미 등록된 내역 '+dup+'건은 건너뜁니다.';
+    if(failed.length) msg+=' 인식하지 못한 행 '+failed.length+'개 (예: '+failed.slice(0,3).join(', ')+')';
+    return {error:msg};
   }
+  return {items:items,failed:failed,dup:dup,noTime:noTime};
+}
 
-  return {kilnId, firingName:fn};
+function showUploadPreview(res){
+  const nS=res.items.filter(function(r){return r.isStudent;}).length, nG=res.items.length-nS;
+  ge('ul-err').style.display='none';
+  ge('ul-preview').style.display='block';
+  let msg='총 '+res.items.length+'건 인식 (학생 예약 '+nS+'건, 소성 내역 '+nG+'건)';
+  if(res.dup) msg+=' · 이미 등록되어 건너뜀 '+res.dup+'건';
+  ge('ul-count').textContent=msg;
+  let notes='';
+  if(res.failed.length) notes+='<div style="color:#D93025;margin-top:6px">인식하지 못한 행 '+res.failed.length+'개는 제외됩니다: '+esc(res.failed.slice(0,3).join(', '))+(res.failed.length>3?' 외':'')+'</div>';
+  if(res.noTime) notes+='<div style="color:#E8710A;margin-top:6px">시간이 없는 '+res.noTime+'건은 09:00 시작으로 등록됩니다</div>';
+  ge('ul-preview-body').innerHTML=res.items.slice(0,5).map(function(r){
+    return '<div style="padding:3px 0;border-bottom:1px solid #DADCE0">'+fmt(r.start)+' · '+esc(r.kilnName)+' '+esc(r.firingName)+(r.isStudent?' · 학생 '+esc(r.student):'')+(r.manager_name?' · 담당 '+esc(r.manager_name):'')+'</div>';
+  }).join('')+notes;
+  ge('ul-confirm-btn').disabled=false;
 }
 
 function showUlErr(msg){
+  ge('ul-preview').style.display='none';
   ge('ul-err').textContent='⚠️ '+msg;
   ge('ul-err').style.display='block';
   ge('ul-confirm-btn').disabled=true;
@@ -2105,38 +2130,36 @@ function showUlErr(msg){
 
 async function confirmUpload(){
   if(!uploadRows.length) return;
-  ge('ul-confirm-btn').disabled=true;
-  ge('ul-confirm-btn').textContent='처리 중...';
-
-  let ok=0,fail=0;
-  for(const r of uploadRows){
-    if(!r.kilnId||!r.start) {fail++;continue;}
-    const k=kilns.find(x=>x.id===r.kilnId);
-    if(!k){fail++;continue;}
-    const ft=k.types.find(t=>t.name===r.firingName)||k.types[0];
-    if(!ft){fail++;continue;}
-
-    const start=r.start;
-    const peak=addH(start,ft.heatHours);
-    const end=addH(peak,ft.coolHours);
-    const data={
-      kiln_id:r.kilnId, firing_name:ft.name, student_name:null,
-      manager_name:r.manager_name||null,
-      start_at:start.toISOString(), peak_at:peak.toISOString(), end_at:end.toISOString(),
-      heat_hours:ft.heatHours, cool_hours:ft.coolHours,
-      memo:r.memo||null
-    };
-    const ni={id:Date.now()+ok,...data};
-    if(sb){try{const{data:d}=await sb.from('firings').insert(data).select().single();if(d)ni.id=d.id;}catch(e){}}
-    firings.push(ni);
-    ok++;
+  const btn=ge('ul-confirm-btn');
+  btn.disabled=true; btn.textContent='처리 중...';
+  const payloads=uploadRows.map(function(r){
+    const d={kiln_id:r.kilnId,firing_name:r.firingName,student_name:r.isStudent?r.student:null,
+      manager_name:r.manager_name,start_at:r.start.toISOString(),peak_at:r.peak.toISOString(),end_at:r.end.toISOString(),
+      heat_hours:r.heat,cool_hours:r.cool,memo:r.memo};
+    if(r.purpose) d.purpose=r.purpose; // purpose 컬럼이 없는 DB에서도 일반 업로드가 되도록 값이 있을 때만 보냄
+    return d;
+  });
+  let nS=0,nG=0,dbFail=false;
+  const CH=100;
+  for(let i=0;i<payloads.length;i+=CH){
+    const chunk=payloads.slice(i,i+CH);
+    let ids=null;
+    if(sb){
+      try{
+        const r=await sb.from('firings').insert(chunk).select();
+        if(r&&r.error) dbFail=true;
+        else if(r&&r.data&&r.data.length===chunk.length) ids=r.data.map(function(x){return x.id;});
+      }catch(e){ dbFail=true; }
+    }
+    chunk.forEach(function(d,j){
+      const ni=Object.assign({id:ids?ids[j]:Date.now()+i+j},d);
+      if(d.student_name){ students.push(ni); nS++; } else { firings.push(ni); nG++; }
+    });
   }
-
   saveLocal(); buildCal();
-  ge('ul-confirm-btn').textContent='가져오기';
-  ge('ul-confirm-btn').disabled=false;
+  btn.textContent='가져오기'; btn.disabled=false;
   co('ov-ul');
-  alert(`✅ ${ok}건 가져오기 완료${fail>0?' ('+fail+'건 실패)':''}`);
+  alert('✅ '+(nS+nG)+'건을 가져왔습니다 (학생 예약 '+nS+'건, 소성 내역 '+nG+'건)'+(dbFail?'\n\n⚠️ 서버(Supabase) 저장에 실패해 이 기기에만 저장되었습니다. 화면 아래 빨간 박스의 오류 내용을 확인하세요.':''));
 }
 
 // ── 엑셀 다운로드 ──
