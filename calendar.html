@@ -108,6 +108,11 @@ main{max-width:1400px;margin:0 auto;padding:12px 16px 60px;}
 .ebar.rl{border-radius:3px 0 0 3px;}
 .ebar.rr{border-radius:0 3px 3px 0;}
 .ebar.rlr{border-radius:3px;}
+/* 일반 소성: 눈에 띄지 않는 연한 하늘색 + 푸른 점선 윤곽 (지난 예약의 회색, 학생 예약의 빨강·주황·초록 계열과 겹치지 않음) */
+.ebar.gen{background:#CFE7FA;color:#2F6388;border:1px dashed #6FA8CF;font-weight:500;}
+.ebar.gen.past{background:#EEEEEE;color:#9E9E9E;border-color:#C4C4C4;}
+.ebar.gen.nol{border-left:none!important;padding-left:6px;}
+.ebar.gen.nor{border-right:none;}
 .ebar.nol{border-left:none!important;padding-left:8px;}
 
 /* 학생 예약 색상 — 시작날 진한색, 연속날 연한색 */
@@ -330,72 +335,52 @@ textarea:focus{border-color:#1A73E8;}
   </div>
 </div>
 
-<!-- 학생 예약 모달 -->
-<div class="ov" id="ov-st">
+<!-- 소성 일정 등록·수정 모달 (일반 소성 + 학생 예약) -->
+<div class="ov" id="ov-sc">
   <div class="mo">
-    <p class="mo-t" id="st-title">📅 학생 예약 등록</p>
-    <p class="mo-s">소성 시작 시간을 입력하면 종료 시간이 자동 계산됩니다</p>
-    <input type="hidden" id="st-id">
-    <div class="f">
-      <label>학생 이름</label>
-      <div style="display:flex;align-items:center;gap:8px">
-        <input type="text" id="st-name" placeholder="홍길동" style="flex:1">
-        <button type="button" id="btn-half" onclick="toggleHalf()"
-          style="padding:7px 14px;border-radius:4px;border:1px solid #BDBDBD;background:#fff;color:#5F6368;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;white-space:nowrap;transition:all .15s">
-          절반
-        </button>
-      </div>
-    </div>
-    <div class="f"><label>목적</label><input type="text" id="st-purpose" placeholder="예) 수업, 졸업작품, 개인작업"></div>
-    <div class="f"><label>가마 선택</label><select id="st-kiln" onchange="stKilnChange()"></select></div>
-    <div class="f"><label>소성 종류</label><select id="st-type" onchange="stPreview()"></select></div>
+    <p class="mo-t" id="sc-title">🔥 소성 일정 등록</p>
+    <p class="mo-s">시작 시간을 입력하면 최고온도 도달·종료 시각이 자동 계산됩니다</p>
+    <input type="hidden" id="sc-id">
+    <div class="f"><label>가마 선택</label><select id="sc-kiln" onchange="scKilnChange()"></select></div>
+    <div class="f"><label>소성 종류</label><select id="sc-type" onchange="scPreview()"></select></div>
     <div class="g2 f">
-      <div><label>시작 날짜</label><input type="date" id="st-date" onchange="stPreview()"></div>
-      <div><label>시작 시간</label><input type="time" id="st-time" value="09:00" onchange="stPreview()"></div>
+      <div><label>시작 날짜</label><input type="date" id="sc-date" onchange="scPreview()"></div>
+      <div><label>시작 시간</label><input type="time" id="sc-time" value="09:00" onchange="scPreview()"></div>
     </div>
-    <div class="pvbox" id="st-pv" style="display:none">
+    <div class="pvbox" id="sc-pv" style="display:none">
       <div style="font-weight:700;color:#5F6368;margin-bottom:4px">📋 자동 계산</div>
       <div style="color:#9AA0A6;display:flex;flex-direction:column;gap:2px">
-        <div>🌡️ 최고온도: <b id="st-peak" style="color:#E8710A"></b></div>
-        <div>✅ 종료: <b id="st-end" style="color:#202124"></b></div>
+        <div>🌡️ 최고온도: <b id="sc-peak" style="color:#E8710A"></b></div>
+        <div>✅ 종료: <b id="sc-end" style="color:#202124"></b></div>
+      </div>
+    </div>
+    <div class="f" style="margin:10px 0 6px;padding:10px 12px;background:#F8F9FA;border:1px solid #DADCE0;border-radius:6px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;font-size:13px;font-weight:700;color:#202124">
+        <input type="checkbox" id="sc-is-st" onchange="scToggleStudent()" style="width:auto;margin:0"> 학생 예약
+      </label>
+      <div style="font-size:11px;color:#9AA0A6;margin-top:3px">체크하면 일정 제목이 학생 이름으로 표시되고 진한 색으로 강조됩니다</div>
+      <div id="sc-st-box" style="display:none;margin-top:10px">
+        <div class="f">
+          <label>학생 이름</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="text" id="sc-name" placeholder="홍길동" style="flex:1">
+            <button type="button" id="btn-half" onclick="toggleHalf()"
+              style="padding:7px 14px;border-radius:4px;border:1px solid #BDBDBD;background:#fff;color:#5F6368;cursor:pointer;font-size:13px;font-weight:500;font-family:inherit;white-space:nowrap;transition:all .15s">
+              절반
+            </button>
+          </div>
+        </div>
+        <div class="f" style="margin-bottom:0"><label>목적</label><input type="text" id="sc-purpose" placeholder="예) 수업, 졸업작품, 개인작업"></div>
       </div>
     </div>
     <div class="adr">
-      <div class="adl">🔒 관리자 기록</div>
-      <div class="f" style="margin-top:4px"><label>담당자</label><input type="text" id="st-mgr" placeholder="담당 선생님"></div>
+      <div class="adl">🔒 관리자 기록 (학생에게 보이지 않음)</div>
+      <div class="f" style="margin-top:4px"><label>담당자</label><input type="text" id="sc-mgr" placeholder="담당 선생님"></div>
+      <div class="f" style="margin-bottom:0"><label>비고</label><input type="text" id="sc-memo" placeholder="특이사항"></div>
     </div>
-    <div class="f" style="margin-top:6px"><label>메모</label><input type="text" id="st-memo" placeholder="특이사항"></div>
     <div class="mo-a">
-      <button class="btn bp" style="flex:1" onclick="submitSt()">저장</button>
-      <button class="btn" onclick="co('ov-st')">취소</button>
-    </div>
-  </div>
-</div>
-
-<!-- 일반 소성 모달 -->
-<div class="ov" id="ov-fi">
-  <div class="mo">
-    <p class="mo-t" id="fi-title">🔥 소성 내역 등록</p>
-    <p class="mo-s">담당자 기록용 소성 이력입니다</p>
-    <input type="hidden" id="fi-id">
-    <div class="f"><label>가마 선택</label><select id="fi-kiln" onchange="fiKilnChange()"></select></div>
-    <div class="f"><label>소성 종류</label><select id="fi-type" onchange="fiPreview()"></select></div>
-    <div class="g2 f">
-      <div><label>시작 날짜</label><input type="date" id="fi-date" onchange="fiPreview()"></div>
-      <div><label>시작 시간</label><input type="time" id="fi-time" value="09:00" onchange="fiPreview()"></div>
-    </div>
-    <div class="pvbox" id="fi-pv" style="display:none">
-      <div style="font-weight:700;color:#5F6368;margin-bottom:4px">📋 자동 계산</div>
-      <div style="color:#9AA0A6;display:flex;flex-direction:column;gap:2px">
-        <div>🌡️ 최고온도: <b id="fi-peak" style="color:#E8710A"></b></div>
-        <div>✅ 종료: <b id="fi-end" style="color:#202124"></b></div>
-      </div>
-    </div>
-    <div class="f"><label>담당자</label><input type="text" id="fi-mgr" placeholder="담당 선생님"></div>
-    <div class="f"><label>메모</label><input type="text" id="fi-memo" placeholder="특이사항"></div>
-    <div class="mo-a">
-      <button class="btn bp" style="flex:1" onclick="submitFi()">저장</button>
-      <button class="btn" onclick="co('ov-fi')">취소</button>
+      <button class="btn bp" style="flex:1" onclick="submitSc()">저장</button>
+      <button class="btn" onclick="co('ov-sc')">취소</button>
     </div>
   </div>
 </div>
@@ -470,8 +455,8 @@ textarea:focus{border-color:#1A73E8;}
 <!-- 엑셀 업로드 모달 -->
 <div class="ov" id="ov-ul">
   <div class="mo">
-    <p class="mo-t">📤 소성 내역 엑셀 업로드</p>
-    <p class="mo-s">기존 엑셀 파일을 업로드하면 소성 내역으로 자동 반영됩니다</p>
+    <p class="mo-t">📤 소성 일정 엑셀 업로드</p>
+    <p class="mo-s">기존 엑셀 파일을 업로드하면 소성 일정으로 자동 반영됩니다</p>
     <div class="f">
       <label>엑셀 파일 선택 (.xlsx, .xls)</label>
       <input type="file" id="ul-file" accept=".xlsx,.xls" style="padding:8px;border:1px solid #BDBDBD;border-radius:4px;width:100%;font-family:inherit;font-size:13px;">
@@ -480,7 +465,7 @@ textarea:focus{border-color:#1A73E8;}
       📋 <b>컬럼 형식 안내</b><br>
       • <b>소성 날짜</b> — 날짜+시간 (예: 2월 6일 오전 11시 37분), 시간이 날짜 옆 칸에 있어도 됨<br>
       • <b>가마종류</b> — 대형/중형/소형(초벌) 등 · <b>담당자</b> · <b>비고</b><br>
-      • 이 사이트에서 <b>내려받은 엑셀</b>은 그대로 올리면 학생 예약과 소성 내역이 원래대로 복원됩니다. 이미 등록된 내역은 건너뜁니다. 가마 종류가 비어 있으면 소성 종류와 가열 시간으로 가마를 추정합니다.
+      • 이 사이트에서 <b>내려받은 엑셀</b>은 그대로 올리면 학생 예약과 일반 소성이 원래대로 복원됩니다. 이미 등록된 내역은 건너뜁니다. 가마 종류가 비어 있으면 소성 종류와 가열 시간으로 가마를 추정합니다.
     </div>
     <div id="ul-preview" style="display:none;margin-top:8px;">
       <div style="font-size:12px;font-weight:700;color:#5F6368;margin-bottom:6px">미리보기 (처음 5행)</div>
@@ -533,8 +518,7 @@ textarea:focus{border-color:#1A73E8;}
 <div class="mt-bar">
   <div class="mt-in">
     <div class="mt-tabs">
-      <button class="mt on" onclick="switchTab('res',this)">📅 학생 예약</button>
-      <button class="mt" id="tab-his" style="display:none" onclick="switchTab('his',this)">🔥 소성 내역</button>
+      <button class="mt on" onclick="switchTab('res',this)">📅 소성 일정</button>
       <button class="mt" onclick="switchTab('info',this)">🏺 가마 안내</button>
     </div>
     <div class="at-wrap" id="at-wrap">
@@ -561,10 +545,8 @@ textarea:focus{border-color:#1A73E8;}
       <div class="cal-btns">
         <button class="cbtn only-narrow" id="btn-reslist" onclick="openResList()">📋 예약 목록</button>
         <button class="cbtn" id="btn-avail" onclick="openAvailModal()">🔍 소성 가능 일자</button>
-        <button class="cbtn h" id="btn-ev" onclick="openEv()">🔧 일정 추가</button>
-        <button class="cbtn p h" id="btn-st" onclick="openSt()">+ 학생 예약</button>
-        <button class="cbtn p h" id="btn-fi" onclick="openFi()">+ 소성 등록</button>
-        <button class="cbtn h" id="btn-list" onclick="toggleSideList()">📋 목록 보기</button>
+        <button class="cbtn h" id="btn-ev" onclick="openEv()">🔧 가마 외 일정</button>
+        <button class="cbtn p h" id="btn-sc" onclick="openSc()">+ 소성 일정 등록</button>
         <button class="cbtn h" id="btn-ul" onclick="oo('ov-ul');initUpload()">📤 업로드</button>
         <button class="cbtn h" id="btn-dl" onclick="openDl()">📥 엑셀</button>
       </div>
@@ -582,20 +564,12 @@ textarea:focus{border-color:#1A73E8;}
           <div class="cal-body" id="cal-body"></div>
         </div>
       </div>
-      <!-- 소성 내역 사이드 리스트 (소성 내역 탭에서만 표시) -->
+      <!-- 학생 예약 목록 (데스크탑 우측 패널) -->
       <div id="res-side">
         <div style="background:#fff;border:1px solid #DADCE0;border-radius:8px;overflow:hidden;">
           <div id="res-side-title" style="background:#1A73E8;color:#fff;padding:12px 14px;font-size:14px;font-weight:700;">📋 학생 예약 목록</div>
           <div class="rl-head"><div>목적</div><div>이름</div><div>가마 / 소성</div><div>예약 날짜</div></div>
           <div id="res-side-body" style="max-height:640px;overflow-y:auto;"></div>
-        </div>
-      </div>
-      <div id="side-list" style="display:none;width:280px;flex-shrink:0;">
-        <div style="background:#fff;border:1px solid #DADCE0;border-radius:8px;overflow:hidden;">
-          <div style="background:#1565C0;color:#fff;padding:12px 14px;font-size:14px;font-weight:700;">
-            🔥 이번 달 소성 목록
-          </div>
-          <div id="side-list-body" style="max-height:600px;overflow-y:auto;"></div>
         </div>
       </div>
     </div>
@@ -728,7 +702,7 @@ let noticeData={active:false,icon:'📢',title:'공지사항',body:''};
 let kilns=[], students=[], firings=[], events=[], repairs=[], sems=[];
 let cy=new Date().getFullYear(), cm=new Date().getMonth();
 let evType='m', semRows=[], rpFilter='all';
-let editStId=null, editFiId=null, editEvId=null;
+let editEvId=null;
 
 const SC=['sc0','sc1','sc2','sc3','sc4'];
 const GC=['gc0','gc1','gc2','gc3','gc4'];
@@ -839,22 +813,18 @@ function defKilns(){
 function switchTab(tab,el){
   mainTab=tab;
   document.querySelectorAll('.mt').forEach(e=>e.classList.remove('on'));
-  el.classList.add('on');
+  if(el) el.classList.add('on');
   if(tab==='info'){
-    co('ov-avail'); // 혹시 열려있으면 닫기
+    co('ov-avail'); co('ov-reslist'); // 혹시 열려있으면 닫기
     ge('pnl-cal').classList.remove('on');
     ge('pnl-info').classList.add('on');
     renderKilnInfo();
-    ['btn-avail','btn-reslist','btn-ev','btn-st','btn-fi','btn-list','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
+    ['btn-avail','btn-reslist','btn-ev','btn-sc','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
     return;
   }
   ge('pnl-info').classList.remove('on');
   ge('pnl-cal').classList.add('on');
   ge('btn-avail').classList.remove('h'); // 소성 가능 일자 버튼 복원
-  ge('btn-st').classList.toggle('h',tab!=='res'||!isAdm);
-  ge('btn-fi').classList.toggle('h',tab!=='his'||!isAdm);
-  ge('btn-list').classList.toggle('h',tab!=='his');
-  if(tab!=='his') ge('side-list').style.display='none';
   applyResUi();
   buildCal(); renderLegend();
 }
@@ -864,6 +834,7 @@ function applyResUi(){
   ge('res-side').classList.toggle('off',!res);
   ge('btn-reslist').classList.toggle('h',!res);
   ge('cal-notice-txt').style.display=res?'':'none';
+  ['btn-ev','btn-sc','btn-ul','btn-dl'].forEach(id=>ge(id).classList.toggle('h',!(res&&isAdm)));
 }
 
 function switchAt(tab,el){
@@ -886,14 +857,10 @@ function tryLogin(){
     isAdm=true; co('ov-login');
     ge('adm-btn').textContent='로그아웃'; ge('adm-btn').classList.add('on');
     ge('at-wrap').classList.add('show');
-    ge('tab-his').style.display='';
-    ge('btn-ev').classList.remove('h');
-    ge('btn-dl').classList.remove('h');
-    ge('btn-ul').classList.remove('h');
-    ge(mainTab==='res'?'btn-st':'btn-fi').classList.remove('h');
-    if(mainTab==='his') ge('btn-list').classList.remove('h');
     fillEvKiln(); fillRpKiln();
+    applyResUi();
     buildCal();
+    if(mainTab==='info') renderKilnInfo();
   }else{
     ge('pw-err').style.display='block';
     ge('pw-input').value=''; ge('pw-input').focus();
@@ -903,32 +870,26 @@ function logoutAdm(){
   isAdm=false;
   ge('adm-btn').textContent='관리자'; ge('adm-btn').classList.remove('on');
   ge('at-wrap').classList.remove('show');
-  ge('tab-his').style.display='none';
-  if(mainTab==='his'){
-    mainTab='res';
-    document.querySelectorAll('.mt').forEach(e=>e.classList.remove('on'));
-    document.querySelector('.mt').classList.add('on');
-    applyResUi();
-  }
-  ['btn-ev','btn-st','btn-fi','btn-list','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
-  // 캘린더 패널로 복귀
-  ['pnl-rp','pnl-ks','pnl-sem','pnl-info','pnl-notice'].forEach(id=>ge(id).classList.remove('on'));
-  ge('pnl-cal').classList.add('on');
+  ['pnl-rp','pnl-ks','pnl-sem','pnl-notice'].forEach(id=>ge(id).classList.remove('on'));
+  if(mainTab==='info'){ ge('pnl-cal').classList.remove('on'); ge('pnl-info').classList.add('on'); renderKilnInfo(); }
+  else{ ge('pnl-info').classList.remove('on'); ge('pnl-cal').classList.add('on'); }
   document.querySelectorAll('.at').forEach((e,i)=>e.classList.toggle('on',i===0));
-  atTab='cal'; buildCal();
+  atTab='cal'; applyResUi(); buildCal();
 }
 
 // ── 범례 ──
 function renderLegend(){
   const el=ge('legend');
-  const hist=mainTab!=='res';
-  let out=kilns.map(function(k,i){
-    const c=kilnHex(k,i,hist);
+  let out='<div class="li" style="font-weight:700;color:#202124">학생 예약</div>';
+  out+=kilns.map(function(k,i){
+    const c=kilnHex(k,i,false);
     return '<div class="li"><div class="ld" style="background:'+c+';border:1.5px solid '+shade(c,.25)+'"></div>'+esc(k.name)+'</div>';
   }).join('');
   kilns.forEach(function(k){(k.types||[]).forEach(function(t){
     if(okHex(t.color)) out+='<div class="li"><div class="ld" style="background:'+t.color+';border:1.5px solid '+shade(t.color,.25)+'"></div>'+esc(k.name)+' '+esc(t.name)+'</div>';
   });});
+  out+='<div class="li"><div class="ld" style="background:#E0E0E0;border:1.5px solid #9E9E9E"></div>지난 일정</div>';
+  out+='<div class="li" style="margin-left:8px"><div class="ld" style="background:#CFE7FA;border:1.5px dashed #6FA8CF"></div>일반 소성</div>';
   el.innerHTML=out;
 }
 
@@ -965,29 +926,27 @@ function buildCal(){
   const items=[];
   // 가마 외 이벤트는 셀에 직접 텍스트로 표시 (바 제거)
   // → 아래 셀 렌더링에서 ev-blocked-lbl로 처리
-  // 학생/소성
-  const src=mainTab==='res'?students:firings;
-  src.forEach(f=>{
+  // 학생 예약(진한 색)을 먼저 넣어 위쪽 줄에, 일반 소성(연한 톤)은 그 아래 줄에 배치
+  const addItem=function(f,isSt){
     const fs=new Date(f.start_at),fe=new Date(f.end_at);
     if(fs>me||fe<ms) return;
-    const ki=kilns.findIndex(k=>k.id===f.kiln_id);
-    const hex=typeHex(kilns[ki],ki,f.firing_name,mainTab!=='res');
-    const kn=kilns[ki]?.name||'가마';
-    const stName=f.student_name||'';
-      const isHalfBar=stName.includes('(절반)');
+    const ki=kilns.findIndex(function(k){return k.id===f.kiln_id;});
+    const kn=(kilns[ki]&&kilns[ki].name)||'가마';
+    const sdv=d0(fs)<d0(ms)?d0(ms):d0(fs), edv=d0(fe)>d0(me)?d0(me):d0(fe);
+    if(isSt){
+      const stName=f.student_name||'';
       const cleanName=stName.replace('(절반)','').trim();
-      const lbl=mainTab==='res'
-        ?(isHalfBar?`${cleanName} - ${f.firing_name||''} (절반)`:`${cleanName} - ${f.firing_name||''}`)
-        :`${kn} ${f.firing_name||''}`.trim();
-    // 학생 예약에서 종료된 일정은 회색으로
-    const isPast = mainTab==='res' && d0(fe) < tod;
-    const finalCc = isPast ? 'sc-past' : 'cbar';
-    items.push({
-      sd:d0(fs)<d0(ms)?d0(ms):d0(fs), ed:d0(fe)>d0(me)?d0(me):d0(fe),
-      fsd:d0(fs), fed:d0(fe), cc:finalCc, hex:isPast?null:hex, lbl, ico:'',
-      onClick:()=>mainTab==='res'?showStDt(f):showFiDt(f)
-    });
-  });
+      const lbl=cleanName+' - '+(f.firing_name||'')+(stName.includes('(절반)')?' (절반)':'');
+      const isPast=d0(fe)<tod; // 이미 끝난 예약은 회색
+      items.push({sd:sdv,ed:edv,fsd:d0(fs),fed:d0(fe),cc:isPast?'sc-past':'cbar',
+        hex:isPast?null:typeHex(kilns[ki],ki,f.firing_name,false),lbl:lbl,ico:'',onClick:function(){showStDt(f);}});
+    }else{
+      items.push({sd:sdv,ed:edv,fsd:d0(fs),fed:d0(fe),cc:'gen',gen:true,past:d0(fe)<tod,hex:null,
+        lbl:(kn+' '+(f.firing_name||'')).trim(),ico:'',onClick:function(){showFiDt(f);}});
+    }
+  };
+  students.forEach(function(f){addItem(f,true);});
+  firings.forEach(function(f){addItem(f,false);});
 
   // 슬롯 배치
   const nr=Math.ceil(cd.length/7);
@@ -1101,7 +1060,8 @@ function buildCal(){
 
         const bar=document.createElement('div');
         // 시작날(isThisFirst)만 진한색, 나머지 전부 연한색
-        bar.className='ebar '+(isThisFirst ? item.cc : item.cc+' lt');
+        bar.className='ebar '+(item.gen?('gen'+(item.past?' past':'')):(isThisFirst ? item.cc : item.cc+' lt'));
+        if(item.gen&&!isColLast) bar.classList.add('nor');
 
         // border-radius
         if(isColFirst&&isColLast) bar.classList.add('rlr');
@@ -1135,14 +1095,14 @@ function buildCal(){
           bar.appendChild(sp);
         }
         // 시작 마커
-        if(isThisFirst){
+        if(isThisFirst&&!item.gen){
           const m=document.createElement('div');
           m.style.cssText=`position:absolute;left:2px;top:2px;bottom:2px;width:3px;border-radius:2px;background:${mk};pointer-events:none;`;
           bar.style.paddingLeft='9px'; bar.style.position='absolute';
           bar.appendChild(m);
         }
         // 종료 마커
-        if(isThisLast){
+        if(isThisLast&&!item.gen){
           const m=document.createElement('div');
           m.style.cssText=`position:absolute;right:2px;top:2px;bottom:2px;width:3px;border-radius:2px;background:${mk};pointer-events:none;`;
           bar.style.paddingRight='9px';
@@ -1157,7 +1117,7 @@ function buildCal(){
   renderResList();
 }
 
-function go(d){ cm+=d; if(cm>11){cm=0;cy++;}if(cm<0){cm=11;cy--;} buildCal(); renderSideList(); }
+function go(d){ cm+=d; if(cm>11){cm=0;cy++;}if(cm<0){cm=11;cy--;} buildCal(); }
 
 // ── 학생 예약 목록 (데스크탑 우측 패널 / 좁은 화면 팝업) ──
 function resListHtml(){
@@ -1197,38 +1157,6 @@ function openResDetail(id){
   co('ov-reslist');
   showStDt(f);
 }
-
-// ── 사이드 리스트 ──
-function toggleSideList(){
-  const sl=ge('side-list');
-  const isOpen=sl.style.display!=='none';
-  sl.style.display=isOpen?'none':'block';
-  ge('btn-list').classList.toggle('p',!isOpen);
-  if(!isOpen) renderSideList();
-}
-function renderSideList(){
-  if(ge('side-list').style.display==='none') return;
-  const ms=new Date(cy,cm,1), me=new Date(cy,cm+1,0,23,59,59);
-  const list=[...firings].filter(f=>new Date(f.start_at)>=ms&&new Date(f.start_at)<=me);
-  list.sort((a,b)=>new Date(a.start_at)-new Date(b.start_at));
-  const body=ge('side-list-body');
-  if(!list.length){
-    body.innerHTML='<div style="padding:20px;text-align:center;color:#9AA0A6;font-size:13px">이번 달 소성 내역이 없습니다</div>';
-    return;
-  }
-  body.innerHTML=list.map(f=>{
-    const s=new Date(f.start_at);
-    const ki=kilns.findIndex(k=>k.id===f.kiln_id);
-    const kn=kilns[ki]?.name||'가마';
-    const col=typeHex(kilns[ki],ki,f.firing_name,true);
-    return `<div class="sli" onclick="showFiDt(firings.find(x=>x.id===${f.id}))">
-      <div class="sli-date">${fmt(s)}</div>
-      <div class="sli-kiln" style="color:${col}">${kn}</div>
-      <div class="sli-type">${f.firing_name||''}</div>
-    </div>`;
-  }).join('');
-}
-
 
 // ── 공지사항 ──
 function showNoticeIfNeeded(){
@@ -1371,15 +1299,15 @@ function showStDt(f){
 }
 function showFiDt(f){
   const kn=kilns.find(k=>k.id===f.kiln_id)?.name||'-';
-  ge('dt-title').textContent='🔥 소성 내역';
+  ge('dt-title').textContent='🔥 소성 일정';
   ge('dt-body').innerHTML=`
     <div class="dr"><span class="dl">가마</span><span class="dv">${kn}</span></div>
     <div class="dr"><span class="dl">소성 종류</span><span class="dv">${f.firing_name||'-'}</span></div>
     <div class="dr"><span class="dl">🔥 소성 시작</span><span class="dv">${fmt(new Date(f.start_at))}</span></div>
     <div class="dr"><span class="dl">🌡️ 최고온도 도달</span><span class="dv" style="color:#E8710A">${fmt(new Date(f.peak_at))}</span></div>
     <div class="dr"><span class="dl">❄️ 소성 종료</span><span class="dv">${fmt(new Date(f.end_at))}</span></div>
-    ${f.manager_name?`<div class="dr"><span class="dl">담당자</span><span class="dv">${f.manager_name}</span></div>`:''}
-    ${f.memo?`<div class="dr"><span class="dl">메모</span><span class="dv">${f.memo}</span></div>`:''}
+    ${isAdm&&f.manager_name?`<div class="dr"><span class="dl">담당자</span><span class="dv">${esc(f.manager_name)}</span></div>`:''}
+    ${isAdm&&f.memo?`<div class="dr"><span class="dl">비고</span><span class="dv">${esc(f.memo)}</span></div>`:''}
     ${tlHtml(f)}`;
   ge('dt-actions').innerHTML=isAdm
     ?`<button class="btn bs" onclick="editFi(${f.id})">수정</button><button class="btn bs bd" onclick="delRec('fi',${f.id})">삭제</button><button class="btn" style="flex:1;margin-left:auto" onclick="co('ov-dt')">닫기</button>`
@@ -1422,137 +1350,97 @@ function updateHalfBtn(){
   }
 }
 
-// ── 학생 예약 ──
-function fillStKiln(){
-  ge('st-kiln').innerHTML=kilns.map((k,i)=>`<option value="${i}">${k.name}</option>`).join('');
-  stKilnChange();
+// ── 소성 일정 등록·수정 (일반 소성 + 학생 예약 통합) ──
+let editScId=null, editScKind=null;
+function localDateStr(d){ return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); }
+function fillScKiln(){
+  ge('sc-kiln').innerHTML=kilns.map((k,i)=>`<option value="${i}">${esc(k.name)}</option>`).join('');
+  scKilnChange();
 }
-function stKilnChange(){
-  const ki=+ge('st-kiln').value;
-  ge('st-type').innerHTML=kilns[ki].types.map((t,i)=>`<option value="${i}">${t.name} (가열 ${fH(t.heatHours)} / 냉각 ${fH(t.coolHours)})</option>`).join('');
-  stPreview();
+function scKilnChange(){
+  const ki=+ge('sc-kiln').value;
+  ge('sc-type').innerHTML=kilns[ki].types.map((t,i)=>`<option value="${i}">${esc(t.name)} (가열 ${fH(t.heatHours)} / 냉각 ${fH(t.coolHours)})</option>`).join('');
+  scPreview();
 }
-function stPreview(){
-  const sd=ge('st-date').value,st=ge('st-time').value;
-  if(!sd||!st){ge('st-pv').style.display='none';return;}
-  const ki=+ge('st-kiln').value,fi=+ge('st-type').value,f=kilns[ki].types[fi];
+function scPreview(){
+  const sd=ge('sc-date').value,st=ge('sc-time').value;
+  if(!sd||!st){ge('sc-pv').style.display='none';return;}
+  const ki=+ge('sc-kiln').value,fi=+ge('sc-type').value,f=kilns[ki].types[fi];
   const s=new Date(`${sd}T${st}`);
-  ge('st-peak').textContent=fmt(addH(s,f.heatHours));
-  ge('st-end').textContent=fmt(addH(addH(s,f.heatHours),f.coolHours));
-  ge('st-pv').style.display='block';
+  ge('sc-peak').textContent=fmt(addH(s,f.heatHours));
+  ge('sc-end').textContent=fmt(addH(addH(s,f.heatHours),f.coolHours));
+  ge('sc-pv').style.display='block';
 }
-function openSt(editId=null){
-  editStId=editId;
-  ge('st-title').textContent=editId?'📅 학생 예약 수정':'📅 학생 예약 등록';
-  ge('st-id').value=editId||'';
-  fillStKiln();
-  if(!editId){
-    ge('st-purpose').value='';
-    ge('st-name').value=''; ge('st-date').value=new Date().toISOString().split('T')[0];
-    ge('st-time').value='09:00'; ge('st-mgr').value=''; ge('st-memo').value='';
-    ge('st-pv').style.display='none';
-    isHalf=false; updateHalfBtn();
-  }else{
-    const f=students.find(s=>String(s.id)===String(editId));
+function scToggleStudent(){
+  ge('sc-st-box').style.display=ge('sc-is-st').checked?'block':'none';
+}
+function openSc(editId=null,kind=null){
+  editScId=editId; editScKind=kind;
+  ge('sc-id').value=editId||'';
+  fillScKiln();
+  let f=null;
+  if(editId){
+    f=(kind==='st'?students:firings).find(x=>String(x.id)===String(editId));
     if(!f) return;
-    ge('st-name').value=f.student_name||'';
-    ge('st-purpose').value=f.purpose||'';
-    const ki=kilns.findIndex(k=>k.id===f.kiln_id);
-    if(ki>=0){ ge('st-kiln').value=ki; stKilnChange(); const ti=kilns[ki].types.findIndex(t=>t.name===f.firing_name); if(ti>=0) ge('st-type').value=ti; }
-    const s=new Date(f.start_at);
-    ge('st-date').value=s.toISOString().split('T')[0];
-    ge('st-time').value=`${p2(s.getHours())}:${p2(s.getMinutes())}`;
-    ge('st-mgr').value=f.manager_name||''; ge('st-memo').value=f.memo||'';
-    isHalf=f.memo?.includes('(절반)')||false; updateHalfBtn();
-    stPreview();
   }
-  oo('ov-st');
+  ge('sc-title').textContent=editId?'🔥 소성 일정 수정':'🔥 소성 일정 등록';
+  if(!f){
+    ge('sc-is-st').checked=false;
+    ge('sc-name').value=''; ge('sc-purpose').value='';
+    ge('sc-date').value=localDateStr(new Date());
+    ge('sc-time').value='09:00'; ge('sc-mgr').value=''; ge('sc-memo').value='';
+    ge('sc-pv').style.display='none';
+    isHalf=false;
+  }else{
+    ge('sc-is-st').checked=(kind==='st');
+    const raw=f.student_name||'';
+    isHalf=raw.includes('(절반)');
+    ge('sc-name').value=raw.replace('(절반)','').trim();
+    ge('sc-purpose').value=f.purpose||'';
+    const ki=kilns.findIndex(k=>k.id===f.kiln_id);
+    if(ki>=0){
+      ge('sc-kiln').value=ki; scKilnChange();
+      const ti=kilns[ki].types.findIndex(t=>t.name===f.firing_name);
+      if(ti>=0) ge('sc-type').value=ti;
+    }
+    const s=new Date(f.start_at);
+    ge('sc-date').value=localDateStr(s);
+    ge('sc-time').value=p2(s.getHours())+':'+p2(s.getMinutes());
+    ge('sc-mgr').value=f.manager_name||''; ge('sc-memo').value=f.memo||'';
+    scPreview();
+  }
+  updateHalfBtn(); scToggleStudent();
+  oo('ov-sc');
 }
-function editSt(id){ co('ov-dt'); openSt(id); }
-async function submitSt(){
-  const nm=ge('st-name').value.trim(),sd=ge('st-date').value,st=ge('st-time').value;
-  const ki=+ge('st-kiln').value,fi=+ge('st-type').value;
-  if(!nm){alert('학생 이름을 입력해주세요');return;}
+function editSt(id){ co('ov-dt'); openSc(id,'st'); }
+function editFi(id){ co('ov-dt'); openSc(id,'fi'); }
+async function submitSc(){
+  const isSt=ge('sc-is-st').checked;
+  const nm=ge('sc-name').value.trim(),sd=ge('sc-date').value,st=ge('sc-time').value;
+  const ki=+ge('sc-kiln').value,fi=+ge('sc-type').value;
+  if(isSt&&!nm){alert('학생 예약은 학생 이름을 입력해주세요');return;}
   if(!sd||!st){alert('날짜와 시간을 입력해주세요');return;}
   const kiln=kilns[ki],ft=kiln.types[fi],s=new Date(`${sd}T${st}`);
   const pk=addH(s,ft.heatHours),en=addH(pk,ft.coolHours);
-  const memoVal=ge('st-memo').value.trim();
-  const data={kiln_id:kiln.id,firing_name:ft.name,student_name:isHalf?nm+'(절반)':nm,manager_name:ge('st-mgr').value.trim()||null,start_at:s.toISOString(),peak_at:pk.toISOString(),end_at:en.toISOString(),heat_hours:ft.heatHours,cool_hours:ft.coolHours,memo:memoVal||null};
-  // 목적은 입력했거나 이미 값이 있을 때만 저장 (purpose 컬럼이 없는 DB에서도 기존 기능이 그대로 동작)
-  const purposeVal=ge('st-purpose').value.trim();
-  const prevSt=editStId?students.find(function(x){return String(x.id)===String(editStId);}):null;
-  if(purposeVal||(prevSt&&prevSt.purpose)) data.purpose=purposeVal||null;
-  if(editStId){
-    const idx=students.findIndex(x=>String(x.id)===String(editStId));
-    if(idx>=0) students[idx]={...students[idx],...data};
-    if(sb){try{await sb.from('firings').update(data).eq('id',editStId);}catch(e){}}
+  const data={kiln_id:kiln.id,firing_name:ft.name,student_name:isSt?(isHalf?nm+'(절반)':nm):null,
+    manager_name:ge('sc-mgr').value.trim()||null,start_at:s.toISOString(),peak_at:pk.toISOString(),end_at:en.toISOString(),
+    heat_hours:ft.heatHours,cool_hours:ft.coolHours,memo:ge('sc-memo').value.trim()||null};
+  // 목적은 학생 예약일 때만. 값이 있거나 기존 값을 지워야 할 때만 보내서, purpose 컬럼이 없는 DB에서도 기존 기능이 그대로 동작
+  const purposeVal=isSt?ge('sc-purpose').value.trim():'';
+  const prev=editScId?(editScKind==='st'?students:firings).find(x=>String(x.id)===String(editScId)):null;
+  if(purposeVal||(prev&&prev.purpose)) data.purpose=purposeVal||null;
+  if(editScId){
+    if(sb){try{await sb.from('firings').update(data).eq('id',editScId);}catch(e){}}
+    const merged=Object.assign({},prev||{},data);
+    students=students.filter(x=>String(x.id)!==String(editScId));
+    firings=firings.filter(x=>String(x.id)!==String(editScId));
+    (isSt?students:firings).push(merged);
   }else{
-    const ni={id:Date.now(),...data};
-    if(sb){try{const{data:d}=await sb.from('firings').insert(data).select().single();if(d)ni.id=d.id;}catch(e){}}
-    students.push(ni);
+    const ni=Object.assign({id:Date.now()},data);
+    if(sb){try{const r=await sb.from('firings').insert(data).select().single(); if(r&&r.data) ni.id=r.data.id;}catch(e){}}
+    (isSt?students:firings).push(ni);
   }
-  saveLocal(); buildCal(); co('ov-st');
-}
-
-// ── 일반 소성 ──
-function fillFiKiln(){
-  ge('fi-kiln').innerHTML=kilns.map((k,i)=>`<option value="${i}">${k.name}</option>`).join('');
-  fiKilnChange();
-}
-function fiKilnChange(){
-  const ki=+ge('fi-kiln').value;
-  ge('fi-type').innerHTML=kilns[ki].types.map((t,i)=>`<option value="${i}">${t.name} (가열 ${fH(t.heatHours)} / 냉각 ${fH(t.coolHours)})</option>`).join('');
-  fiPreview();
-}
-function fiPreview(){
-  const sd=ge('fi-date').value,st=ge('fi-time').value;
-  if(!sd||!st){ge('fi-pv').style.display='none';return;}
-  const ki=+ge('fi-kiln').value,fi=+ge('fi-type').value,f=kilns[ki].types[fi];
-  const s=new Date(`${sd}T${st}`);
-  ge('fi-peak').textContent=fmt(addH(s,f.heatHours));
-  ge('fi-end').textContent=fmt(addH(addH(s,f.heatHours),f.coolHours));
-  ge('fi-pv').style.display='block';
-}
-function openFi(editId=null){
-  editFiId=editId;
-  ge('fi-title').textContent=editId?'🔥 소성 내역 수정':'🔥 소성 내역 등록';
-  ge('fi-id').value=editId||'';
-  fillFiKiln();
-  if(!editId){
-    ge('fi-date').value=new Date().toISOString().split('T')[0];
-    ge('fi-time').value='09:00'; ge('fi-mgr').value=''; ge('fi-memo').value='';
-    ge('fi-pv').style.display='none';
-  }else{
-    const f=firings.find(x=>String(x.id)===String(editId));
-    if(!f) return;
-    const ki=kilns.findIndex(k=>k.id===f.kiln_id);
-    if(ki>=0){ ge('fi-kiln').value=ki; fiKilnChange(); const ti=kilns[ki].types.findIndex(t=>t.name===f.firing_name); if(ti>=0) ge('fi-type').value=ti; }
-    const s=new Date(f.start_at);
-    ge('fi-date').value=s.toISOString().split('T')[0];
-    ge('fi-time').value=`${p2(s.getHours())}:${p2(s.getMinutes())}`;
-    ge('fi-mgr').value=f.manager_name||''; ge('fi-memo').value=f.memo||'';
-    fiPreview();
-  }
-  oo('ov-fi');
-}
-function editFi(id){ co('ov-dt'); openFi(id); }
-async function submitFi(){
-  const sd=ge('fi-date').value,st=ge('fi-time').value;
-  if(!sd||!st){alert('날짜와 시간을 입력해주세요');return;}
-  const ki=+ge('fi-kiln').value,fi=+ge('fi-type').value;
-  const kiln=kilns[ki],ft=kiln.types[fi],s=new Date(`${sd}T${st}`);
-  const pk=addH(s,ft.heatHours),en=addH(pk,ft.coolHours);
-  const data={kiln_id:kiln.id,firing_name:ft.name,student_name:null,manager_name:ge('fi-mgr').value.trim()||null,start_at:s.toISOString(),peak_at:pk.toISOString(),end_at:en.toISOString(),heat_hours:ft.heatHours,cool_hours:ft.coolHours,memo:ge('fi-memo').value.trim()||null};
-  if(editFiId){
-    const idx=firings.findIndex(x=>String(x.id)===String(editFiId));
-    if(idx>=0) firings[idx]={...firings[idx],...data};
-    if(sb){try{await sb.from('firings').update(data).eq('id',editFiId);}catch(e){}}
-  }else{
-    const ni={id:Date.now(),...data};
-    if(sb){try{const{data:d}=await sb.from('firings').insert(data).select().single();if(d)ni.id=d.id;}catch(e){}}
-    firings.push(ni);
-  }
-  saveLocal(); buildCal(); co('ov-fi');
+  saveLocal(); buildCal(); co('ov-sc');
 }
 
 // ── 가마 외 이벤트 ──
@@ -2141,7 +2029,7 @@ function showUploadPreview(res){
   const nS=res.items.filter(function(r){return r.isStudent;}).length, nG=res.items.length-nS;
   ge('ul-err').style.display='none';
   ge('ul-preview').style.display='block';
-  let msg='총 '+res.items.length+'건 인식 (학생 예약 '+nS+'건, 소성 내역 '+nG+'건)';
+  let msg='총 '+res.items.length+'건 인식 (학생 예약 '+nS+'건, 일반 소성 '+nG+'건)';
   if(res.dup) msg+=' · 이미 등록되어 건너뜀 '+res.dup+'건';
   ge('ul-count').textContent=msg;
   let notes='';
@@ -2193,7 +2081,7 @@ async function confirmUpload(){
   saveLocal(); buildCal();
   btn.textContent='가져오기'; btn.disabled=false;
   co('ov-ul');
-  alert('✅ '+(nS+nG)+'건을 가져왔습니다 (학생 예약 '+nS+'건, 소성 내역 '+nG+'건)'+(dbFail?'\n\n⚠️ 서버(Supabase) 저장에 실패해 이 기기에만 저장되었습니다. 화면 아래 빨간 박스의 오류 내용을 확인하세요.':''));
+  alert('✅ '+(nS+nG)+'건을 가져왔습니다 (학생 예약 '+nS+'건, 일반 소성 '+nG+'건)'+(dbFail?'\n\n⚠️ 서버(Supabase) 저장에 실패해 이 기기에만 저장되었습니다. 화면 아래 빨간 박스의 오류 내용을 확인하세요.':''));
 }
 
 // ── 엑셀 다운로드 ──
@@ -2201,7 +2089,7 @@ function renderDlBtns(){
   const all=[...students,...firings];
   const yrs=[...new Set(all.map(f=>new Date(f.start_at).getFullYear()))].sort().reverse();
   let h=`<button class="dl-btn" onclick="oo('ov-dl')">📥 전체 내보내기</button>`;
-  yrs.forEach(y=>h+=`<button class="dl-btn" onclick="dlYr(${y})">📥 ${y}년 소성 내역</button>`);
+  yrs.forEach(y=>h+=`<button class="dl-btn" onclick="dlYr(${y})">📥 ${y}년 소성 일정</button>`);
   sems.forEach(s=>h+=`<button class="dl-btn" onclick="dlSem(${s.id})">📥 ${s.year}년 ${s.name}</button>`);
   ge('dl-btns').innerHTML=h;
 }
