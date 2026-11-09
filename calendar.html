@@ -40,7 +40,7 @@ main{max-width:1400px;margin:0 auto;padding:12px 16px 60px;}
 
 /* 캘린더 컨트롤 */
 .cal-ctrl{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
-.nav-wrap{display:flex;align-items:center;gap:6px;}
+.nav-wrap{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .nav-btn{width:28px;height:28px;border-radius:50%;border:none;background:none;cursor:pointer;font-size:16px;color:#5F6368;display:flex;align-items:center;justify-content:center;transition:background .15s;}
 .nav-btn:hover{background:#F1F3F4;}
 .mon-lbl{font-size:24px;font-weight:700;color:#202124;min-width:120px;text-align:center;}
@@ -67,6 +67,25 @@ main{max-width:1400px;margin:0 auto;padding:12px 16px 60px;}
 /* 행 */
 .cal-row{position:relative;}
 .cell-row{display:grid;grid-template-columns:repeat(7,1fr);}
+/* 예약 목록 패널 / 안내 문구 */
+.cal-notice{font-size:13px;font-weight:700;color:#D93025;margin-left:10px;line-height:1.4;}
+.cbar{}
+@media(max-width:768px){.cal-notice{margin-left:0;width:100%;font-size:12px;}}
+#res-side{display:none;width:370px;flex-shrink:0;}
+@media(min-width:1024px){#res-side:not(.off){display:block;}.only-narrow{display:none!important;}}
+.rl-head{display:grid;grid-template-columns:70px 72px 1fr 78px;gap:6px;padding:8px 12px;background:#F8F9FA;border-bottom:1px solid #DADCE0;font-size:11px;font-weight:700;color:#5F6368;}
+.rl-row{display:grid;grid-template-columns:70px 72px 1fr 78px;gap:6px;padding:9px 12px;border-bottom:1px solid #F1F3F4;font-size:12.5px;line-height:1.45;cursor:pointer;align-items:start;word-break:keep-all;}
+.rl-row:hover{background:#F8F9FA;}
+.rl-row:last-child{border-bottom:none;}
+.rl-row.past{color:#9AA0A6;}
+.rl-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:baseline;}
+.rl-date{font-size:12px;}
+.rl-date small{display:block;color:#9AA0A6;font-size:11px;}
+.cchips{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:6px 0 2px;}
+.cchip{width:20px;height:20px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #BDBDBD;cursor:pointer;padding:0;}
+.cchip.sel{box-shadow:0 0 0 2px #202124;}
+.cchips input[type=color]{width:28px;height:24px;padding:0;border:1px solid #BDBDBD;border-radius:4px;background:#fff;cursor:pointer;}
+.cchips .clbl{font-size:11px;color:#5F6368;font-weight:600;margin-right:2px;}
 .cell{border-right:1px solid #DADCE0;border-bottom:1px solid #DADCE0;min-height:145px;padding:2px 0 4px 0;overflow:hidden;}
 .cell:nth-child(7){border-right:none;}
 .cell.dim{background:#FAFAFA;}
@@ -261,6 +280,40 @@ textarea:focus{border-color:#1A73E8;}
   </div>
 </div>
 
+<!-- 공지사항 팝업 -->
+<div style="display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.5);align-items:center;justify-content:center;padding:20px;" id="ov-notice">
+  <div style="background:#fff;border-radius:10px;width:100%;max-width:480px;box-shadow:0 8px 30px rgba(0,0,0,.2);overflow:hidden;animation:su .2s ease;">
+    <div style="background:#1A73E8;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:18px" id="notice-icon-disp">📢</span>
+        <span style="font-size:15px;font-weight:700;color:#fff;" id="notice-title-disp">공지사항</span>
+      </div>
+      <button onclick="closeNotice()" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div style="padding:18px 20px;">
+      <div id="notice-body-disp" style="font-size:14px;color:#202124;line-height:1.8;white-space:pre-wrap;"></div>
+    </div>
+    <div style="padding:10px 20px 16px;display:flex;align-items:center;justify-content:space-between;">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#5F6368;cursor:pointer;font-weight:400;">
+        <input type="checkbox" id="notice-no-show" style="width:auto"> 오늘 하루 보지 않기
+      </label>
+      <button onclick="closeNotice()" class="btn bp" style="padding:6px 18px;font-size:13px;">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- 예약 목록 팝업 -->
+<div style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);overflow-y:auto;padding:16px;" id="ov-reslist" onclick="if(event.target===this)co('ov-reslist')">
+  <div style="background:#fff;border-radius:8px;width:100%;max-width:560px;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.2);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;background:#1A73E8;color:#fff;padding:12px 14px">
+      <div id="ov-reslist-title" style="font-size:15px;font-weight:700">📋 학생 예약 목록</div>
+      <button onclick="co('ov-reslist')" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div class="rl-head"><div>목적</div><div>이름</div><div>가마 / 소성</div><div>예약 날짜</div></div>
+    <div id="ov-reslist-body" style="max-height:70vh;overflow-y:auto"></div>
+  </div>
+</div>
+
 <!-- 로그인 모달 -->
 <div class="ov" id="ov-login">
   <div class="mo sm">
@@ -293,6 +346,7 @@ textarea:focus{border-color:#1A73E8;}
         </button>
       </div>
     </div>
+    <div class="f"><label>목적</label><input type="text" id="st-purpose" placeholder="예) 수업, 졸업작품, 개인작업"></div>
     <div class="f"><label>가마 선택</label><select id="st-kiln" onchange="stKilnChange()"></select></div>
     <div class="f"><label>소성 종류</label><select id="st-type" onchange="stPreview()"></select></div>
     <div class="g2 f">
@@ -489,6 +543,7 @@ textarea:focus{border-color:#1A73E8;}
       <button class="at" onclick="switchAt('rp',this)">수리 내역</button>
       <button class="at" onclick="switchAt('ks',this)">가마 설정</button>
       <button class="at" onclick="switchAt('sem',this)">학기 설정</button>
+      <button class="at" onclick="switchAt('notice',this)">📢 공지사항</button>
     </div>
   </div>
 </div>
@@ -502,8 +557,10 @@ textarea:focus{border-color:#1A73E8;}
         <button class="nav-btn" onclick="go(-1)">‹</button>
         <div class="mon-lbl" id="mon-lbl"></div>
         <button class="nav-btn" onclick="go(1)">›</button>
+        <span class="cal-notice" id="cal-notice-txt">가마 소성 예약은 최소 3주전에 해주시길 바랍니다</span>
       </div>
       <div class="cal-btns">
+        <button class="cbtn only-narrow" id="btn-reslist" onclick="openResList()">📋 예약 목록</button>
         <button class="cbtn" id="btn-avail" onclick="openAvailModal()">🔍 소성 가능 일자</button>
         <button class="cbtn h" id="btn-ev" onclick="openEv()">🔧 일정 추가</button>
         <button class="cbtn p h" id="btn-st" onclick="openSt()">+ 학생 예약</button>
@@ -527,6 +584,13 @@ textarea:focus{border-color:#1A73E8;}
         </div>
       </div>
       <!-- 소성 내역 사이드 리스트 (소성 내역 탭에서만 표시) -->
+      <div id="res-side">
+        <div style="background:#fff;border:1px solid #DADCE0;border-radius:8px;overflow:hidden;">
+          <div id="res-side-title" style="background:#1A73E8;color:#fff;padding:12px 14px;font-size:14px;font-weight:700;">📋 학생 예약 목록</div>
+          <div class="rl-head"><div>목적</div><div>이름</div><div>가마 / 소성</div><div>예약 날짜</div></div>
+          <div id="res-side-body" style="max-height:640px;overflow-y:auto;"></div>
+        </div>
+      </div>
       <div id="side-list" style="display:none;width:280px;flex-shrink:0;">
         <div style="background:#fff;border:1px solid #DADCE0;border-radius:8px;overflow:hidden;">
           <div style="background:#1565C0;color:#fff;padding:12px 14px;font-size:14px;font-weight:700;">
@@ -548,6 +612,38 @@ textarea:focus{border-color:#1A73E8;}
     <div id="kiln-info-cards"></div>
   </div>
 
+  <!-- 공지사항 패널 -->
+  <div class="pnl" id="pnl-notice">
+    <div class="slbl">공지사항 관리</div>
+    <div class="card">
+      <p style="font-size:12px;color:#9AA0A6;margin-bottom:14px;line-height:1.6">사이트 접속 시 팝업으로 표시할 공지사항을 설정합니다. 공지를 비활성화하면 팝업이 뜨지 않습니다.</p>
+      <div class="f">
+        <label>공지 활성화</label>
+        <div class="rg">
+          <div class="ro" id="notice-on-btn" onclick="setNoticeActive(true)">✅ 활성화</div>
+          <div class="ro" id="notice-off-btn" onclick="setNoticeActive(false)">❌ 비활성화</div>
+        </div>
+      </div>
+      <div class="f">
+        <label>아이콘 & 제목</label>
+        <div style="display:flex;gap:8px;">
+          <input type="text" id="notice-icon" placeholder="📢" style="width:60px;text-align:center;font-size:18px;">
+          <input type="text" id="notice-title" placeholder="공지사항 제목" style="flex:1;">
+        </div>
+      </div>
+      <div class="f">
+        <label>공지 내용</label>
+        <textarea id="notice-body" rows="6" placeholder="공지 내용을 입력하세요&#10;줄바꿈도 그대로 반영됩니다"></textarea>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+        <button class="btn bp" onclick="saveNotice()">저장</button>
+        <button class="btn" onclick="previewNotice()">미리보기</button>
+        <span class="sok" id="notice-ok">✓ 저장됨</span>
+      </div>
+    </div>
+  </div>
+
+
   <!-- 수리 패널 -->
   <div class="pnl" id="pnl-rp">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
@@ -561,7 +657,7 @@ textarea:focus{border-color:#1A73E8;}
   <!-- 가마 설정 패널 -->
   <div class="pnl" id="pnl-ks">
     <div class="slbl">가마 및 소성 종류 설정</div>
-    <p style="font-size:12px;color:#9AA0A6;margin-bottom:12px;line-height:1.6">가마 이름, 소성 종류, 가열/냉각 시간을 수정하고 저장을 눌러주세요.</p>
+    <p style="font-size:12px;color:#9AA0A6;margin-bottom:12px;line-height:1.6">가마 이름, 소성 종류, 가열/냉각 시간, 색상을 수정하고 저장을 눌러주세요.</p>
     <div id="ks-list"></div>
     <button class="btn bs" onclick="addKs()" style="margin-bottom:12px">+ 가마 추가</button>
     <div class="div"></div>
@@ -596,7 +692,40 @@ const PW    = 'kiln1234';
 let sb=null;
 try{sb=supabase.createClient(SB_URL,SB_KEY);}catch(e){}
 
+// ── Supabase 오류 표시 ──
+// supabase-js는 실패해도 예외를 던지지 않고 {error}만 돌려주므로, 여기서 가로채서 관리자에게 보여줌
+function reportDbErr(err){
+  console.error('Supabase 오류:',err);
+  if(!isAdm||!err||err.code==='PGRST116') return;
+  let b=document.getElementById('db-err-banner');
+  if(!b){
+    b=document.createElement('div');
+    b.id='db-err-banner';
+    b.style.cssText='position:fixed;left:12px;right:12px;bottom:12px;z-index:900;background:#D93025;color:#fff;padding:12px 14px;border-radius:8px;font-size:13px;line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,.3);cursor:pointer';
+    b.onclick=function(){b.remove();};
+    document.body.appendChild(b);
+  }
+  b.innerHTML='<b>서버(Supabase) 저장 실패</b> - 이 기기에만 저장되어 다른 기기에서는 보이지 않습니다.<br>오류 내용: <span id="db-err-msg"></span><br><span style="opacity:.85">누르면 닫힙니다</span>';
+  document.getElementById('db-err-msg').textContent=(err.message||String(err))+(err.code?' ('+err.code+')':'');
+}
+(function patchSb(){
+  try{
+    if(!sb) return;
+    let proto=Object.getPrototypeOf(sb.from('firings').select('id'));
+    while(proto&&!Object.prototype.hasOwnProperty.call(proto,'then')) proto=Object.getPrototypeOf(proto);
+    if(!proto) return;
+    const orig=proto.then;
+    proto.then=function(onF,onR){
+      return orig.call(this,function(res){
+        if(res&&res.error) reportDbErr(res.error);
+        return onF?onF(res):res;
+      },onR);
+    };
+  }catch(e){ console.warn('오류 표시 설정 실패',e); }
+})();
+
 let isAdm=false, mainTab='res', atTab='cal';
+let noticeData={active:false,icon:'📢',title:'공지사항',body:''};
 let kilns=[], students=[], firings=[], events=[], repairs=[], sems=[];
 let cy=new Date().getFullYear(), cm=new Date().getMonth();
 let evType='m', semRows=[], rpFilter='all';
@@ -610,6 +739,36 @@ const ELBL={m:'가마보수',c:'가마청소',x:'휴무/공휴일',o:'기타'};
 const EICO={m:'🔧',c:'🧹',x:'🚫',o:'📌'};
 const MKC={'sc-past':'rgba(150,150,150,.5)',sc0:'rgba(180,0,0,.6)',sc1:'rgba(180,90,0,.6)',sc2:'rgba(0,100,50,.6)',sc3:'rgba(0,60,160,.6)',sc4:'rgba(100,0,130,.6)',gc0:'rgba(150,0,0,.5)',gc1:'rgba(150,80,0,.5)',gc2:'rgba(0,80,30,.5)',gc3:'rgba(0,50,130,.5)',gc4:'rgba(90,0,110,.5)',evm:'rgba(90,0,130,.5)',evc:'rgba(0,80,150,.5)',evx:'rgba(150,0,0,.5)',evo:'rgba(80,70,0,.5)'};
 
+// ── 색상 도우미 ──
+const DEF_K=['#D50000','#E67C00','#0B8043','#1A73E8','#8E24AA'];
+const DEF_G=['#C62828','#E65100','#2E7D32','#1565C0','#6A1B9A'];
+const PALETTE=['#D50000','#E67C00','#F9A825','#0B8043','#00897B','#1A73E8','#3949AB','#8E24AA','#D81B60','#5D4037'];
+let dbKilnIds=new Set();
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+function okHex(c){return typeof c==='string'&&/^#[0-9a-fA-F]{6}$/.test(c);}
+function hexRgb(h){const n=parseInt(h.slice(1),16);return [(n>>16)&255,(n>>8)&255,n&255];}
+function rgbHex(r,g,b){return '#'+[r,g,b].map(function(v){return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0');}).join('');}
+function mixHex(h,t,a){const x=hexRgb(h),y=hexRgb(t);return rgbHex(x[0]+(y[0]-x[0])*a,x[1]+(y[1]-x[1])*a,x[2]+(y[2]-x[2])*a);}
+function tint(h,a){return mixHex(h,'#ffffff',a);}
+function shade(h,a){return mixHex(h,'#000000',a);}
+function textOn(h){const c=hexRgb(h);return (0.299*c[0]+0.587*c[1]+0.114*c[2])/255>0.62?'#202124':'#ffffff';}
+// 가마 색은 소성 종류 항목의 kc 값으로 보관 (계산기 쪽 저장이 가마 목록을 다시 만들어도 types는 그대로 유지되므로 색이 남음)
+function kilnHex(k,ki,hist){
+  const c=((k&&k.types)||[]).map(function(t){return t&&t.kc;}).find(okHex);
+  if(c) return c;
+  const arr=hist?DEF_G:DEF_K;
+  return arr[(ki<0?0:ki)%arr.length];
+}
+function typeHex(k,ki,fname,hist){
+  const t=((k&&k.types)||[]).find(function(x){return x&&x.name===fname;});
+  return (t&&okHex(t.color))?t.color:kilnHex(k,ki,hist);
+}
+function barCss(hex,dark){
+  return dark
+    ? 'background:'+hex+';border-left:3px solid '+shade(hex,.3)+';color:'+textOn(hex)+';'
+    : 'background:'+tint(hex,.84)+';border-left:3px solid '+tint(hex,.45)+';color:'+shade(hex,.4)+';';
+}
+
 // ── 초기화 ──
 async function init(){
   loadLocal();
@@ -621,6 +780,7 @@ async function init(){
   renderLegend();
   buildCal();
   renderRpFilter(); renderRepairs(); renderKs(); renderSemDisp(); renderDlBtns();
+  showNoticeIfNeeded();
 }
 
 function loadLocal(){
@@ -632,6 +792,8 @@ function loadLocal(){
     events   =JSON.parse(localStorage.getItem('events')   ||'[]');
     repairs  =JSON.parse(localStorage.getItem('repairs')  ||'[]');
     sems     =JSON.parse(localStorage.getItem('sems')     ||'[]');
+    const nd=JSON.parse(localStorage.getItem('noticeData')||'null');
+    if(nd) noticeData=nd;
   }catch(e){ kilns=defKilns(); }
 }
 
@@ -645,6 +807,7 @@ async function loadDB(){
       sb.from('kiln_repairs').select('*').order('repair_date',{ascending:false}),
       sb.from('semesters').select('*').order('start_date')
     ]);
+    dbKilnIds=new Set((kr.data||[]).map(function(k){return k.id;}));
     if(kr.data?.length) kilns=kr.data.map(k=>({...k,types:Array.isArray(k.types)?k.types:JSON.parse(k.types||'[]')}));
     if(fr.data){ students=fr.data.filter(f=>f.student_name); firings=fr.data.filter(f=>!f.student_name); }
     if(er.data) events=er.data.map(e=>({...e,evType:e.event_type==='maintenance'?'m':e.event_type==='cleaning'?'c':e.event_type==='closed'?'x':'o'}));
@@ -683,7 +846,7 @@ function switchTab(tab,el){
     ge('pnl-cal').classList.remove('on');
     ge('pnl-info').classList.add('on');
     renderKilnInfo();
-    ['btn-avail','btn-ev','btn-st','btn-fi','btn-list','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
+    ['btn-avail','btn-reslist','btn-ev','btn-st','btn-fi','btn-list','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
     return;
   }
   ge('pnl-info').classList.remove('on');
@@ -693,7 +856,15 @@ function switchTab(tab,el){
   ge('btn-fi').classList.toggle('h',tab!=='his'||!isAdm);
   ge('btn-list').classList.toggle('h',tab!=='his');
   if(tab!=='his') ge('side-list').style.display='none';
+  applyResUi();
   buildCal(); renderLegend();
+}
+
+function applyResUi(){
+  const res=(mainTab==='res');
+  ge('res-side').classList.toggle('off',!res);
+  ge('btn-reslist').classList.toggle('h',!res);
+  ge('cal-notice-txt').style.display=res?'':'none';
 }
 
 function switchAt(tab,el){
@@ -701,11 +872,12 @@ function switchAt(tab,el){
   document.querySelectorAll('.at').forEach(e=>e.classList.remove('on'));
   el.classList.add('on');
   // 패널 전환
-  ['pnl-cal','pnl-rp','pnl-ks','pnl-sem','pnl-info'].forEach(id=>ge(id).classList.remove('on'));
+  ['pnl-cal','pnl-rp','pnl-ks','pnl-sem','pnl-info','pnl-notice'].forEach(id=>ge(id).classList.remove('on'));
   if(tab==='cal')  { ge('pnl-cal').classList.add('on'); }
   else if(tab==='rp')  { ge('pnl-rp').classList.add('on');  renderRpFilter(); renderRepairs(); }
   else if(tab==='ks')  { ge('pnl-ks').classList.add('on');  renderKs(); }
-  else if(tab==='sem') { ge('pnl-sem').classList.add('on'); renderSemDisp(); renderDlBtns(); }
+  else if(tab==='sem')    { ge('pnl-sem').classList.add('on'); renderSemDisp(); renderDlBtns(); }
+  else if(tab==='notice') { ge('pnl-notice').classList.add('on'); renderNoticeAdmin(); }
 }
 
 // ── 관리자 ──
@@ -737,10 +909,11 @@ function logoutAdm(){
     mainTab='res';
     document.querySelectorAll('.mt').forEach(e=>e.classList.remove('on'));
     document.querySelector('.mt').classList.add('on');
+    applyResUi();
   }
   ['btn-ev','btn-st','btn-fi','btn-list','btn-ul','btn-dl'].forEach(id=>ge(id).classList.add('h'));
   // 캘린더 패널로 복귀
-  ['pnl-rp','pnl-ks','pnl-sem','pnl-info'].forEach(id=>ge(id).classList.remove('on'));
+  ['pnl-rp','pnl-ks','pnl-sem','pnl-info','pnl-notice'].forEach(id=>ge(id).classList.remove('on'));
   ge('pnl-cal').classList.add('on');
   document.querySelectorAll('.at').forEach((e,i)=>e.classList.toggle('on',i===0));
   atTab='cal'; buildCal();
@@ -749,10 +922,15 @@ function logoutAdm(){
 // ── 범례 ──
 function renderLegend(){
   const el=ge('legend');
-  const colors=mainTab==='res'
-    ?['#FFEBEE','#FFF3E0','#E6F4EA','#E8F0FE','#F3E8FD']
-    :['#EF9A9A','#FFCC80','#A5D6A7','#90CAF9','#CE93D8'];
-  el.innerHTML=kilns.map((k,i)=>`<div class="li"><div class="ld" style="background:${colors[i%5]};border:1.5px solid ${KHX[i%5]}"></div>${k.name}</div>`).join('');
+  const hist=mainTab!=='res';
+  let out=kilns.map(function(k,i){
+    const c=kilnHex(k,i,hist);
+    return '<div class="li"><div class="ld" style="background:'+c+';border:1.5px solid '+shade(c,.25)+'"></div>'+esc(k.name)+'</div>';
+  }).join('');
+  kilns.forEach(function(k){(k.types||[]).forEach(function(t){
+    if(okHex(t.color)) out+='<div class="li"><div class="ld" style="background:'+t.color+';border:1.5px solid '+shade(t.color,.25)+'"></div>'+esc(k.name)+' '+esc(t.name)+'</div>';
+  });});
+  el.innerHTML=out;
 }
 
 // ════════════════════════════
@@ -794,7 +972,7 @@ function buildCal(){
     const fs=new Date(f.start_at),fe=new Date(f.end_at);
     if(fs>me||fe<ms) return;
     const ki=kilns.findIndex(k=>k.id===f.kiln_id);
-    const cc=mainTab==='res'?SC[ki%SC.length]||'sc0':GC[ki%GC.length]||'gc0';
+    const hex=typeHex(kilns[ki],ki,f.firing_name,mainTab!=='res');
     const kn=kilns[ki]?.name||'가마';
     const stName=f.student_name||'';
       const isHalfBar=stName.includes('(절반)');
@@ -804,10 +982,10 @@ function buildCal(){
         :`${kn} ${f.firing_name||''}`.trim();
     // 학생 예약에서 종료된 일정은 회색으로
     const isPast = mainTab==='res' && d0(fe) < tod;
-    const finalCc = isPast ? 'sc-past' : cc;
+    const finalCc = isPast ? 'sc-past' : 'cbar';
     items.push({
       sd:d0(fs)<d0(ms)?d0(ms):d0(fs), ed:d0(fe)>d0(me)?d0(me):d0(fe),
-      fsd:d0(fs), fed:d0(fe), cc:finalCc, lbl, ico:'',
+      fsd:d0(fs), fed:d0(fe), cc:finalCc, hex:isPast?null:hex, lbl, ico:'',
       onClick:()=>mainTab==='res'?showStDt(f):showFiDt(f)
     });
   });
@@ -906,7 +1084,7 @@ function buildCal(){
       if(c0<0||c1<0||c0>6||c1>6) return;
 
       const isF=sd(ss,item.fsd), isL=sd(se,item.fed);
-      const mk=MKC[item.cc]||'rgba(0,0,0,.3)';
+      const mk=item.hex?shade(item.hex,.45):(MKC[item.cc]||'rgba(0,0,0,.3)');
       const lp=c0/7*100, rp=(6-c1)/7*100;
       const tp=DTH+GAP+slot*(BAR+GAP);
 
@@ -934,6 +1112,7 @@ function buildCal(){
         if(!isColFirst) bar.classList.add('nol');
 
         bar.style.cssText=`left:${colLeft};right:${colRight};top:${tp}px;height:${BAR}px;line-height:${BAR}px;`;
+        if(item.hex) bar.style.cssText+=barCss(item.hex,isThisFirst);
 
         // 텍스트: 이 행의 첫 칸에만
         if(isColFirst){
@@ -976,9 +1155,49 @@ function buildCal(){
     });
     body.appendChild(rw);
   }
+  renderResList();
 }
 
 function go(d){ cm+=d; if(cm>11){cm=0;cy++;}if(cm<0){cm=11;cy--;} buildCal(); renderSideList(); }
+
+// ── 학생 예약 목록 (데스크탑 우측 패널 / 좁은 화면 팝업) ──
+function resListHtml(){
+  const ms=new Date(cy,cm,1), me=new Date(cy,cm+1,0,23,59,59);
+  const tod=d0(new Date());
+  const list=students.filter(function(f){const s=new Date(f.start_at),e=new Date(f.end_at);return s<=me&&e>=ms;})
+    .sort(function(a,b){return new Date(a.start_at)-new Date(b.start_at);});
+  if(!list.length) return {n:0,html:'<div style="padding:24px 12px;text-align:center;color:#9AA0A6;font-size:13px">이 달 예약 내역이 없습니다</div>'};
+  const days=['일','월','화','수','목','금','토'];
+  const out=list.map(function(f){
+    const s=new Date(f.start_at);
+    const ki=kilns.findIndex(function(k){return k.id===f.kiln_id;});
+    const kn=(kilns[ki]&&kilns[ki].name)||'가마';
+    const hex=typeHex(kilns[ki],ki,f.firing_name,false);
+    const past=d0(new Date(f.end_at))<tod;
+    return '<div class="rl-row'+(past?' past':'')+'" onclick="openResDetail(\''+f.id+'\')">'
+      +'<div>'+(esc(f.purpose)||'-')+'</div>'
+      +'<div style="font-weight:600">'+esc(f.student_name)+'</div>'
+      +'<div><span class="rl-dot" style="background:'+(past?'#BDBDBD':hex)+'"></span>'+esc(kn)+' / '+esc(f.firing_name)+'</div>'
+      +'<div class="rl-date">'+(s.getMonth()+1)+'/'+s.getDate()+'('+days[s.getDay()]+')<small>'+p2(s.getHours())+':'+p2(s.getMinutes())+'</small></div>'
+      +'</div>';
+  }).join('');
+  return {n:list.length,html:out};
+}
+function renderResList(){
+  const r=resListHtml();
+  const title='📋 '+(cm+1)+'월 학생 예약 목록 ('+r.n+'건)';
+  ge('res-side-body').innerHTML=r.html;
+  ge('res-side-title').textContent=title;
+  ge('ov-reslist-body').innerHTML=r.html;
+  ge('ov-reslist-title').textContent=title;
+}
+function openResList(){ renderResList(); ge('ov-reslist').style.display='block'; }
+function openResDetail(id){
+  const f=students.find(function(x){return String(x.id)===String(id);});
+  if(!f) return;
+  co('ov-reslist');
+  showStDt(f);
+}
 
 // ── 사이드 리스트 ──
 function toggleSideList(){
@@ -998,18 +1217,77 @@ function renderSideList(){
     body.innerHTML='<div style="padding:20px;text-align:center;color:#9AA0A6;font-size:13px">이번 달 소성 내역이 없습니다</div>';
     return;
   }
-  const colors=['#C62828','#E65100','#2E7D32','#1565C0','#6A1B9A'];
   body.innerHTML=list.map(f=>{
     const s=new Date(f.start_at);
     const ki=kilns.findIndex(k=>k.id===f.kiln_id);
     const kn=kilns[ki]?.name||'가마';
-    const col=colors[ki%colors.length];
+    const col=typeHex(kilns[ki],ki,f.firing_name,true);
     return `<div class="sli" onclick="showFiDt(firings.find(x=>x.id===${f.id}))">
       <div class="sli-date">${fmt(s)}</div>
       <div class="sli-kiln" style="color:${col}">${kn}</div>
       <div class="sli-type">${f.firing_name||''}</div>
     </div>`;
   }).join('');
+}
+
+
+// ── 공지사항 ──
+function showNoticeIfNeeded(){
+  if(!noticeData.active||!noticeData.body) return;
+  // 오늘 하루 보지 않기 체크 여부 확인
+  const noShowDate=localStorage.getItem('noticeNoShow');
+  const today=new Date().toISOString().split('T')[0];
+  if(noShowDate===today) return;
+  // 팝업 표시
+  ge('notice-icon-disp').textContent=noticeData.icon||'📢';
+  ge('notice-title-disp').textContent=noticeData.title||'공지사항';
+  ge('notice-body-disp').textContent=noticeData.body;
+  ge('notice-no-show').checked=false;
+  ge('ov-notice').style.display='flex';
+}
+function closeNotice(){
+  if(ge('notice-no-show').checked){
+    const today=new Date().toISOString().split('T')[0];
+    localStorage.setItem('noticeNoShow',today);
+  }
+  ge('ov-notice').style.display='none';
+}
+function setNoticeActive(val){
+  noticeData.active=val;
+  ge('notice-on-btn').classList.toggle('s',val);
+  ge('notice-off-btn').classList.toggle('s',!val);
+}
+function renderNoticeAdmin(){
+  ge('notice-icon').value=noticeData.icon||'📢';
+  ge('notice-title').value=noticeData.title||'공지사항';
+  ge('notice-body').value=noticeData.body||'';
+  setNoticeActive(noticeData.active);
+}
+function previewNotice(){
+  const icon=ge('notice-icon').value.trim()||'📢';
+  const title=ge('notice-title').value.trim()||'공지사항';
+  const body=ge('notice-body').value.trim();
+  if(!body){alert('공지 내용을 입력해주세요');return;}
+  ge('notice-icon-disp').textContent=icon;
+  ge('notice-title-disp').textContent=title;
+  ge('notice-body-disp').textContent=body;
+  ge('notice-no-show').checked=false;
+  ge('ov-notice').style.display='flex';
+}
+async function saveNotice(){
+  noticeData={
+    active:noticeData.active,
+    icon:ge('notice-icon').value.trim()||'📢',
+    title:ge('notice-title').value.trim()||'공지사항',
+    body:ge('notice-body').value.trim()
+  };
+  localStorage.setItem('noticeData',JSON.stringify(noticeData));
+  if(sb){
+    try{
+      await sb.from('notice').upsert({id:1,show:noticeData.active,type:'info',title:noticeData.title,body:noticeData.body});
+    }catch(e){}
+  }
+  const el=ge('notice-ok'); el.style.display='inline-block'; setTimeout(()=>el.style.display='none',2500);
 }
 
 // ── 가마 안내 ──
@@ -1020,15 +1298,13 @@ function saveKilnNotes(){ localStorage.setItem('kilnNotes',JSON.stringify(kilnNo
 
 function renderKilnInfo(){
   loadKilnNotes();
-  const colors=['#D50000','#E67C00','#0B8043','#1A73E8','#8E24AA'];
-  const icons=['🔴','🟠','🟢','🔵','🟣'];
   ge('kiln-info-cards').innerHTML=kilns.map((k,i)=>{
     const note=kilnNotes[k.id]||'';
+    const kc=kilnHex(k,i,false);
     return `
     <div class="ki-card">
-      <div class="ki-card-head" style="background:${colors[i%colors.length]}">
-        <span style="font-size:20px">${icons[i%icons.length]}</span>
-        ${k.name}
+      <div class="ki-card-head" style="background:${kc};color:${textOn(kc)}">
+        ${esc(k.name)}
       </div>
       <div class="ki-card-body">
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-bottom:6px;">
@@ -1038,7 +1314,7 @@ function renderKilnInfo(){
         </div>
         ${k.types.map(t=>`
           <div class="ki-type-row">
-            <div class="ki-type-name">${t.name}</div>
+            <div class="ki-type-name"><span class="rl-dot" style="background:${typeHex(k,i,t.name,false)}"></span>${t.name}</div>
             <div class="ki-type-val"><b>${fH(t.heatHours)}</b></div>
             <div class="ki-type-val"><b>${fH(t.coolHours)}</b></div>
           </div>`).join('')}
@@ -1080,6 +1356,7 @@ function showStDt(f){
   const kn=kilns.find(k=>k.id===f.kiln_id)?.name||'-';
   ge('dt-title').textContent=`👤 ${f.student_name} 예약`;
   ge('dt-body').innerHTML=`
+    ${f.purpose?`<div class="dr"><span class="dl">목적</span><span class="dv">${esc(f.purpose)}</span></div>`:''}
     <div class="dr"><span class="dl">가마</span><span class="dv">${kn}</span></div>
     <div class="dr"><span class="dl">소성 종류</span><span class="dv">${f.firing_name||'-'}</span></div>
     <div class="dr"><span class="dl">🔥 소성 시작</span><span class="dv">${fmt(new Date(f.start_at))}</span></div>
@@ -1171,6 +1448,7 @@ function openSt(editId=null){
   ge('st-id').value=editId||'';
   fillStKiln();
   if(!editId){
+    ge('st-purpose').value='';
     ge('st-name').value=''; ge('st-date').value=new Date().toISOString().split('T')[0];
     ge('st-time').value='09:00'; ge('st-mgr').value=''; ge('st-memo').value='';
     ge('st-pv').style.display='none';
@@ -1179,6 +1457,7 @@ function openSt(editId=null){
     const f=students.find(s=>String(s.id)===String(editId));
     if(!f) return;
     ge('st-name').value=f.student_name||'';
+    ge('st-purpose').value=f.purpose||'';
     const ki=kilns.findIndex(k=>k.id===f.kiln_id);
     if(ki>=0){ ge('st-kiln').value=ki; stKilnChange(); const ti=kilns[ki].types.findIndex(t=>t.name===f.firing_name); if(ti>=0) ge('st-type').value=ti; }
     const s=new Date(f.start_at);
@@ -1200,6 +1479,10 @@ async function submitSt(){
   const pk=addH(s,ft.heatHours),en=addH(pk,ft.coolHours);
   const memoVal=ge('st-memo').value.trim();
   const data={kiln_id:kiln.id,firing_name:ft.name,student_name:isHalf?nm+'(절반)':nm,manager_name:ge('st-mgr').value.trim()||null,start_at:s.toISOString(),peak_at:pk.toISOString(),end_at:en.toISOString(),heat_hours:ft.heatHours,cool_hours:ft.coolHours,memo:memoVal||null};
+  // 목적은 입력했거나 이미 값이 있을 때만 저장 (purpose 컬럼이 없는 DB에서도 기존 기능이 그대로 동작)
+  const purposeVal=ge('st-purpose').value.trim();
+  const prevSt=editStId?students.find(function(x){return String(x.id)===String(editStId);}):null;
+  if(purposeVal||(prevSt&&prevSt.purpose)) data.purpose=purposeVal||null;
   if(editStId){
     const idx=students.findIndex(x=>String(x.id)===String(editStId));
     if(idx>=0) students[idx]={...students[idx],...data};
@@ -1365,14 +1648,27 @@ async function delRp(id){
 }
 
 // ── 가마 설정 ──
+function chipHtml(cur,fnName,args,withReset){
+  const chips=PALETTE.map(function(c){
+    return '<button type="button" class="cchip'+(cur&&cur.toLowerCase()===c.toLowerCase()?' sel':'')+'" style="background:'+c+'" title="'+c+'" onclick="'+fnName+'('+args+"'"+c+"')\"></button>";
+  }).join('');
+  const custom='<input type="color" value="'+(okHex(cur)?cur:'#888888')+'" onchange="'+fnName+'('+args+'this.value)" title="직접 고르기">';
+  const reset=withReset?'<button type="button" class="btn bs" onclick="'+fnName+'('+args+"'')\">가마 색 따라가기</button>":'';
+  return '<div class="cchips">'+chips+custom+reset+'</div>';
+}
 function renderKs(){
-  ge('ks-list').innerHTML=kilns.map((k,ki)=>`
+  ge('ks-list').innerHTML=kilns.map((k,ki)=>{
+    const kc=kilnHex(k,ki,false);
+    return `
     <div class="ks-item">
       <div class="ks-nr">
+        <span class="rl-dot" style="width:14px;height:14px;background:${kc}"></span>
         <input class="ks-ni" type="text" value="${ea(k.name)}" oninput="kilns[${ki}].name=this.value">
         <button class="btn bs bd" onclick="delKs(${ki})">삭제</button>
       </div>
-      <div class="trow" style="margin-bottom:4px">
+      <div style="font-size:11px;font-weight:700;color:#9AA0A6">가마 색상</div>
+      ${chipHtml(kc,'setKilnColor',ki+',',false)}
+      <div class="trow" style="margin:8px 0 4px">
         <span class="th">소성 종류</span><span class="th">가열(h)</span><span class="th">냉각(h)</span><span></span>
       </div>
       ${k.types.map((t,ti)=>`
@@ -1381,16 +1677,49 @@ function renderKs(){
           <input type="number" value="${t.heatHours}" min="0.5" step="0.5" oninput="kilns[${ki}].types[${ti}].heatHours=parseFloat(this.value)||0">
           <input type="number" value="${t.coolHours}" min="0.5" step="0.5" oninput="kilns[${ki}].types[${ti}].coolHours=parseFloat(this.value)||0">
           <button class="btn bs bd" onclick="delTy(${ki},${ti})">✕</button>
-        </div>`).join('')}
+        </div>
+        <div style="margin-bottom:8px"><span class="clbl" style="font-size:11px;color:#5F6368;font-weight:600">이 소성 종류만 다른 색으로 (선택)</span>${chipHtml(okHex(t.color)?t.color:'','setTypeColor',ki+','+ti+',',true)}</div>`).join('')}
       <button class="btn bs" onclick="addTy(${ki})" style="margin-top:6px">+ 소성 종류 추가</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
+function setKilnColor(ki,c){ if(!okHex(c)) return; kilns[ki].types.forEach(function(t){t.kc=c;}); renderKs(); }
+function setTypeColor(ki,ti,c){ const t=kilns[ki].types[ti]; if(c===''){ delete t.color; } else if(okHex(c)){ t.color=c; } renderKs(); }
 function addKs(){kilns.push({id:Date.now(),name:`가마 ${kilns.length+1}`,sort_order:kilns.length+1,types:[{name:'초벌',heatHours:6,coolHours:12}]});renderKs();}
 function delKs(ki){if(kilns.length<=1){alert('최소 1개 이상');return;}if(confirm('삭제?')){kilns.splice(ki,1);renderKs();}}
-function addTy(ki){kilns[ki].types.push({name:'새 소성',heatHours:6,coolHours:12});renderKs();}
+function addTy(ki){const kc=kilns[ki].types.map(function(t){return t.kc;}).find(okHex);const nt={name:'새 소성',heatHours:6,coolHours:12};if(kc)nt.kc=kc;kilns[ki].types.push(nt);renderKs();}
 function delTy(ki,ti){if(kilns[ki].types.length<=1){alert('최소 1개');return;}kilns[ki].types.splice(ti,1);renderKs();}
 async function saveKs(){
-  if(sb){try{await sb.from('kilns').delete().neq('id',0);await sb.from('kilns').insert(kilns.map((k,i)=>({name:k.name,sort_order:i+1,types:k.types})));}catch(e){console.warn(e);}}
+  if(sb){
+    try{
+      // 기존 가마는 id로 수정, 새 가마만 추가, 삭제한 가마만 제거 (id가 바뀌지 않으므로 기존 예약의 가마 연결이 유지됨)
+      const keep=new Set(), remaps=[];
+      for(let i=0;i<kilns.length;i++){
+        const k=kilns[i];
+        const row={name:k.name,sort_order:i+1,types:k.types};
+        if(dbKilnIds.has(k.id)){
+          keep.add(k.id);
+          await sb.from('kilns').update(row).eq('id',k.id);
+        }else{
+          const r=await sb.from('kilns').insert(row).select().single();
+          if(r&&r.data){
+            if(r.data.id!==k.id) remaps.push([k.id,r.data.id]);
+            k.id=r.data.id; dbKilnIds.add(r.data.id); keep.add(r.data.id);
+          }
+        }
+      }
+      for(const id of Array.from(dbKilnIds)){
+        if(!keep.has(id)){ await sb.from('kilns').delete().eq('id',id); dbKilnIds.delete(id); }
+      }
+      if(remaps.length){
+        const tabs=['firings','kiln_events','kiln_repairs'];
+        for(const rm of remaps) for(const t of tabs) await sb.from(t).update({kiln_id:-rm[1]}).eq('kiln_id',rm[0]);
+        for(const rm of remaps) for(const t of tabs) await sb.from(t).update({kiln_id:rm[1]}).eq('kiln_id',-rm[1]);
+        const m=new Map(remaps);
+        [students,firings,events,repairs].forEach(function(arr){arr.forEach(function(x){ if(m.has(x.kiln_id)) x.kiln_id=m.get(x.kiln_id); });});
+      }
+    }catch(e){console.warn(e);}
+  }
   saveLocal(); buildCal(); renderLegend();
   const el=ge('ks-ok'); el.style.display='inline-block'; setTimeout(()=>el.style.display='none',2500);
 }
@@ -1580,7 +1909,6 @@ function renderAvailResults(results,kilnVal,typeVal){
     byDate[dk2].push(r);
   });
 
-  const colors=['#D50000','#E67C00','#0B8043','#1A73E8','#8E24AA'];
   const days=['일','월','화','수','목','금','토'];
 
   body.innerHTML=Object.entries(byDate).map(([dateKey,items])=>{
@@ -1592,7 +1920,7 @@ function renderAvailResults(results,kilnVal,typeVal){
         <div style="display:flex;flex-direction:column;gap:6px">
           ${items.map(r=>{
             const ki=kilns.findIndex(k=>k.id===r.kiln.id);
-            const col=colors[ki%colors.length];
+            const col=typeHex(r.kiln,ki,r.type.name,false);
             return `
               <div style="background:#fff;border:1px solid #DADCE0;border-left:4px solid ${col};border-radius:6px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
                 <div>
@@ -1859,6 +2187,7 @@ function toXl(data,fn){
       '가마 종류':kilns.find(k=>k.id===f.kiln_id)?.name||'-',
       '소성 종류':f.firing_name||'-',
       '학생 이름':f.student_name||'-',
+      '목적':f.purpose||'',
       '담당자':f.manager_name||'-',
       '비고':f.memo||''
     };
@@ -1873,7 +2202,7 @@ function oo(id){ge(id).classList.add('on');}
 function co(id){
   const el=ge(id);
   if(!el) return;
-  if(id==='ov-avail'){ el.style.display='none'; return; }
+  if(id==='ov-avail'||id==='ov-reslist'){ el.style.display='none'; return; }
   el.classList.remove('on');
   if(id==='ov-login'){ge('pw-input').value='';ge('pw-err').style.display='none';}
 }
